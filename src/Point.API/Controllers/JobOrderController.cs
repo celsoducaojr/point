@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Point.API.Controllers.Models;
 using Point.Core.Application.Handlers.Order;
 using Point.Core.Domain.Contracts.Repositories;
 
@@ -32,16 +33,13 @@ namespace Point.API.Controllers
             return Results.Ok(await _jobOrderRepository.GetAll());
         }
 
-        //[HttpPut("{id}")]
-        //public async Task<IResult> Update([FromRoute] int id, [FromBody] UpdateActivityModel model)
-        //{
-        //    var request = new UpdateActivityRequest(
-        //        id,
-        //        model.Name,
-        //        model.Description,
-        //        model.Category);
+        [HttpPut("{id}")]
+        public async Task<IResult> Update([FromRoute] int id, [FromBody] UpdateJobOrderModel model)
+        {
+            var request = new UpdateJobOrderRequest(
+                id);
 
-        //    return await _mediator.Send(request);
-        //}
+            return await _mediator.Send(request);
+        }
     }
 }
