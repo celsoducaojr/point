@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Point.Infrastructure.Persis
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C642AF69-559D-448F-89FD-64BE60F2A1A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Point.Infrastructure.Identity", "Point.Infrastructure.Identity\Point.Infrastructure.Identity.csproj", "{9D382FEC-540B-431F-BC49-6E8ADC4D441C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{90EAA93A-9726-4222-883A-FDE86CB4EAD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90EAA93A-9726-4222-883A-FDE86CB4EAD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90EAA93A-9726-4222-883A-FDE86CB4EAD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D382FEC-540B-431F-BC49-6E8ADC4D441C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D382FEC-540B-431F-BC49-6E8ADC4D441C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D382FEC-540B-431F-BC49-6E8ADC4D441C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D382FEC-540B-431F-BC49-6E8ADC4D441C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,6 +56,7 @@ Global
 		{842CDB8D-73D3-4EFB-87C4-FFA74A58E123} = {2F95605A-C11F-45E6-A2B2-AEF0CB054D18}
 		{A766904A-B444-4B2F-8DBF-73AF069BA261} = {2F95605A-C11F-45E6-A2B2-AEF0CB054D18}
 		{90EAA93A-9726-4222-883A-FDE86CB4EAD0} = {A595AA51-8BB6-429E-B1AF-40117464EBF2}
+		{9D382FEC-540B-431F-BC49-6E8ADC4D441C} = {A595AA51-8BB6-429E-B1AF-40117464EBF2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E0B4B5EC-1869-4F03-9968-115D2B645CAD}

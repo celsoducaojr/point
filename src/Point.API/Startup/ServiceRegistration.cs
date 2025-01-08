@@ -1,14 +1,24 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Point.API.Constants;
 using Point.API.Conventions;
+using Point.Infrastructure.Identity;
 using Point.Infrastructure.Persistence;
 
 namespace Point.API.Startup
 {
     public static class ServiceRegistration
     {
-        public static IServiceCollection RegisterDomainServices(this IServiceCollection services)
+        public static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services, IConfigurationManager configuration)
+        {
+            services.AddPointDomain(configuration.GetConnectionString(PointDomainContants.ConnectionStringName));
+            services.AddIdentityDomain(configuration.GetConnectionString(IdentityDomainConstants.ConnectionStringName));
+
+            return services;
+        }
+
+        public static IServiceCollection RegisterPointDomainServices(this IServiceCollection services)
         {
             services.AddControllers(options =>
             {
@@ -27,6 +37,25 @@ namespace Point.API.Startup
                 .AsImplementedInterfaces()
                 .WithTransientLifetime());
 
+            return services;
+        }
+
+        public static IServiceCollection RegisterIdentityDomainServices(this IServiceCollection services)
+        {
+            services
+                .AddAuthorization()
+                .AddAuthentication()
+                .AddBearerToken(IdentityConstants.BearerScheme);
+
+            services.AddIdentityCore<User>()
+                .AddEntityFrameworkStores<UserDbContext>()
+                .AddApiEndpoints();
+
+            return services;
+        }
+
+        public static IServiceCollection RegisterCommonServices(this IServiceCollection services)
+        {
             // Middlewares
             services.Scan(scan => scan.FromAssemblies(AppDomain.CurrentDomain.GetAssemblies())
             .AddClasses(classes => classes.AssignableTo(typeof(IMiddleware)))
@@ -35,13 +64,6 @@ namespace Point.API.Startup
 
             // Swagger
             services.RegisterSwagger();
-
-            return services;
-        }
-
-        public static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services, IConfigurationManager configuration)
-        {
-            services.AddPointDomain(configuration.GetConnectionString(DomainContants.ConnectionStringName));
 
             return services;
         }

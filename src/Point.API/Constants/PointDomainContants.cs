@@ -1,6 +1,6 @@
 ﻿namespace Point.API.Constants
 {
-    public static class DomainContants
+    public static class PointDomainContants
     {
         public const string ConnectionStringName = "Point";
     }

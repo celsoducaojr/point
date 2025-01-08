@@ -1,10 +1,17 @@
+using Microsoft.AspNetCore.Identity;
 using Point.API.Startup;
+using Point.Infrastructure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
+    .AddEndpointsApiExplorer();
+
+builder.Services
     .RegisterInfrastructureDependencies(builder.Configuration)
-    .RegisterDomainServices();
+    .RegisterPointDomainServices()
+    .RegisterIdentityDomainServices()
+    .RegisterCommonServices();
 
 var app = builder.Build();
 
@@ -17,6 +24,8 @@ app.UseAuthorization();
 app.ConfigureSwagger();
 
 app.MapControllers();
+
+app.MapIdentityApi<User>();
 
 app.Run();
 

@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Point.Infrastructure.Identity\Point.Infrastructure.Identity.csproj" />
     <ProjectReference Include="..\Point.Infrastructure.Persistence\Point.Infrastructure.Persistence.csproj" />
   </ItemGroup>
 
