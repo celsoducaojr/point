@@ -17,9 +17,9 @@ namespace Point.Infrastructure.Persistence
                 throw new ArgumentNullException(nameof(connectionString), "ConnectionString cannot be null.");
             }
 
-            services.AddScoped<IPointContext, PointContext>();
+            services.AddScoped<IPointDbContext, PointDbContext>();
 
-            services.AddDbContext<PointContext>(options =>
+            services.AddDbContext<PointDbContext>(options =>
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
             services.AddTransient<IDbConnection>((sp) => new MySqlConnection(connectionString));

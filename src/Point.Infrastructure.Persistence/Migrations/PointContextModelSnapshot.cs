@@ -10,7 +10,7 @@ using Point.Infrastructure.Persistence;
 
 namespace Point.Infrastructure.Persistence.Migrations
 {
-    [DbContext(typeof(PointContext))]
+    [DbContext(typeof(PointDbContext))]
     partial class PointContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

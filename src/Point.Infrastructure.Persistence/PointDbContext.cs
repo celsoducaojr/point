@@ -5,8 +5,8 @@ using Point.Order.Core.Domain.Entities;
 
 namespace Point.Infrastructure.Persistence
 {
-    public class PointContext(DbContextOptions<PointContext> options)
-        : DbContext(options), IPointContext 
+    public class PointDbContext(DbContextOptions<PointDbContext> options)
+        : DbContext(options), IPointDbContext 
     {
         public DbSet<JobOrder> JobOrders => Set<JobOrder>();
 

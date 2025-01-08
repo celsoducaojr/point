@@ -11,9 +11,9 @@ using Point.Infrastructure.Persistence;
 
 namespace Point.Infrastructure.Persistence.Migrations
 {
-    [DbContext(typeof(PointContext))]
-    [Migration("20250105075742_initalCreate")]
-    partial class initalCreate
+    [DbContext(typeof(PointDbContext))]
+    [Migration("20250108082229_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -9,9 +9,9 @@ namespace Point.Core.Application.Handlers.Order
     public sealed record UpdateJobOrderRequest(
         int Id)
         : IRequest<IResult>;
-    public class UpdateJobOrderHandler(IPointContext context) : IRequestHandler<UpdateJobOrderRequest, IResult>
+    public class UpdateJobOrderHandler(IPointDbContext context) : IRequestHandler<UpdateJobOrderRequest, IResult>
     {
-        private readonly IPointContext _context = context;
+        private readonly IPointDbContext _context = context;
 
         public async Task<IResult> Handle(UpdateJobOrderRequest request, CancellationToken cancellationToken)
         {

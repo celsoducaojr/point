@@ -8,9 +8,9 @@ namespace Point.Core.Application.Handlers.Order
 {
     public sealed record CreateJobOrderRequest()
         : IRequest<IResult>;
-    public class CreateJobOrderHandler(IPointContext context) : IRequestHandler<CreateJobOrderRequest, IResult>
+    public class CreateJobOrderHandler(IPointDbContext context) : IRequestHandler<CreateJobOrderRequest, IResult>
     {
-        private readonly IPointContext _context = context;
+        private readonly IPointDbContext _context = context;
 
         public async Task<IResult> Handle(CreateJobOrderRequest request, CancellationToken cancellationToken)
         {
