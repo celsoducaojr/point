@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Point.API.Startup;
-using Point.Infrastructure.Identity;
+using Point.Infrastructure.Identity.Domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
