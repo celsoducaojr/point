@@ -12,8 +12,8 @@ using Point.Infrastructure.Identity;
 namespace Point.Infrastructure.Identity.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20250108090555_initial")]
-    partial class initial
+    [Migration("20250211102132_initial_category")]
+    partial class initial_category
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,7 +157,7 @@ namespace Point.Infrastructure.Identity.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Point.Infrastructure.Identity.User", b =>
+            modelBuilder.Entity("Point.Infrastructure.Identity.Domain.Entities.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
@@ -235,7 +235,7 @@ namespace Point.Infrastructure.Identity.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Point.Infrastructure.Identity.User", null)
+                    b.HasOne("Point.Infrastructure.Identity.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -244,7 +244,7 @@ namespace Point.Infrastructure.Identity.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Point.Infrastructure.Identity.User", null)
+                    b.HasOne("Point.Infrastructure.Identity.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -259,7 +259,7 @@ namespace Point.Infrastructure.Identity.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Point.Infrastructure.Identity.User", null)
+                    b.HasOne("Point.Infrastructure.Identity.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -268,7 +268,7 @@ namespace Point.Infrastructure.Identity.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Point.Infrastructure.Identity.User", null)
+                    b.HasOne("Point.Infrastructure.Identity.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

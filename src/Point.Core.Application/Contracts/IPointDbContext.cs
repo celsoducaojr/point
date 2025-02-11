@@ -5,7 +5,7 @@ namespace Point.Core.Application.Contracts
 {
     public interface IPointDbContext
     {
-        DbSet<JobOrder> JobOrders { get; }
+        DbSet<JobOrder> JobOrder { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

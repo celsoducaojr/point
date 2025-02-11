@@ -19,7 +19,7 @@ namespace Point.Core.Application.Handlers.Order
                 Status = JobOrderStatus.New
             };
 
-            _context.JobOrders.Add(jobOrder);
+            _context.JobOrder.Add(jobOrder);
             await _context.SaveChangesAsync(cancellationToken);
 
             return Results.Ok(new { jobOrder.Id, jobOrder.Created });

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Point.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Point.Infrastructure.Persistence;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PointDbContext))]
-    partial class PointDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250211101400_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,29 +99,7 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ArticleUnit");
-                });
-
-            modelBuilder.Entity("Point.Core.Domain.Entities.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("LastModified")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Category");
+                    b.ToTable("Unit");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Company", b =>

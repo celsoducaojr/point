@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Point.Infrastructure.Identity.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class initial_category : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

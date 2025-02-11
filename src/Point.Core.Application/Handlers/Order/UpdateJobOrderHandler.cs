@@ -15,7 +15,7 @@ namespace Point.Core.Application.Handlers.Order
 
         public async Task<IResult> Handle(UpdateJobOrderRequest request, CancellationToken cancellationToken)
         {
-            var jobOrder = await _context.JobOrders.FindAsync(request.Id, cancellationToken);
+            var jobOrder = await _context.JobOrder.FindAsync(request.Id, cancellationToken);
 
             if (jobOrder == null)
             {
@@ -24,7 +24,7 @@ namespace Point.Core.Application.Handlers.Order
 
             jobOrder.Status = JobOrderStatus.Complete; // Test change
 
-            _context.JobOrders.Update(jobOrder);
+            _context.JobOrder.Update(jobOrder);
             await _context.SaveChangesAsync(cancellationToken);
 
             return Results.Ok(new { jobOrder.LastModified });
