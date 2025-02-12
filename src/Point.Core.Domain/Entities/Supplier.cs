@@ -2,7 +2,7 @@
 
 namespace Point.Core.Domain.Entities
 {
-    public class Company : IEntities, IAuditable
+    public class Supplier : IEntities, IAuditable
     {
         public int Id { get; set; }
         public DateTime Created { get; set; }
@@ -10,6 +10,6 @@ namespace Point.Core.Domain.Entities
 
         public string? Name { get; set; }
         public string? Notes { get; set; }
-        public List<CompanyTag>? Tags { get; set; }
+        public List<SupplierTag>? Tags { get; set; }
     }
 }

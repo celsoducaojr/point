@@ -4,7 +4,7 @@ namespace Point.Core.Domain.Entities
 {
     public class PriceReference : IEntities, IAuditable
     {
-        public int Id { get; set; }
+        public int Id { get; set; } // PriceId, ForeignKey
         public DateTime Created { get; set; }
         public DateTime LastModified { get; set; }
 

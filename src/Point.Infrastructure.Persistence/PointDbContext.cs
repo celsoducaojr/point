@@ -11,7 +11,7 @@ namespace Point.Infrastructure.Persistence
     {
         public DbSet<Tag> Tag { get; set; }
         public DbSet<Category> Category { get; set; }
-        public DbSet<Company> Company { get; set; }
+        public DbSet<Supplier> Supplier { get; set; }
         public DbSet<Article> Article { get; set; }
         public DbSet<ArticleUnit> ArticleUnit { get; set; }
         
