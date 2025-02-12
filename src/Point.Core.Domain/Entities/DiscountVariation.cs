@@ -2,7 +2,7 @@
 
 namespace Point.Core.Domain.Entities
 {
-    public class CostVariation : IEntities
+    public class DiscountVariation : IEntities
     {
         public int Id { get; set; }
         public decimal? Amount { get; set; }

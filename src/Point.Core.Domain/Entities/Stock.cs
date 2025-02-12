@@ -10,6 +10,6 @@ namespace Point.Core.Domain.Entities
 
         public int ItemUnitId { get;set; }  
         public int Quantity { get;set; }
-        public int? Threshold { get; set; }
+        public int Threshold { get; set; }
     }
 }

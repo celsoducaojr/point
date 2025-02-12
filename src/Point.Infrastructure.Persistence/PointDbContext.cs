@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Google.Protobuf.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Domain.Contracts.Entities;
 using Point.Core.Domain.Entities;
@@ -9,13 +10,14 @@ namespace Point.Infrastructure.Persistence
     public class PointDbContext(DbContextOptions<PointDbContext> options)
         : DbContext(options), IPointDbContext 
     {
-        public DbSet<Tag> Tag { get; set; }
-        public DbSet<Unit> Unit { get; set; }
-        public DbSet<Category> Category { get; set; }
-        public DbSet<Supplier> Supplier { get; set; }
-        public DbSet<Item> Item { get; set; }
-        
-        public DbSet<JobOrder> JobOrder => Set<JobOrder>();
+        public DbSet<Tag> Tag => Set<Tag>();
+        public DbSet<Unit> Unit => Set<Unit>();
+        public DbSet<Category> Category => Set<Category>();
+        public DbSet<Supplier> Supplier => Set<Supplier>();
+        public DbSet<Item> Item => Set<Item>();
+        public DbSet<Stock> Stock => Set<Stock>();
+        public DbSet<Customer> Customer => Set<Customer>();
+        public DbSet<Sale> Sale => Set<Sale>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -8,7 +8,7 @@ namespace Point.Core.Domain.Entities
         public DateTime Created { get; set; }
         public DateTime LastModified { get; set; }
 
-        public string? Name { get; set; }
+        public string Name { get; set; }
         public string? Remarks { get; set; }
         public List<SupplierTag>? Tags { get; set; }
     }

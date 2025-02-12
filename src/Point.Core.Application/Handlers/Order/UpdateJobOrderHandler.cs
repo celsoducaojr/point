@@ -15,16 +15,16 @@ namespace Point.Core.Application.Handlers.Order
 
         public async Task<IResult> Handle(UpdateJobOrderRequest request, CancellationToken cancellationToken)
         {
-            var jobOrder = await _context.JobOrder.FindAsync(request.Id, cancellationToken);
+            var jobOrder = await _context.Sale.FindAsync(request.Id, cancellationToken);
 
             if (jobOrder == null)
             {
                 throw new NotFoundException("Job Order not found.");
             }
 
-            jobOrder.Status = JobOrderStatus.Complete; // Test change
+            jobOrder.Status = SaleStatus.Paid; // Test change
 
-            _context.JobOrder.Update(jobOrder);
+            _context.Sale.Update(jobOrder);
             await _context.SaveChangesAsync(cancellationToken);
 
             return Results.Ok(new { jobOrder.LastModified });

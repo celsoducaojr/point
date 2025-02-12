@@ -10,17 +10,17 @@ namespace Point.Infrastructure.Persistence.Repositories
     {
         private readonly IDbConnection _dbConnection = dbConnection;
 
-        public async Task<JobOrder> GetById(int id)
+        public async Task<Sale> GetById(int id)
         {
-            var jobOrder = await _dbConnection.QuerySingleOrDefaultAsync<JobOrder>(
+            var jobOrder = await _dbConnection.QuerySingleOrDefaultAsync<Sale>(
                 "SELECT * FROM JobOrders WHERE Id = @Id", new { Id = id });
 
             return jobOrder ?? throw new NotFoundException("Job Order not found.");
         }
 
-        public async Task<IEnumerable<JobOrder>> GetAll()
+        public async Task<IEnumerable<Sale>> GetAll()
         {
-            return await _dbConnection.QueryAsync<JobOrder>("SELECT * FROM JobOrders");
+            return await _dbConnection.QueryAsync<Sale>("SELECT * FROM JobOrders");
         }
     }
 }

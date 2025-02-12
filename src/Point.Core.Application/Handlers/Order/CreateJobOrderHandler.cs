@@ -14,12 +14,12 @@ namespace Point.Core.Application.Handlers.Order
 
         public async Task<IResult> Handle(CreateJobOrderRequest request, CancellationToken cancellationToken)
         {
-            var jobOrder = new JobOrder
+            var jobOrder = new Sale
             {
-                Status = JobOrderStatus.New
+                Status = SaleStatus.Pending
             };
 
-            _context.JobOrder.Add(jobOrder);
+            _context.Sale.Add(jobOrder);
             await _context.SaveChangesAsync(cancellationToken);
 
             return Results.Ok(new { jobOrder.Id, jobOrder.Created });

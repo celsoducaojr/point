@@ -10,7 +10,7 @@ namespace Point.Core.Domain.Entities
 
         public decimal InitialAmount { get;set; }
         public decimal FinalAmount { get; set; }
-        public List<CostVariation>? Variations { get; set; }
+        public List<DiscountVariation>? Variations { get; set; }
 
         
         // Navigation property to ItemUnit
