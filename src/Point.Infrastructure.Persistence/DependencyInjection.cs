@@ -25,7 +25,7 @@ namespace Point.Infrastructure.Persistence
             services.AddTransient<IDbConnection>((sp) => new MySqlConnection(connectionString));
 
             // Repositories
-            services.AddTransient<IJobOrderRepository, JobOrderRepository>();
+            services.AddTransient<ISupplierRepository, SupplierRepository>();
 
             return services;
         }

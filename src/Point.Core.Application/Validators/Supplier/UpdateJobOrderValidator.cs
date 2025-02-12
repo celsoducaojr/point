@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Point.Core.Application.Validators.Order
+namespace Point.Core.Application.Validators.Supplier
 {
-    public class UpdateJobOrderValidator : AbstractValidator<UpdateJobOrderRequest>
+    public class UpdateJobOrderValidator : AbstractValidator<UpdateSupplierRequest>
     {
         public UpdateJobOrderValidator()
         {

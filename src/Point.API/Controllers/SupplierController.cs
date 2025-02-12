@@ -10,13 +10,13 @@ namespace Point.API.Controllers
     [ApiVersion("1.0")]
     [Route("api/v{version:apiversion}/[controller]")]
     [ApiController]
-    public class JobOrderController(IMediator mediator, IJobOrderRepository jobOrderRepository) : ControllerBase
+    public class SupplierController(IMediator mediator, ISupplierRepository supplierRepository) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;
-        private readonly IJobOrderRepository _jobOrderRepository = jobOrderRepository;
+        private readonly ISupplierRepository _supplierRepository = supplierRepository;
 
         [HttpPost]
-        public async Task<IResult> Add([FromBody] CreateJobOrderRequest request)
+        public async Task<IResult> Add([FromBody] CreateSupplierRequest request)
         {
             return await _mediator.Send(request);
         }
@@ -24,20 +24,20 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IResult> GetById(int id)
         {
-            return Results.Ok(await _jobOrderRepository.GetById(id));
+            return Results.Ok(await _supplierRepository.GetById(id));
         }
 
         [HttpGet]
         public async Task<IResult> GetAll()
         {
-            return Results.Ok(await _jobOrderRepository.GetAll());
+            return Results.Ok(await _supplierRepository.GetAll());
         }
 
         [HttpPut("{id}")]
-        public async Task<IResult> Update([FromRoute] int id, [FromBody] UpdateJobOrderModel model)
+        public async Task<IResult> Update([FromRoute] int id, [FromBody] UpdateSupplierDto dto)
         {
-            var request = new UpdateJobOrderRequest(
-                id);
+            var request = new UpdateSupplierRequest(
+                id, dto.Name, dto.Remarks);
 
             return await _mediator.Send(request);
         }
