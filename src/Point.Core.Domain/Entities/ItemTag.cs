@@ -2,7 +2,7 @@
 
 namespace Point.Core.Domain.Entities
 {
-    public class ArticleTag : IEntities
+    public class ItemTag : IEntities
     {
         public int Id { get; set; }
         public int TagId { get; set; }

@@ -2,19 +2,19 @@
 
 namespace Point.Core.Domain.Entities
 {
-    public class PriceReference : IEntities, IAuditable
+    public class PurchaseCost : IEntities, IAuditable
     {
         public int Id { get; set; } // PriceId, ForeignKey
         public DateTime Created { get; set; }
         public DateTime LastModified { get; set; }
 
-        public decimal InitialPrice { get;set; }
-        public decimal FinalPrice { get; set; }
-        public List<PriceVariation>? Variations { get; set; }
+        public decimal InitialAmount { get;set; }
+        public decimal FinalAmount { get; set; }
+        public List<CostVariation>? Variations { get; set; }
 
         
-        // Navigation property to Price
+        // Navigation property to ItemUnit
         // One-to-one relationship reference
-        public Price Price { get; set; }
+        public ItemUnit ItemUnit { get; set; }
     }
 }

@@ -10,10 +10,10 @@ namespace Point.Infrastructure.Persistence
         : DbContext(options), IPointDbContext 
     {
         public DbSet<Tag> Tag { get; set; }
+        public DbSet<Unit> Unit { get; set; }
         public DbSet<Category> Category { get; set; }
         public DbSet<Supplier> Supplier { get; set; }
-        public DbSet<Article> Article { get; set; }
-        public DbSet<ArticleUnit> ArticleUnit { get; set; }
+        public DbSet<Item> Item { get; set; }
         
         public DbSet<JobOrder> JobOrder => Set<JobOrder>();
 
@@ -21,10 +21,10 @@ namespace Point.Infrastructure.Persistence
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Price>()
-                .HasOne(p => p.References)  // Price has one PriceReference
-                .WithOne(r => r.Price)      // PriceReference belongs to Price
-                .HasForeignKey<PriceReference>(r => r.Id) // FK = PK
+            modelBuilder.Entity<ItemUnit>()
+                .HasOne(p => p.PurchaseCost)  // ItemUnit has one PurchaseCost
+                .WithOne(r => r.ItemUnit)      // PurchaseCost belongs to a single ItemUnit
+                .HasForeignKey<PurchaseCost>(r => r.Id) // FK = PK
                 .IsRequired();  // Enforce relationship
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)

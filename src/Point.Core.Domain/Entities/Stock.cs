@@ -2,14 +2,14 @@
 
 namespace Point.Core.Domain.Entities
 {
-    public class Supplier : IEntities, IAuditable
+    public class Stock : IEntities, IAuditable
     {
         public int Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime LastModified { get; set; }
 
-        public string? Name { get; set; }
-        public string? Remarks { get; set; }
-        public List<SupplierTag>? Tags { get; set; }
+        public int ItemUnitId { get;set; }  
+        public int Quantity { get;set; }
+        public int? Threshold { get; set; }
     }
 }

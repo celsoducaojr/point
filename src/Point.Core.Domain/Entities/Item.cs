@@ -2,7 +2,7 @@
 
 namespace Point.Core.Domain.Entities
 {
-    public class Article : IEntities, IAuditable
+    public class Item : IEntities, IAuditable
     {
         public int Id { get; set; }
         public DateTime Created { get; set; }
@@ -11,7 +11,7 @@ namespace Point.Core.Domain.Entities
         public string? Name { get; set; }
         public string? Description { get; set; }
         public int CategoryId { get; set; }
-        public List<ArticleTag>? Tags { get; set; }
-        public List<Price>? Prices { get; set; }
+        public List<ItemTag>? Tags { get; set; }
+        public List<ItemUnit>? Units { get; set; }
     }
 }

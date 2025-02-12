@@ -1,5 +1,4 @@
 ﻿using Point.Core.Domain.Contracts.Entities;
-using Point.Core.Domain.Entities;
 using Point.Core.Domain.Entities.Enums;
 
 namespace Point.Order.Core.Domain.Entities
