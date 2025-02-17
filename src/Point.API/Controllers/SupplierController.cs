@@ -21,6 +21,15 @@ namespace Point.API.Controllers
             return await _mediator.Send(request);
         }
 
+        [HttpPut("{id}")]
+        public async Task<IResult> Update([FromRoute] int id, [FromBody] UpdateSupplierDto dto)
+        {
+            var request = new UpdateSupplierRequest(
+                id, dto.Name, dto.Remarks);
+
+            return await _mediator.Send(request);
+        }
+
         [HttpGet("{id}")]
         public async Task<IResult> GetById(int id)
         {
@@ -33,13 +42,6 @@ namespace Point.API.Controllers
             return Results.Ok(await _supplierRepository.GetAll());
         }
 
-        [HttpPut("{id}")]
-        public async Task<IResult> Update([FromRoute] int id, [FromBody] UpdateSupplierDto dto)
-        {
-            var request = new UpdateSupplierRequest(
-                id, dto.Name, dto.Remarks);
-
-            return await _mediator.Send(request);
-        }
+        
     }
 }

@@ -3,8 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using MySql.Data.MySqlClient;
 using Point.Core.Application.Contracts;
 using Point.Core.Domain.Contracts.Repositories;
+using Point.Infrastructure.Persistence.Contracts;
 using Point.Infrastructure.Persistence.Repositories;
-using System.Data;
 
 namespace Point.Infrastructure.Persistence
 {
@@ -22,7 +22,7 @@ namespace Point.Infrastructure.Persistence
             services.AddDbContext<PointDbContext>(options =>
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-            services.AddTransient<IDbConnection>((sp) => new MySqlConnection(connectionString));
+            services.AddTransient<IPointDbConnection>((sp) => new PointDbConnection(new MySqlConnection(connectionString)));
 
             // Repositories
             services.AddTransient<ISupplierRepository, SupplierRepository>();

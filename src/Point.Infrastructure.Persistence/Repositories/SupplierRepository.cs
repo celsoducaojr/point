@@ -2,26 +2,26 @@
 using Point.Core.Application.Exceptions;
 using Point.Core.Domain.Contracts.Repositories;
 using Point.Core.Domain.Entities;
-using Point.Order.Core.Domain.Entities;
+using Point.Infrastructure.Persistence.Contracts;
 using System.Data;
 
 namespace Point.Infrastructure.Persistence.Repositories
 {
-    public class SupplierRepository(IDbConnection dbConnection) : ISupplierRepository
+    public class SupplierRepository(IPointDbConnection pointDbConnection) : ISupplierRepository
     {
-        private readonly IDbConnection _dbConnection = dbConnection;
+        private readonly IPointDbConnection _pointDbConnection = pointDbConnection;
 
         public async Task<Supplier> GetById(int id)
         {
-            var supplier = await _dbConnection.QuerySingleOrDefaultAsync<Supplier>(
-                "SELECT * FROM Supplier WHERE Id = @Id", new { Id = id });
+            var supplier = await _pointDbConnection.Connection
+                .QuerySingleOrDefaultAsync<Supplier>("SELECT * FROM Supplier WHERE Id = @Id", new { Id = id });
 
             return supplier ?? throw new NotFoundException("Supplier not found.");
         }
 
         public async Task<IEnumerable<Supplier>> GetAll()
         {
-            return await _dbConnection.QueryAsync<Supplier>("SELECT * FROM Supplier");
+            return await _pointDbConnection.Connection.QueryAsync<Supplier>("SELECT * FROM Supplier");
         }
     }
 }
