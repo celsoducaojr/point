@@ -1,5 +1,4 @@
-﻿using Asp.Versioning;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Point.API.Controllers.Models;
 using Point.Core.Application.Handlers.Order;
@@ -7,18 +6,15 @@ using Point.Core.Domain.Contracts.Repositories;
 
 namespace Point.API.Controllers
 {
-    [ApiVersion("1.0")]
-    [Route("api/v{version:apiversion}/[controller]")]
-    [ApiController]
-    public class SupplierController(IMediator mediator, ISupplierRepository supplierRepository) : ControllerBase
+    public class SupplierController(IMediator mediator, ISupplierRepository supplierRepository) : BaseController
     {
         private readonly IMediator _mediator = mediator;
         private readonly ISupplierRepository _supplierRepository = supplierRepository;
 
         [HttpPost]
-        public async Task<IResult> Add([FromBody] CreateSupplierRequest request)
+        public async Task<IResult> Add([FromBody] CreateSupplierRequest createSupplierRequest)
         {
-            return await _mediator.Send(request);
+            return await _mediator.Send(createSupplierRequest);
         }
 
         [HttpPut("{id}")]

@@ -10,13 +10,13 @@ namespace Point.Core.Application.Handlers.Order
         string Name,
         string? Remarks)
         : IRequest<IResult>;
-    public class UpdateSupplierHandler(IPointDbContext context) : IRequestHandler<UpdateSupplierRequest, IResult>
+    public class UpdateSupplierHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateSupplierRequest, IResult>
     {
-        private readonly IPointDbContext _context = context;
+        private readonly IPointDbContext _pointDbContext = pointDbContext;
 
         public async Task<IResult> Handle(UpdateSupplierRequest request, CancellationToken cancellationToken)
         {
-            var supplier = await _context.Supplier.FindAsync(request.Id, cancellationToken);
+            var supplier = await _pointDbContext.Supplier.FindAsync(request.Id, cancellationToken);
 
             if (supplier == null)
             {
@@ -26,8 +26,8 @@ namespace Point.Core.Application.Handlers.Order
             supplier.Name = request.Name;
             supplier.Remarks = request.Remarks;
 
-            _context.Supplier.Update(supplier);
-            await _context.SaveChangesAsync(cancellationToken);
+            _pointDbContext.Supplier.Update(supplier);
+            await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return Results.Ok(new { supplier.LastModified });
         }
