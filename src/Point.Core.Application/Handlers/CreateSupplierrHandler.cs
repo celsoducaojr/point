@@ -8,7 +8,8 @@ namespace Point.Core.Application.Handlers.Order
 {
     public sealed record CreateSupplierRequest(
         string Name,
-        string Remarks)
+        string Remarks,
+        List<int> Tags)
         : IRequest<IResult>;
     public class CreateSupplierrHandler(IPointDbContext pointDbContext) : IRequestHandler<CreateSupplierRequest, IResult>
     {
@@ -16,17 +17,16 @@ namespace Point.Core.Application.Handlers.Order
 
         public async Task<IResult> Handle(CreateSupplierRequest request, CancellationToken cancellationToken)
         {
-            var supplier = _pointDbContext.Supplier.FirstOrDefault(s => s.Name == request.Name);
-
-            if (supplier != null)
+            if (_pointDbContext.Supplier.Any(s => s.Name == request.Name))
             {
-                throw new DomainException("Supplier Name already exist.");
+                throw new DomainException("Supplier already exist.");
             }
 
-            supplier = new Supplier
+            var supplier = new Supplier
             {
                 Name = request.Name,
-                Remarks = request.Remarks
+                Remarks = request.Remarks,
+                Tags = request.Tags.Select(tagId => new SupplierTag { Id = tagId }).ToList()
             };
 
             _pointDbContext.Supplier.Add(supplier);

@@ -8,10 +8,11 @@ namespace Point.Core.Application.Validators
         public CreateSupplierValidator()
         {
             RuleFor(x => x.Name)
-                .NotEmpty();
+                .NotEmpty()
+                .MaximumLength(50);
 
             RuleFor(x => x.Remarks)
-                .MaximumLength(10);
+                .MaximumLength(100);
         }
     }
 }
