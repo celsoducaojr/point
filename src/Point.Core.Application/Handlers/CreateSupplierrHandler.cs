@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Domain.Entities;
@@ -17,6 +18,20 @@ namespace Point.Core.Application.Handlers.Order
 
         public async Task<IResult> Handle(CreateSupplierRequest request, CancellationToken cancellationToken)
         {
+            if (request.Tags?.Count > 0)
+            {
+                var tags = await _pointDbContext.Tag
+                .Where(t => request.Tags.Contains(t.Id))
+                .Select(p => p.Id)
+                .ToListAsync(cancellationToken);
+
+                var missingTags = request.Tags.Except(tags).ToList();
+                if (missingTags.Any())
+                {
+                    throw new NotFoundException($"Tag(s) not found: {string.Join(", ", missingTags)}");
+                }
+            }
+            
             if (_pointDbContext.Supplier.Any(s => s.Name == request.Name))
             {
                 throw new DomainException("Supplier already exist.");
@@ -26,7 +41,7 @@ namespace Point.Core.Application.Handlers.Order
             {
                 Name = request.Name,
                 Remarks = request.Remarks,
-                Tags = request.Tags.Select(tagId => new SupplierTag { Id = tagId }).ToList()
+                Tags = request.Tags?.Select(tagId => new SupplierTag { TagId = tagId }).ToList()
             };
 
             _pointDbContext.Supplier.Add(supplier);
