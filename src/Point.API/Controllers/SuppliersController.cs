@@ -19,7 +19,7 @@ namespace Point.API.Controllers
         public async Task<IResult> Update([FromRoute] int id, [FromBody] UpdateSupplierDto dto)
         {
             var request = new UpdateSupplierRequest(
-                id, dto.Name, dto.Remarks);
+                id, dto.Name, dto.Remarks, dto.Tags);
 
             return await _mediator.Send(request);
         }

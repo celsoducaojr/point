@@ -16,12 +16,8 @@ namespace Point.Core.Application.Handlers
 
         public async Task<IResult> Handle(UpdateTagRequest request, CancellationToken cancellationToken)
         {
-            var tag = await _pointDbContext.Tag.FindAsync(request.Id, cancellationToken);
-
-            if (tag == null)
-            {
-                throw new NotFoundException("Tag not found.");
-            }
+            var tag = (await _pointDbContext.Tag.FindAsync(request.Id, cancellationToken))
+                ?? throw new NotFoundException("Tag not found.");
 
             if (await _pointDbContext.Tag.AnyAsync(t => t.Id != request.Id && t.Name == request.Name))
             {

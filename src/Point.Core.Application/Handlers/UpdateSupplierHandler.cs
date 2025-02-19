@@ -1,14 +1,17 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
+using Point.Core.Domain.Entities;
 
 namespace Point.Core.Application.Handlers.Order
 {
     public sealed record UpdateSupplierRequest(
         int Id,
         string Name,
-        string? Remarks)
+        string? Remarks,
+        List<int> Tags)
         : IRequest<IResult>;
     public class UpdateSupplierHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateSupplierRequest, IResult>
     {
@@ -16,15 +19,38 @@ namespace Point.Core.Application.Handlers.Order
 
         public async Task<IResult> Handle(UpdateSupplierRequest request, CancellationToken cancellationToken)
         {
-            var supplier = await _pointDbContext.Supplier.FindAsync(request.Id, cancellationToken);
+            var supplier = (await _pointDbContext.Supplier
+                .Include(s => s.Tags)
+                .FirstOrDefaultAsync(s => s.Id == request.Id, cancellationToken))
+                ?? throw new NotFoundException("Supplier not found.");
 
-            if (supplier == null)
+            if (request.Tags?.Count > 0)
             {
-                throw new NotFoundException("Supplier not found.");
+                var tags = await _pointDbContext.Tag
+                .Where(t => request.Tags.Contains(t.Id))
+                .Select(p => p.Id)
+                .ToListAsync(cancellationToken);
+
+                var missingTags = request.Tags.Except(tags).ToList();
+                if (missingTags.Any())
+                {
+                    throw new NotFoundException($"Tags(s) not found: {string.Join(", ", missingTags)}");
+                }
+            }
+
+            if (await _pointDbContext.Supplier.AnyAsync(t => t.Id != request.Id && t.Name == request.Name))
+            {
+                throw new DomainException("Supplier already exist.");
+            }
+
+            if (supplier.Tags != null)
+            {
+                _pointDbContext.SupplierTag.RemoveRange(supplier.Tags);
             }
 
             supplier.Name = request.Name;
             supplier.Remarks = request.Remarks;
+            supplier.Tags = request.Tags?.Select(tagId => new SupplierTag { TagId = tagId }).ToList();
 
             _pointDbContext.Supplier.Update(supplier);
             await _pointDbContext.SaveChangesAsync(cancellationToken);

@@ -34,7 +34,7 @@ namespace Point.Core.Application.Handlers.Order
             
             if (_pointDbContext.Supplier.Any(s => s.Name == request.Name))
             {
-                throw new DomainException("Supplier already exist.");
+                throw new DomainException("Tag already exist.");
             }
 
             var supplier = new Supplier

@@ -7,7 +7,12 @@ namespace Point.Core.Application.Validators
     {
         public UpdateSupplierValidator()
         {
-            // TODO: Add rules
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                .MaximumLength(50);
+
+            RuleFor(x => x.Remarks)
+                .MaximumLength(100);
         }
     }
 }

@@ -14,6 +14,7 @@ namespace Point.Infrastructure.Persistence
         public DbSet<Unit> Unit => Set<Unit>();
         public DbSet<Category> Category => Set<Category>();
         public DbSet<Supplier> Supplier => Set<Supplier>();
+        public DbSet<SupplierTag> SupplierTag => Set<SupplierTag>();
         public DbSet<Item> Item => Set<Item>();
         public DbSet<Stock> Stock => Set<Stock>();
         public DbSet<Customer> Customer => Set<Customer>();
