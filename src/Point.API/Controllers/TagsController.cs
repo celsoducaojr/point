@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Point.API.Controllers.Dtos;
+using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Application.Handlers;
 using Point.Core.Domain.Entities;
@@ -10,10 +12,10 @@ using Point.Infrastructure.Persistence.Contracts;
 
 namespace Point.API.Controllers
 {
-    public class TagsController(IMediator mediator, IPointDbConnection pointDbConnection) : BaseController
+    public class TagsController(IMediator mediator, IPointDbContext pointDbContext) : BaseController
     {
         private readonly IMediator _mediator = mediator;
-        private readonly IPointDbConnection _pointDbConnection = pointDbConnection;
+        private readonly IPointDbContext _pointDbContext = pointDbContext;
 
         [HttpPost]
         public async Task<IResult> Add([FromBody] CreateTagRequest createTagRequest)
@@ -32,21 +34,18 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IResult> GetById(int id)
         {
-            var query = "SELECT * FROM Tag WHERE Id = @Id";
-            var tag = await _pointDbConnection.Connection
-                .QuerySingleOrDefaultAsync<Tag>(query, new { Id = id })
+            var supplier = (await _pointDbContext.Tag
+                .FirstOrDefaultAsync(t => t.Id == id))
                 ?? throw new NotFoundException("Tag not found.");
 
-            return Results.Ok(tag);
+            return Results.Ok(supplier);
         }
 
         [HttpGet]
         public async Task<IResult> GetAll()
         {
-            var tag = await _pointDbConnection.Connection
-                .QueryAsync<Tag>("SELECT * FROM Tag");
-
-            return Results.Ok(tag);
+            return Results.Ok(await _pointDbContext.Tag
+                .ToListAsync());
         }
     }
 }
