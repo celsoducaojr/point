@@ -20,7 +20,7 @@ namespace Point.Core.Application.Handlers
             var category = (await _pointDbContext.Category.FindAsync(request.Id, cancellationToken))
                ?? throw new NotFoundException("Category not found.");
 
-            if (await _pointDbContext.Category.AnyAsync(t => t.Id != request.Id && t.Name == request.Name))
+            if (await _pointDbContext.Category.AnyAsync(c => c.Id != request.Id && c.Name == request.Name))
             {
                 throw new DomainException("Category already exist.");
             }

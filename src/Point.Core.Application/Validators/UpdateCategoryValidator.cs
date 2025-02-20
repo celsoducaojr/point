@@ -8,8 +8,8 @@ namespace Point.Core.Application.Validators
         public UpdateCategoryValidator() 
         {
             RuleFor(x => x.Name)
-                   .NotEmpty()
-                   .MaximumLength(30);
+                .NotEmpty()
+                .MaximumLength(30);
         }
     }
 }

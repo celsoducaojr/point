@@ -1,4 +1,4 @@
-﻿namespace Point.API.Controllers.Models
+﻿namespace Point.API.Dtos
 {
     public sealed record UpdateSupplierDto(
         string Name,

@@ -11,7 +11,7 @@ namespace Point.Core.Application.Handlers.Order
         int Id,
         string Name,
         string? Remarks,
-        List<int> Tags)
+        List<int>? Tags)
         : IRequest<IResult>;
     public class UpdateSupplierHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateSupplierRequest, IResult>
     {
@@ -28,7 +28,7 @@ namespace Point.Core.Application.Handlers.Order
             {
                 var tags = await _pointDbContext.Tag
                 .Where(t => request.Tags.Contains(t.Id))
-                .Select(p => p.Id)
+                .Select(t => t.Id)
                 .ToListAsync(cancellationToken);
 
                 var missingTags = request.Tags.Except(tags).ToList();
@@ -38,7 +38,7 @@ namespace Point.Core.Application.Handlers.Order
                 }
             }
 
-            if (await _pointDbContext.Supplier.AnyAsync(t => t.Id != request.Id && t.Name == request.Name))
+            if (await _pointDbContext.Supplier.AnyAsync(s => s.Id != request.Id && s.Name == request.Name))
             {
                 throw new DomainException("Supplier already exist.");
             }

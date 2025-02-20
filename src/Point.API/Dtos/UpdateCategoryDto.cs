@@ -1,4 +1,4 @@
-﻿namespace Point.API.Controllers.Dtos
+﻿namespace Point.API.Dtos
 {
     public sealed record UpdateCategoryDto(
         string Name);

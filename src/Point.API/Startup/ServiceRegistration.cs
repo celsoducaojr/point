@@ -1,11 +1,14 @@
 ﻿using FluentValidation;
+using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Point.API.Constants;
 using Point.API.Conventions;
+using Point.API.Dtos.Mapping;
 using Point.Infrastructure.Identity;
 using Point.Infrastructure.Identity.Domain.Entities;
 using Point.Infrastructure.Persistence;
+using System.Reflection;
 
 namespace Point.API.Startup
 {
@@ -65,6 +68,11 @@ namespace Point.API.Startup
 
             // Swagger
             services.RegisterSwagger();
+
+            // Mapper
+            services.AddMapster();
+            var config = TypeAdapterConfig.GlobalSettings;
+            config.Scan(Assembly.GetExecutingAssembly());
 
             return services;
         }

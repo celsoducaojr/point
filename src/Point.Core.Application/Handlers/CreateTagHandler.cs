@@ -15,7 +15,7 @@ namespace Point.Core.Application.Handlers
 
         public async Task<IResult> Handle(CreateTagRequest request, CancellationToken cancellationToken)
         {
-            if (_pointDbContext.Tag.Any(s => s.Name == request.Name))
+            if (_pointDbContext.Tag.Any(t => t.Name == request.Name))
             {
                 throw new DomainException("Tag already exist.");
             }

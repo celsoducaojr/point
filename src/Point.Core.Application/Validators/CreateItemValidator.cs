@@ -1,17 +1,17 @@
 ﻿using FluentValidation;
-using Point.Core.Application.Handlers.Order;
+using Point.Core.Application.Handlers;
 
 namespace Point.Core.Application.Validators
 {
-    public class UpdateSupplierValidator : AbstractValidator<UpdateSupplierRequest>
+    public class CreateItemValidator : AbstractValidator<CreateItemRequest>
     {
-        public UpdateSupplierValidator()
+        public CreateItemValidator() 
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .MaximumLength(100);
 
-            RuleFor(x => x.Remarks)
+            RuleFor(x => x.Description)
                 .MaximumLength(250);
         }
     }

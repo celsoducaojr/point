@@ -9,10 +9,10 @@ namespace Point.Core.Application.Validators
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .MaximumLength(50);
+                .MaximumLength(100);
 
             RuleFor(x => x.Remarks)
-                .MaximumLength(100);
+                .MaximumLength(250);
         }
     }
 }
