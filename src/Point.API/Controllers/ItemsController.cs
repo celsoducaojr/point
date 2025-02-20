@@ -33,6 +33,7 @@ namespace Point.API.Controllers
             var supplier = (await _pointDbContext.Item
                 .Include(i => i.Tags)
                 .Include(i => i.Units)
+                .Include(i => i.CategoryId)
                 .FirstOrDefaultAsync(i => i.Id == id))
                 ?? throw new NotFoundException("Tag not found.");
 

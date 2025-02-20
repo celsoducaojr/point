@@ -41,8 +41,7 @@ namespace Point.API.Controllers
         [HttpGet]
         public async Task<IResult> GetAll()
         {
-            return Results.Ok(await _pointDbContext.Tag
-                .ToListAsync());
+            return Results.Ok(await _pointDbContext.Tag.ToListAsync());
         }
     }
 }
