@@ -21,22 +21,24 @@ namespace Point.API.Controllers
         private readonly IDbConnection _dbConnection = pointDbConnection.Connection;
 
         [HttpPost]
-        public async Task<IResult> Add([FromBody] CreateSupplierRequest request)
+        public async Task<IActionResult> Add([FromBody] CreateSupplierRequest request)
         {
-            return await _mediator.Send(request);
+            var id = await _mediator.Send(request);
+
+            return CreatedAtAction(nameof(GetById), new { id }, new { id });
         }
 
         [HttpPut("{id}")]
-        public async Task<IResult> Update([FromRoute] int id, [FromBody] UpdateSupplierDto dto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateSupplierDto dto)
         {
-            var request = new UpdateSupplierRequest(
-                id, dto.Name, dto.Remarks, dto.Tags);
+            await _mediator.Send(new UpdateSupplierRequest(
+                id, dto.Name, dto.Remarks, dto.Tags));
 
-            return await _mediator.Send(request);
+            return NoContent();
         }
 
         [HttpGet("{id}")]
-        public async Task<IResult> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var item = await GetSuppliersAsync(id);
 
@@ -46,15 +48,15 @@ namespace Point.API.Controllers
             }
             else
             {
-                return Results.Ok(item.FirstOrDefault());
+                return Ok(item.FirstOrDefault());
             }
 
         }
 
         [HttpGet]
-        public async Task<IResult> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return Results.Ok((await GetSuppliersAsync()).Distinct().ToList());
+            return Ok((await GetSuppliersAsync()).Distinct().ToList());
         }
 
         #region Common Query

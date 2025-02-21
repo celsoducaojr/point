@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
@@ -11,12 +10,12 @@ namespace Point.Core.Application.Handlers.Order
         string Name,
         string? Remarks,
         List<int>? Tags)
-        : IRequest<IResult>;
-    public class CreateSupplierHandler(IPointDbContext pointDbContext) : IRequestHandler<CreateSupplierRequest, IResult>
+        : IRequest<int>;
+    public class CreateSupplierHandler(IPointDbContext pointDbContext) : IRequestHandler<CreateSupplierRequest, int>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
-        public async Task<IResult> Handle(CreateSupplierRequest request, CancellationToken cancellationToken)
+        public async Task<int> Handle(CreateSupplierRequest request, CancellationToken cancellationToken)
         {
             if (request.Tags?.Count > 0)
             {
@@ -47,7 +46,7 @@ namespace Point.Core.Application.Handlers.Order
             _pointDbContext.Supplier.Add(supplier);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
-            return Results.Ok(new { supplier.Id, supplier.Created });
+            return supplier.Id;
         }
     }
 }

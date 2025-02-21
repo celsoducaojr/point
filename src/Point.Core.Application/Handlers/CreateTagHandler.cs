@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
@@ -9,12 +8,12 @@ namespace Point.Core.Application.Handlers
 {
     public sealed record CreateTagRequest(
        string Name)
-        : IRequest<IResult>;
-    public class CreateTagHandler(IPointDbContext pointDbContext) : IRequestHandler<CreateTagRequest, IResult>
+        : IRequest<int>;
+    public class CreateTagHandler(IPointDbContext pointDbContext) : IRequestHandler<CreateTagRequest, int>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
-        public async Task<IResult> Handle(CreateTagRequest request, CancellationToken cancellationToken)
+        public async Task<int> Handle(CreateTagRequest request, CancellationToken cancellationToken)
         {
             if (await _pointDbContext.Tag.AnyAsync(t => t.Name == request.Name))
             {
@@ -29,7 +28,7 @@ namespace Point.Core.Application.Handlers
             _pointDbContext.Tag.Add(tag);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
-            return Results.Ok(new { tag.Id, created = DateTime.Now });
+            return tag.Id;
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Point.API.Dtos;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
@@ -22,28 +21,32 @@ namespace Point.API.Controllers
         private readonly IDbConnection _dbConnection = pointDbConnection.Connection;
 
         [HttpPost]
-        public async Task<IResult> Add([FromBody] CreateItemRequest request)
+        public async Task<IActionResult> Add([FromBody] CreateItemRequest request)
         {
-            return await _mediator.Send(request);
+            var id = await _mediator.Send(request);
+
+            return CreatedAtAction(nameof(GetById), new { id }, new { id });
         }
 
         [HttpPut("{id}")]
-        public async Task<IResult> Update([FromRoute] int id, [FromBody] UpdateItemDto dto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateItemDto dto)
         {
-            var request = new UpdateItemRequest(
-                id, dto.Name, dto.Description, dto.CategoryId, dto.Tags);
+            await _mediator.Send(new UpdateItemRequest(
+                id, dto.Name, dto.Description, dto.CategoryId, dto.Tags));
 
-            return await _mediator.Send(request);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IResult> Delete([FromRoute] int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            return await _mediator.Send(new DeleteItemRequest(id));
+            await _mediator.Send(new DeleteItemRequest(id));
+
+            return NoContent();
         }
 
         [HttpGet("{id}")]
-        public async Task<IResult> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var item = await GetItemsAsync(id);
 
@@ -53,15 +56,15 @@ namespace Point.API.Controllers
             }
             else
             {
-                return Results.Ok(item.FirstOrDefault());
+                return Ok(item.FirstOrDefault());
             }
             
         }
 
         [HttpGet]
-        public async Task<IResult> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return Results.Ok((await GetItemsAsync()).Distinct().ToList());
+            return Ok((await GetItemsAsync()).Distinct().ToList());
         }
 
         #region Common Query

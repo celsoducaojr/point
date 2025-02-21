@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
@@ -12,12 +11,12 @@ namespace Point.Core.Application.Handlers
         string? Description,
         int? CategoryId,
         List<int>? Tags)
-        : IRequest<IResult>;
-    public class CreateItemHandler(IPointDbContext pointDbContext) : IRequestHandler<CreateItemRequest, IResult>
+        : IRequest<int>;
+    public class CreateItemHandler(IPointDbContext pointDbContext) : IRequestHandler<CreateItemRequest, int>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
-        public async Task<IResult> Handle(CreateItemRequest request, CancellationToken cancellationToken)
+        public async Task<int> Handle(CreateItemRequest request, CancellationToken cancellationToken)
         {
             if (request.CategoryId.HasValue)
             {
@@ -55,7 +54,7 @@ namespace Point.Core.Application.Handlers
             _pointDbContext.Item.Add(item);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
-            return Results.Ok(new { item.Id, item.Created });
+            return item.Id;
         }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Domain.Entities;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Point.Core.Application.Handlers
 {
@@ -14,12 +12,12 @@ namespace Point.Core.Application.Handlers
         string? Description,
         int? CategoryId,
         List<int>? Tags)
-        : IRequest<IResult>;
-    public class UpdateItemHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateItemRequest, IResult>
+        : IRequest;
+    public class UpdateItemHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateItemRequest>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
-        public async Task<IResult> Handle(UpdateItemRequest request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateItemRequest request, CancellationToken cancellationToken)
         {
             var item = (await _pointDbContext.Item
                 .Include(s => s.Tags)
@@ -63,8 +61,6 @@ namespace Point.Core.Application.Handlers
 
             _pointDbContext.Item.Update(item);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
-
-            return Results.Ok(new { item.LastModified });
         }
     }
 }

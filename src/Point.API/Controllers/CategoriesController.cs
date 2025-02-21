@@ -5,7 +5,6 @@ using Point.API.Dtos;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Application.Handlers;
-using Point.Infrastructure.Persistence;
 
 namespace Point.API.Controllers
 {
@@ -15,32 +14,35 @@ namespace Point.API.Controllers
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
         [HttpPost]
-        public async Task<IResult> Add([FromBody] CreateCategoryRequest createTagRequest)
+        public async Task<IActionResult> Add([FromBody] CreateCategoryRequest createTagRequest)
         {
-            return await _mediator.Send(createTagRequest);
+            var id = await _mediator.Send(createTagRequest);
+
+            return CreatedAtAction(nameof(GetById), new { id }, new { id });
         }
 
 
         [HttpPut("{id}")]
-        public async Task<IResult> Update([FromRoute] int id, [FromBody] UpdateCategoryDto dto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCategoryDto dto)
         {
-            return await _mediator.Send(new UpdateCategoryRequest(
-                id, dto.Name));
+            await _mediator.Send(new UpdateCategoryRequest(id, dto.Name));
+
+            return NoContent();
         }
 
         [HttpGet("{id}")]
-        public async Task<IResult> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var supplier = (await _pointDbContext.Category.FindAsync(id))
                 ?? throw new NotFoundException("Category not found.");
 
-            return Results.Ok(supplier);
+            return Ok(supplier);
         }
 
         [HttpGet]
-        public async Task<IResult> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return Results.Ok(await _pointDbContext.Category.ToListAsync());
+            return Ok(await _pointDbContext.Category.ToListAsync());
         }
     }
 }
