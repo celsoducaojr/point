@@ -24,7 +24,7 @@ namespace Point.Core.Application.Handlers
             var item = (await _pointDbContext.Item
                 .Include(s => s.Tags)
                 .FirstOrDefaultAsync(s => s.Id == request.Id, cancellationToken))
-                ?? throw new NotFoundException("Tag not found.");
+                ?? throw new NotFoundException("Item not found.");
 
             if (request.CategoryId.HasValue)
             {

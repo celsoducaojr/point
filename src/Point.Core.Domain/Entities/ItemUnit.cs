@@ -8,6 +8,7 @@ namespace Point.Core.Domain.Entities
         public DateTime Created { get; set; }
         public DateTime LastModified { get; set; }
 
+        public int ItemId { get; set; }
         public int UnitId { get; set; }
         public string? ItemCode { get; set; }
         public decimal RetailPrice { get; set; }

@@ -12,8 +12,8 @@ using Point.Infrastructure.Persistence;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PointDbContext))]
-    [Migration("20250212094444_initial")]
-    partial class initial
+    [Migration("20250221214810_Initial2")]
+    partial class Initial2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,7 +103,7 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
@@ -162,7 +162,7 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.Property<string>("ItemCode")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("ItemId")
+                    b.Property<int>("ItemId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastModified")
@@ -441,14 +441,17 @@ namespace Point.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("Point.Core.Domain.Entities.Item", null)
                         .WithMany("Tags")
-                        .HasForeignKey("ItemId");
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.ItemUnit", b =>
                 {
                     b.HasOne("Point.Core.Domain.Entities.Item", null)
                         .WithMany("Units")
-                        .HasForeignKey("ItemId");
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Payment", b =>

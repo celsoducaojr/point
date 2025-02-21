@@ -36,6 +36,12 @@ namespace Point.API.Controllers
             return await _mediator.Send(request);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IResult> Delete([FromRoute] int id)
+        {
+            return await _mediator.Send(new DeleteItemRequest(id));
+        }
+
         [HttpGet("{id}")]
         public async Task<IResult> GetById(int id)
         {

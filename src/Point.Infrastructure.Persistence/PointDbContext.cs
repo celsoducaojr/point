@@ -17,6 +17,7 @@ namespace Point.Infrastructure.Persistence
         public DbSet<SupplierTag> SupplierTag => Set<SupplierTag>();
         public DbSet<Item> Item => Set<Item>();
         public DbSet<ItemTag> ItemTag => Set<ItemTag>();
+        public DbSet<ItemUnit> ItemUnit => Set<ItemUnit>();
         public DbSet<Stock> Stock => Set<Stock>();
         public DbSet<Customer> Customer => Set<Customer>();
         public DbSet<Sale> Sale => Set<Sale>();
@@ -24,6 +25,16 @@ namespace Point.Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Item>()
+                .HasMany(i => i.Tags)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade); 
+
+            modelBuilder.Entity<Item>()
+                .HasMany(i => i.Units)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ItemUnit>()
                 .HasOne(p => p.PurchaseCost)  // ItemUnit has one PurchaseCost
