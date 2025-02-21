@@ -27,14 +27,14 @@ namespace Point.API.Controllers
             return await _mediator.Send(request);
         }
 
-        //[HttpPut("{id}")]
-        //public async Task<IResult> Update([FromRoute] int id, [FromBody] UpdateSupplierDto dto)
-        //{
-        //    var request = new UpdateSupplierRequest(
-        //        id, dto.Name, dto.Remarks, dto.Tags);
+        [HttpPut("{id}")]
+        public async Task<IResult> Update([FromRoute] int id, [FromBody] UpdateItemDto dto)
+        {
+            var request = new UpdateItemRequest(
+                id, dto.Name, dto.Description, dto.CategoryId, dto.Tags);
 
-        //    return await _mediator.Send(request);
-        //}
+            return await _mediator.Send(request);
+        }
 
         [HttpGet("{id}")]
         public async Task<IResult> GetById(int id)

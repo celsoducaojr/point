@@ -12,6 +12,7 @@ namespace Point.Core.Application.Contracts
         DbSet<Supplier> Supplier { get; }
         DbSet<SupplierTag> SupplierTag { get; }
         DbSet<Item> Item { get; }
+        DbSet<ItemTag> ItemTag { get; }
         DbSet<Stock> Stock { get; }
         DbSet<Customer> Customer { get; }
         DbSet<Sale> Sale { get; }

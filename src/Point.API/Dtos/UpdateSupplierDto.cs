@@ -3,5 +3,5 @@
     public sealed record UpdateSupplierDto(
         string Name,
         string? Remarks,
-        List<int> Tags);
+        List<int>? Tags);
 }
