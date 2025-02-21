@@ -71,7 +71,7 @@ namespace Point.API.Controllers
 
             if (id.HasValue)
             {
-                query += " WHERE i.Id = @Id";
+                query += " WHERE s.Id = @Id";
             }
 
             var supplierDictionary = new Dictionary<int, GetSupplierResponseDto>();
