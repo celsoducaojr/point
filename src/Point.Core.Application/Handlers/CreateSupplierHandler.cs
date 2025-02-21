@@ -9,7 +9,7 @@ namespace Point.Core.Application.Handlers.Order
 {
     public sealed record CreateSupplierRequest(
         string Name,
-        string Remarks,
+        string? Remarks,
         List<int>? Tags)
         : IRequest<IResult>;
     public class CreateSupplierHandler(IPointDbContext pointDbContext) : IRequestHandler<CreateSupplierRequest, IResult>
