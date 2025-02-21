@@ -1,6 +1,4 @@
-﻿using Point.Core.Domain.Entities;
-
-namespace Point.API.Dtos
+﻿namespace Point.API.Dtos
 {
     public sealed class GetItemResponseDto
     {
