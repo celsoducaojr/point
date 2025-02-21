@@ -9,7 +9,7 @@ namespace Point.Core.Application.Handlers
 {
     public sealed record CreateItemRequest(
         string Name,
-        string Description,
+        string? Description,
         int? CategoryId,
         List<int>? Tags)
         : IRequest<IResult>;
@@ -19,8 +19,11 @@ namespace Point.Core.Application.Handlers
 
         public async Task<IResult> Handle(CreateItemRequest request, CancellationToken cancellationToken)
         {
-            var category = (await _pointDbContext.Category.FindAsync(request.CategoryId, cancellationToken))
-               ?? throw new NotFoundException("Category not found.");
+            if (request.CategoryId != null)
+            {
+                var category = (await _pointDbContext.Category.FindAsync(request.CategoryId, cancellationToken))
+                    ?? throw new NotFoundException("Category not found.");
+            }
 
             if (request.Tags?.Count > 0)
             {

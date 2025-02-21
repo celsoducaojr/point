@@ -6,7 +6,6 @@ using Point.API.Dtos;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Application.Handlers.Order;
-using System.Threading;
 
 namespace Point.API.Controllers
 {
