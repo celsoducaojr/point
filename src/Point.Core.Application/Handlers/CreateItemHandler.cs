@@ -19,7 +19,7 @@ namespace Point.Core.Application.Handlers
 
         public async Task<IResult> Handle(CreateItemRequest request, CancellationToken cancellationToken)
         {
-            if (request.CategoryId != null)
+            if (request.CategoryId.HasValue)
             {
                 var category = (await _pointDbContext.Category.FindAsync(request.CategoryId, cancellationToken))
                     ?? throw new NotFoundException("Category not found.");
@@ -39,7 +39,7 @@ namespace Point.Core.Application.Handlers
                 }
             }
 
-            if (_pointDbContext.Item.Any(i => i.Name == request.Name && i.CategoryId == request.CategoryId))
+            if (await _pointDbContext.Item.AnyAsync(i => i.Name == request.Name && i.CategoryId == request.CategoryId))
             {
                 throw new DomainException("Item already exist.");
             }

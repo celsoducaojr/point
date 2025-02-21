@@ -31,8 +31,7 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IResult> GetById(int id)
         {
-            var supplier = (await _pointDbContext.Category
-                .FirstOrDefaultAsync(t => t.Id == id))
+            var supplier = (await _pointDbContext.Category.FindAsync(id))
                 ?? throw new NotFoundException("Category not found.");
 
             return Results.Ok(supplier);

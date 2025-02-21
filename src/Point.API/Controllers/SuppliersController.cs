@@ -32,9 +32,9 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IResult> GetById(int id)
         {
-            var supplier = (await _pointDbContext.Supplier
+            var supplier = await _pointDbContext.Supplier
                 .Include(s => s.Tags)
-                .FirstOrDefaultAsync(s => s.Id == id))
+                .FirstOrDefaultAsync(s => s.Id == id)
                 ?? throw new NotFoundException("Supplier not found.");
 
             return Results.Ok(supplier.Adapt<GetSupplierResponseDto>());

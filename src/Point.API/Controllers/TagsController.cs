@@ -31,8 +31,7 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IResult> GetById(int id)
         {
-            var supplier = (await _pointDbContext.Tag
-                .FirstOrDefaultAsync(t => t.Id == id))
+            var supplier = await _pointDbContext.Tag.FindAsync(id)
                 ?? throw new NotFoundException("Tag not found.");
 
             return Results.Ok(supplier);

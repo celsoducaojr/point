@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Point.API.Dtos;
 using Point.Core.Application.Contracts;
+using Point.Core.Application.Exceptions;
 using Point.Core.Application.Handlers;
 using Point.Core.Domain.Entities;
 using Point.Infrastructure.Persistence.Contracts;
@@ -38,14 +39,41 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IResult> GetById(int id)
         {
+            var item = await GetItemsAsync(id);
+
+            if (!item.Any())
+            {
+                throw new NotFoundException("Item not found.");
+            }
+            else
+            {
+                return Results.Ok(item.FirstOrDefault());
+            }
+            
+        }
+
+        [HttpGet]
+        public async Task<IResult> GetAll()
+        {
+            return Results.Ok(await GetItemsAsync());
+        }
+
+        #region Common Query
+
+        private async Task<IEnumerable<GetItemResponseDto>> GetItemsAsync(int? id = null)
+        {
             var query = @"SELECT i.Id, i.Name, i.Description, 
                         i.CategoryId, c.Id, c.Name,
                         it.Id AS ItemTagId, it.Id, t.Name
                         FROM Item i
                         LEFT JOIN Category c ON i.CategoryId = c.Id
                         LEFT JOIN ItemTag it ON i.Id = it.ItemId
-                        LEFT JOIN Tag t ON it.TagId = t.Id
-                        WHERE i.Id = @Id";
+                        LEFT JOIN Tag t ON it.TagId = t.Id";
+
+            if (id.HasValue)
+            {
+                query += " WHERE i.Id = @Id";
+            }
 
             var itemDictionary = new Dictionary<int, GetItemResponseDto>();
 
@@ -68,28 +96,23 @@ namespace Point.API.Controllers
 
                     if (itemTag?.Id != 0)
                     {
-                        itemEntry.Tags.Add(new GetItemTagResponseDto 
-                        { 
-                            Id = itemTag.Id, 
-                            Name = itemTag.Name 
+                        itemEntry.Tags.Add(new GetItemTagResponseDto
+                        {
+                            Id = itemTag.Id,
+                            Name = itemTag.Name
                         });
                     }
 
                     return itemEntry;
                 },
-                new { Id = id },
+                id.HasValue ? new { Id = id.Value } : null,
                 splitOn: "CategoryId, ItemTagId"
             );
 
-            return Results.Ok(item.FirstOrDefault());
+            return item;
         }
 
-        [HttpGet]
-        public async Task<IResult> GetAll()
-        {
-            return Results.Ok(await _pointDbContext.Item
-                .Include(i => i.Tags)
-                .ToListAsync());
-        }
+        #endregion
+
     }
 }

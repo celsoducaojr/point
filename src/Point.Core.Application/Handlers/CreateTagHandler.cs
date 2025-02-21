@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Domain.Entities;
@@ -15,7 +16,7 @@ namespace Point.Core.Application.Handlers
 
         public async Task<IResult> Handle(CreateTagRequest request, CancellationToken cancellationToken)
         {
-            if (_pointDbContext.Tag.Any(t => t.Name == request.Name))
+            if (await _pointDbContext.Tag.AnyAsync(t => t.Name == request.Name))
             {
                 throw new DomainException("Tag already exist.");
             }

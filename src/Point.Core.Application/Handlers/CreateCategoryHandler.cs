@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Domain.Entities;
@@ -15,7 +16,7 @@ namespace Point.Core.Application.Handlers
 
         public async Task<IResult> Handle(CreateCategoryRequest request, CancellationToken cancellationToken)
         {
-            if (_pointDbContext.Category.Any(c => c.Name == request.Name))
+            if (await _pointDbContext.Category.AnyAsync(c => c.Name == request.Name))
             {
                 throw new DomainException("Category already exist.");
             }

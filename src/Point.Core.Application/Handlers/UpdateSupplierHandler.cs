@@ -43,7 +43,7 @@ namespace Point.Core.Application.Handlers.Order
                 throw new DomainException("Supplier already exist.");
             }
 
-            if (supplier.Tags != null)
+            if (supplier.Tags.Count > 0)
             {
                 _pointDbContext.SupplierTag.RemoveRange(supplier.Tags);
             }
