@@ -55,7 +55,7 @@ namespace Point.API.Controllers
         [HttpGet]
         public async Task<IResult> GetAll()
         {
-            return Results.Ok(await GetItemsAsync());
+            return Results.Ok((await GetItemsAsync()).Distinct().ToList());
         }
 
         #region Common Query
@@ -77,7 +77,7 @@ namespace Point.API.Controllers
 
             var itemDictionary = new Dictionary<int, GetItemResponseDto>();
 
-            var item = await _dbConnection.QueryAsync<Item, Category, GetItemTagResponseDto, GetItemResponseDto>(
+            var item = await _dbConnection.QueryAsync<Item, Category, Tag, GetItemResponseDto>(
                 query,
                 (item, category, itemTag) =>
                 {
@@ -88,7 +88,7 @@ namespace Point.API.Controllers
                             Id = item.Id,
                             Name = item.Name,
                             Description = item.Description,
-                            Category = category?.Id != 0 ? category : null,
+                            Category = category?.Id != 0 ? category.Name : null,
                             Tags = itemTag?.Id != 0 ? [] : null
                         };
                         itemDictionary[item.Id] = itemEntry;
@@ -96,11 +96,7 @@ namespace Point.API.Controllers
 
                     if (itemTag?.Id != 0)
                     {
-                        itemEntry.Tags.Add(new GetItemTagResponseDto
-                        {
-                            Id = itemTag.Id,
-                            Name = itemTag.Name
-                        });
+                        itemEntry.Tags.Add(itemTag.Name);
                     }
 
                     return itemEntry;
