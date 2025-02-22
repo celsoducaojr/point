@@ -20,14 +20,21 @@ namespace Point.Core.Application.Handlers
 
         public async Task<int> Handle(CreateItemUnitRequest request, CancellationToken cancellationToken)
         {
-            //if (!await _pointDbContext.Item
-            //    .FirstOrDefaultAsync(s => s.Id == request.ItemId, cancellationToken))
-            //    ?? throw new NotFoundException("Item not found.");
+            if (await _pointDbContext.Item.FindAsync(request.ItemId) == null)
+            {
+                throw new NotFoundException("Item not found.");
+            }
 
-            //var item = (await _pointDbContext.Item
-            //    .Include(s => s.Tags)
-            //    .FirstOrDefaultAsync(s => s.Id == request.UnitId, cancellationToken))
-            //    ?? throw new NotFoundException("Unit not found.");
+            if (await _pointDbContext.Unit.FindAsync(request.UnitId) == null)
+            {
+                throw new NotFoundException("Unit not found.");
+            }
+
+
+            var item = (await _pointDbContext.Item
+                .Include(s => s.Tags)
+                .FirstOrDefaultAsync(s => s.Id == request.UnitId, cancellationToken))
+                ?? throw new NotFoundException("Unit not found.");
 
             return 1;
         }
