@@ -18,7 +18,7 @@ namespace Point.Core.Application.Handlers
 
         public async Task<int> Handle(CreateItemRequest request, CancellationToken cancellationToken)
         {
-            if (await _pointDbContext.Category.FindAsync(request.CategoryId, cancellationToken) == null)
+            if (request.CategoryId.HasValue && await _pointDbContext.Category.FindAsync(request.CategoryId, cancellationToken) == null)
             {
                 throw new NotFoundException("Category not found.");
             }

@@ -10,7 +10,7 @@ namespace Point.Core.Application.Handlers
         int ItemId,
         int UnitId,
         string? ItemCode,
-        decimal RetialPrice,
+        decimal RetailPrice,
         decimal WholeSalePrice,
         string? PriceCode,
         string? Remarks)
@@ -41,7 +41,7 @@ namespace Point.Core.Application.Handlers
                 ItemId = request.ItemId,
                 UnitId = request.UnitId,
                 ItemCode = request.ItemCode,
-                RetailPrice = request.RetialPrice,
+                RetailPrice = request.RetailPrice,
                 WholesalePrice = request.WholeSalePrice,
                 PriceCode = request.PriceCode,
                 Remarks = request.Remarks

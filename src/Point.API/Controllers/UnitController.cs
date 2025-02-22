@@ -34,10 +34,10 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var supplier = await _pointDbContext.Unit.FindAsync(id)
+            var unit = await _pointDbContext.Unit.FindAsync(id)
                 ?? throw new NotFoundException("Unit not found.");
 
-            return Ok(supplier);
+            return Ok(unit);
         }
 
         [HttpGet]

@@ -17,7 +17,7 @@ namespace Point.API.Controllers
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CreateTagRequest request)
+        public async Task<IActionResult> Add([FromBody] CreateItemUnitRequest request)
         {
             var id = await _mediator.Send(request);
 
@@ -25,9 +25,10 @@ namespace Point.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateTagDto dto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateItemUnitDto dto)
         {
-            await _mediator.Send(new UpdateTagRequest(id, dto.Name));
+            await _mediator.Send(new UpdateItemUnitRequest(
+                id, dto.ItemId, dto.UnitId, dto.ItemCode, dto.RetailPrice, dto.WholeSalePrice, dto.PriceCode, dto.Remarks));
 
             return NoContent();
         }
@@ -35,16 +36,16 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var supplier = await _pointDbContext.Tag.FindAsync(id)
-                ?? throw new NotFoundException("Tag not found.");
+            var itemUnit = await _pointDbContext.ItemUnit.FindAsync(id)
+                ?? throw new NotFoundException("Item Unit not found.");
 
-            return Ok(supplier);
+            return Ok(itemUnit);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _pointDbContext.Tag.ToListAsync());
+            return Ok(await _pointDbContext.ItemUnit.ToListAsync());
         }
     }
 }

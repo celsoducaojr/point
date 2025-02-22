@@ -42,15 +42,15 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var item = await GetSuppliersAsync(id);
+            var supplier = await GetSuppliersAsync(id);
 
-            if (!item.Any())
+            if (!supplier.Any())
             {
                 throw new NotFoundException("Supplier not found.");
             }
             else
             {
-                return Ok(item.FirstOrDefault());
+                return Ok(supplier.FirstOrDefault());
             }
 
         }
