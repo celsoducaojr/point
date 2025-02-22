@@ -6,7 +6,6 @@ using Point.API.Dtos;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Application.Handlers;
-using Point.Infrastructure.Persistence;
 
 namespace Point.API.Controllers
 {
@@ -36,7 +35,9 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var itemUnit = await _pointDbContext.ItemUnit.FindAsync(id)
+            var itemUnit = await _pointDbContext.ItemUnit
+                .Include(i => i.PurchaseCost)
+                .FirstOrDefaultAsync(i => i.Id == id)
                 ?? throw new NotFoundException("Item Unit not found.");
 
             return Ok(itemUnit);
