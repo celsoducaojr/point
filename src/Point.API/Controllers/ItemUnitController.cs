@@ -36,7 +36,7 @@ namespace Point.API.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var itemUnit = await _pointDbContext.ItemUnit
-                .Include(i => i.PurchaseCost)
+                .Include(i => i.Cost)
                 .FirstOrDefaultAsync(i => i.Id == id)
                 ?? throw new NotFoundException("Item Unit not found.");
 

@@ -18,7 +18,7 @@ namespace Point.Infrastructure.Persistence
         public DbSet<Item> Item => Set<Item>();
         public DbSet<ItemTag> ItemTag => Set<ItemTag>();
         public DbSet<ItemUnit> ItemUnit => Set<ItemUnit>();
-        public DbSet<PurchaseCost> PurchaseCost => Set<PurchaseCost>();
+        public DbSet<Cost> Cost => Set<Cost>();
         public DbSet<Stock> Stock => Set<Stock>();
         public DbSet<Customer> Customer => Set<Customer>();
         public DbSet<Sale> Sale => Set<Sale>();
@@ -38,9 +38,9 @@ namespace Point.Infrastructure.Persistence
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ItemUnit>()
-                .HasOne(p => p.PurchaseCost)  // ItemUnit has one PurchaseCost
-                .WithOne(r => r.ItemUnit)      // PurchaseCost belongs to a single ItemUnit
-                .HasForeignKey<PurchaseCost>(r => r.Id) // FK = PK
+                .HasOne(i => i.Cost)  // ItemUnit has one Cost
+                .WithOne(c => c.ItemUnit)      // Cost belongs to a single ItemUnit
+                .HasForeignKey<Cost>(r => r.Id) // FK = PK
                 .IsRequired();  // Enforce relationship
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)

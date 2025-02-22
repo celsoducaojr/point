@@ -2,9 +2,9 @@
 
 namespace Point.Core.Domain.Entities
 {
-    public class PurchaseCost : IEntities, IAuditable
+    public class Cost : IEntities, IAuditable
     {
-        public int Id { get; set; } // PriceId, ForeignKey
+        public int Id { get; set; } // ItemUnitId, ForeignKey
         public DateTime Created { get; set; }
         public DateTime LastModified { get; set; }
 
