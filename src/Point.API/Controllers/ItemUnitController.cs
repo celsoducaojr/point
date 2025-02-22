@@ -32,6 +32,15 @@ namespace Point.API.Controllers
             return NoContent();
         }
 
+        [HttpPut("{id}/cost")]
+        public async Task<IActionResult> UpdateCost([FromRoute] int id, [FromBody] UpdateCostDto dto)
+        {
+            await _mediator.Send(new UpdateCostRequest(
+                id, dto.InitialAmount, dto.FinalAmount));
+
+            return NoContent();
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

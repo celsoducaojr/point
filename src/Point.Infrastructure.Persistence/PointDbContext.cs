@@ -40,7 +40,7 @@ namespace Point.Infrastructure.Persistence
             modelBuilder.Entity<ItemUnit>()
                 .HasOne(i => i.Cost)  // ItemUnit has one Cost
                 .WithOne(c => c.ItemUnit)      // Cost belongs to a single ItemUnit
-                .HasForeignKey<Cost>(r => r.Id) // FK = PK
+                .HasForeignKey<Cost>(c => c.Id) // FK = PK
                 .IsRequired();  // Enforce relationship
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)

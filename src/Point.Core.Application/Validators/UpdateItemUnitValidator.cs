@@ -13,10 +13,10 @@ namespace Point.Core.Application.Validators
                 .WithMessage("Item Code cannot exceed 50 characters.");
 
             RuleFor(x => x.RetailPrice)
-                .GreaterThanOrEqualTo(0);
+                .GreaterThan(0);
 
             RuleFor(x => x.WholeSalePrice)
-                .GreaterThanOrEqualTo(0);
+                .GreaterThan(0);
 
             RuleFor(x => x.PriceCode)
                 .MaximumLength(50)
