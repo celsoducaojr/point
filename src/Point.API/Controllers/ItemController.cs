@@ -12,7 +12,8 @@ using System.Data;
 
 namespace Point.API.Controllers
 {
-    public class ItemsController(
+    [Route("api/v{version:apiversion}/items")]
+    public class ItemController(
         IMediator mediator, 
         IPointDbContext pointDbContext, 
         IPointDbConnection pointDbConnection) : BaseController

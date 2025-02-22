@@ -37,7 +37,7 @@ namespace Point.Core.Application.Handlers
                 }
             }
 
-            if (await _pointDbContext.Item.AnyAsync(i => i.Name == request.Name && i.CategoryId == request.CategoryId))
+            if (await _pointDbContext.Item.AnyAsync(i => i.Name == request.Name && i.CategoryId == request.CategoryId, cancellationToken))
             {
                 throw new DomainException("Item already exist.");
             }

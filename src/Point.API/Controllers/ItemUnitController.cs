@@ -6,27 +6,28 @@ using Point.API.Dtos;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Application.Handlers;
+using Point.Infrastructure.Persistence;
 
 namespace Point.API.Controllers
 {
-    public class CategoriesController(IMediator mediator, IPointDbContext pointDbContext) : BaseController
+    [Route("api/v{version:apiversion}/item-units")]
+    public class ItemUnitController(IMediator mediator, IPointDbContext pointDbContext) : BaseController
     {
         private readonly IMediator _mediator = mediator;
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CreateCategoryRequest createTagRequest)
+        public async Task<IActionResult> Add([FromBody] CreateTagRequest request)
         {
-            var id = await _mediator.Send(createTagRequest);
+            var id = await _mediator.Send(request);
 
             return CreatedAtAction(nameof(GetById), new { id }, new { id });
         }
 
-
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCategoryDto dto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateTagDto dto)
         {
-            await _mediator.Send(new UpdateCategoryRequest(id, dto.Name));
+            await _mediator.Send(new UpdateTagRequest(id, dto.Name));
 
             return NoContent();
         }
@@ -34,8 +35,8 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var supplier = (await _pointDbContext.Category.FindAsync(id))
-                ?? throw new NotFoundException("Category not found.");
+            var supplier = await _pointDbContext.Tag.FindAsync(id)
+                ?? throw new NotFoundException("Tag not found.");
 
             return Ok(supplier);
         }
@@ -43,7 +44,7 @@ namespace Point.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _pointDbContext.Category.ToListAsync());
+            return Ok(await _pointDbContext.Tag.ToListAsync());
         }
     }
 }

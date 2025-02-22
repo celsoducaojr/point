@@ -9,7 +9,8 @@ using Point.Core.Application.Handlers;
 
 namespace Point.API.Controllers
 {
-    public class UnitsController(IMediator mediator, IPointDbContext pointDbContext) : BaseController
+    [Route("api/v{version:apiversion}/units")]
+    public class UnitController(IMediator mediator, IPointDbContext pointDbContext) : BaseController
     {
         private readonly IMediator _mediator = mediator;
         private readonly IPointDbContext _pointDbContext = pointDbContext;

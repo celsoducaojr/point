@@ -17,7 +17,7 @@ namespace Point.Core.Application.Handlers
             var unit = (await _pointDbContext.Unit.FindAsync(request.Id, cancellationToken))
                 ?? throw new NotFoundException("Unit not found.");
 
-            if (await _pointDbContext.Unit.AnyAsync(t => t.Id != request.Id && t.Name == request.Name))
+            if (await _pointDbContext.Unit.AnyAsync(t => t.Id != request.Id && t.Name == request.Name, cancellationToken))
             {
                 throw new DomainException("Unit already exist.");
             }

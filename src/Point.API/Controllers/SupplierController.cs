@@ -12,7 +12,8 @@ using System.Data;
 
 namespace Point.API.Controllers
 {
-    public class SuppliersController(
+    [Route("api/v{version:apiversion}/suppliers")]
+    public class SupplierController(
         IMediator mediator, 
         IPointDbContext pointDbContext,
         IPointDbConnection pointDbConnection) : BaseController

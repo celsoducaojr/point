@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
+using Point.Core.Domain.Entities;
 
 namespace Point.Core.Application.Handlers
 {
@@ -20,7 +21,7 @@ namespace Point.Core.Application.Handlers
 
         public async Task<int> Handle(CreateItemUnitRequest request, CancellationToken cancellationToken)
         {
-            if (await _pointDbContext.Item.FindAsync(request.ItemId) == null)
+            if (await _pointDbContext.Item.FindAsync(request.ItemId, cancellationToken) == null)
             {
                 throw new NotFoundException("Item not found.");
             }
@@ -30,13 +31,26 @@ namespace Point.Core.Application.Handlers
                 throw new NotFoundException("Unit not found.");
             }
 
+            if (await _pointDbContext.ItemUnit.AnyAsync(i => i.ItemId == request.ItemId && i.UnitId == request.UnitId, cancellationToken))
+            {
+                throw new DomainException("Item Unit already exist.");
+            }
 
-            var item = (await _pointDbContext.Item
-                .Include(s => s.Tags)
-                .FirstOrDefaultAsync(s => s.Id == request.UnitId, cancellationToken))
-                ?? throw new NotFoundException("Unit not found.");
+            var itemUnit = new ItemUnit 
+            {
+                ItemId = request.ItemId,
+                UnitId = request.UnitId,
+                ItemCode = request.ItemCode,
+                RetailPrice = request.RetialPrice,
+                WholesalePrice = request.WholeSalePrice,
+                PriceCode = request.PriceCode,
+                Remarks = request.Remarks
+            };
 
-            return 1;
+            _pointDbContext.ItemUnit.Add(itemUnit);
+            await _pointDbContext.SaveChangesAsync(cancellationToken);
+
+            return itemUnit.Id;
         }
     }
 }

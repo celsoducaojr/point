@@ -31,7 +31,7 @@ namespace Point.Core.Application.Handlers.Order
                 }
             }
             
-            if (await _pointDbContext.Supplier.AnyAsync(s => s.Name == request.Name))
+            if (await _pointDbContext.Supplier.AnyAsync(s => s.Name == request.Name, cancellationToken))
             {
                 throw new DomainException("Supplier already exist.");
             }
