@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
-using Point.Core.Domain.Entities;
 
 namespace Point.Core.Application.Handlers.Order
 {
@@ -11,12 +10,12 @@ namespace Point.Core.Application.Handlers.Order
         string Name,
         string? Remarks,
         List<int>? Tags)
-        : IRequest;
-    public class UpdateSupplierHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateSupplierRequest>
+        : IRequest<Unit>;
+    public class UpdateSupplierHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateSupplierRequest, Unit>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
-        public async Task Handle(UpdateSupplierRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateSupplierRequest request, CancellationToken cancellationToken)
         {
             var supplier = (await _pointDbContext.Supplier
                 .Include(s => s.Tags)
@@ -49,10 +48,12 @@ namespace Point.Core.Application.Handlers.Order
 
             supplier.Name = request.Name;
             supplier.Remarks = request.Remarks;
-            supplier.Tags = request.Tags?.Select(tagId => new SupplierTag { TagId = tagId }).ToList();
+            supplier.Tags = request.Tags?.Select(tagId => new Domain.Entities.SupplierTag { TagId = tagId }).ToList();
 
             _pointDbContext.Supplier.Update(supplier);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
         }
     }
 }

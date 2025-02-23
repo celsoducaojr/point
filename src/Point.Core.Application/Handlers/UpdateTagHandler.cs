@@ -8,12 +8,12 @@ namespace Point.Core.Application.Handlers
     public sealed record UpdateTagRequest(
        int Id,
        string Name)
-       : IRequest;
-    public class UpdateTagHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateTagRequest>
+       : IRequest<Unit>;
+    public class UpdateTagHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateTagRequest, Unit>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
-        public async Task Handle(UpdateTagRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateTagRequest request, CancellationToken cancellationToken)
         {
             var tag = (await _pointDbContext.Tag.FindAsync(request.Id, cancellationToken))
                 ?? throw new NotFoundException("Tag not found.");
@@ -27,6 +27,8 @@ namespace Point.Core.Application.Handlers
 
             _pointDbContext.Tag.Update(tag);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
         }
     }
 }

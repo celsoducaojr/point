@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
-using Point.Core.Domain.Entities;
 
 namespace Point.Core.Application.Handlers
 {
@@ -15,12 +14,12 @@ namespace Point.Core.Application.Handlers
         decimal WholeSalePrice,
         string? PriceCode,
         string? Remarks)
-        : IRequest;
-    public class UpdateItemUnitHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateItemUnitRequest>
+        : IRequest<Unit>;
+    public class UpdateItemUnitHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateItemUnitRequest, Unit>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
-        public async Task Handle(UpdateItemUnitRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateItemUnitRequest request, CancellationToken cancellationToken)
         {
             var itemUnit = (await _pointDbContext.ItemUnit.FindAsync(request.Id, cancellationToken))
                            ?? throw new NotFoundException("Item Unit not found.");
@@ -50,6 +49,8 @@ namespace Point.Core.Application.Handlers
 
             _pointDbContext.ItemUnit.Update(itemUnit);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
         }
     }
 }

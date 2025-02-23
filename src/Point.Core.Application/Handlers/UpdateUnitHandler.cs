@@ -8,11 +8,11 @@ namespace Point.Core.Application.Handlers
     public sealed record UpdateUnitRequest(
         int Id,
         string Name)
-        : IRequest;
-    public class UpdateUnitHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateUnitRequest>
+        : IRequest<Unit>;
+    public class UpdateUnitHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateUnitRequest, Unit>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
-        public async Task Handle(UpdateUnitRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateUnitRequest request, CancellationToken cancellationToken)
         {
             var unit = (await _pointDbContext.Unit.FindAsync(request.Id, cancellationToken))
                 ?? throw new NotFoundException("Unit not found.");
@@ -26,6 +26,8 @@ namespace Point.Core.Application.Handlers
 
             _pointDbContext.Unit.Update(unit);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
         }
     }
 }

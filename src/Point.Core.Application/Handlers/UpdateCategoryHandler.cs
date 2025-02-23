@@ -8,12 +8,12 @@ namespace Point.Core.Application.Handlers
     public sealed record UpdateCategoryRequest(
         int Id,
         string Name)
-        : IRequest;
-    public class UpdateCategoryHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateCategoryRequest>
+        : IRequest<Unit>;
+    public class UpdateCategoryHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateCategoryRequest, Unit>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
-        public async Task Handle(UpdateCategoryRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateCategoryRequest request, CancellationToken cancellationToken)
         {
             var category = (await _pointDbContext.Category.FindAsync(request.Id, cancellationToken))
                ?? throw new NotFoundException("Category not found.");
@@ -27,6 +27,8 @@ namespace Point.Core.Application.Handlers
 
             _pointDbContext.Category.Update(category);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
         }
     }
 }
