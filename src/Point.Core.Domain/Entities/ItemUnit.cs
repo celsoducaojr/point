@@ -15,7 +15,7 @@ namespace Point.Core.Domain.Entities
         public decimal WholesalePrice { get; set; }
         public string? PriceCode { get; set; }
         public string? Remarks { get; set; }
-        public Cost? Cost { get; set; }
+        public CostReference? CostReference { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

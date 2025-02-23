@@ -12,8 +12,8 @@ using Point.Infrastructure.Persistence;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PointDbContext))]
-    [Migration("20250221214810_Initial2")]
-    partial class Initial2
+    [Migration("20250223040635_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,6 +40,28 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Category");
+                });
+
+            modelBuilder.Entity("Point.Core.Domain.Entities.CostReference", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<decimal>("FinalAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("InitialAmount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CostReference");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Customer", b =>
@@ -79,18 +101,18 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.Property<decimal?>("Amount")
                         .HasColumnType("decimal(65,30)");
 
+                    b.Property<int?>("CostReferenceId")
+                        .HasColumnType("int");
+
                     b.Property<decimal?>("Percentage")
                         .HasColumnType("decimal(65,30)");
-
-                    b.Property<int?>("PurchaseCostId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Remarks")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PurchaseCostId");
+                    b.HasIndex("CostReferenceId");
 
                     b.ToTable("DiscountVariation");
                 });
@@ -224,28 +246,6 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.HasIndex("SaleId");
 
                     b.ToTable("Payment");
-                });
-
-            modelBuilder.Entity("Point.Core.Domain.Entities.PurchaseCost", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<decimal>("FinalAmount")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<decimal>("InitialAmount")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<DateTime>("LastModified")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PurchaseCost");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.SaleItem", b =>
@@ -430,11 +430,22 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.ToTable("Sale");
                 });
 
+            modelBuilder.Entity("Point.Core.Domain.Entities.CostReference", b =>
+                {
+                    b.HasOne("Point.Core.Domain.Entities.ItemUnit", "ItemUnit")
+                        .WithOne("CostReference")
+                        .HasForeignKey("Point.Core.Domain.Entities.CostReference", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ItemUnit");
+                });
+
             modelBuilder.Entity("Point.Core.Domain.Entities.DiscountVariation", b =>
                 {
-                    b.HasOne("Point.Core.Domain.Entities.PurchaseCost", null)
+                    b.HasOne("Point.Core.Domain.Entities.CostReference", null)
                         .WithMany("Variations")
-                        .HasForeignKey("PurchaseCostId");
+                        .HasForeignKey("CostReferenceId");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.ItemTag", b =>
@@ -461,17 +472,6 @@ namespace Point.Infrastructure.Persistence.Migrations
                         .HasForeignKey("SaleId");
                 });
 
-            modelBuilder.Entity("Point.Core.Domain.Entities.PurchaseCost", b =>
-                {
-                    b.HasOne("Point.Core.Domain.Entities.ItemUnit", "ItemUnit")
-                        .WithOne("PurchaseCost")
-                        .HasForeignKey("Point.Core.Domain.Entities.PurchaseCost", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ItemUnit");
-                });
-
             modelBuilder.Entity("Point.Core.Domain.Entities.SaleItem", b =>
                 {
                     b.HasOne("Point.Order.Core.Domain.Entities.Sale", null)
@@ -486,6 +486,11 @@ namespace Point.Infrastructure.Persistence.Migrations
                         .HasForeignKey("SupplierId");
                 });
 
+            modelBuilder.Entity("Point.Core.Domain.Entities.CostReference", b =>
+                {
+                    b.Navigation("Variations");
+                });
+
             modelBuilder.Entity("Point.Core.Domain.Entities.Item", b =>
                 {
                     b.Navigation("Tags");
@@ -495,12 +500,7 @@ namespace Point.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Point.Core.Domain.Entities.ItemUnit", b =>
                 {
-                    b.Navigation("PurchaseCost");
-                });
-
-            modelBuilder.Entity("Point.Core.Domain.Entities.PurchaseCost", b =>
-                {
-                    b.Navigation("Variations");
+                    b.Navigation("CostReference");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Supplier", b =>

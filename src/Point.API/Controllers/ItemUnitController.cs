@@ -35,7 +35,7 @@ namespace Point.API.Controllers
         [HttpPut("{id}/cost")]
         public async Task<IActionResult> UpdateCost([FromRoute] int id, [FromBody] UpdateCostDto dto)
         {
-            await _mediator.Send(new UpdateCostRequest(
+            await _mediator.Send(new UpdateCostReferenceRequest(
                 id, dto.InitialAmount, dto.FinalAmount));
 
             return NoContent();
@@ -45,7 +45,7 @@ namespace Point.API.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var itemUnit = await _pointDbContext.ItemUnit
-                .Include(i => i.Cost)
+                .Include(i => i.CostReference)
                 .FirstOrDefaultAsync(i => i.Id == id)
                 ?? throw new NotFoundException("Item Unit not found.");
 

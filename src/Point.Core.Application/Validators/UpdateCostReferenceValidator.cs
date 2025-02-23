@@ -3,9 +3,9 @@ using Point.Core.Application.Handlers;
 
 namespace Point.Core.Application.Validators
 {
-    public class UpdateCostValidator : AbstractValidator<UpdateCostRequest>
+    public class UpdateCostReferenceValidator : AbstractValidator<UpdateCostReferenceRequest>
     {
-        public UpdateCostValidator() 
+        public UpdateCostReferenceValidator() 
         {
             RuleFor(x => x.InitialAmount)
                 .GreaterThan(0);

@@ -5,23 +5,23 @@ using Point.Core.Application.Exceptions;
 
 namespace Point.Core.Application.Handlers
 {
-    public sealed record UpdateCostRequest(
+    public sealed record UpdateCostReferenceRequest(
         int Id,
         decimal InitialAmount,
         decimal FinalAmount)
         : IRequest<Unit>;
-    public class UpdateCostHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateCostRequest, Unit>
+    public class UpdateCostReferenceHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateCostReferenceRequest, Unit>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
-        public async Task<Unit> Handle(UpdateCostRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateCostReferenceRequest request, CancellationToken cancellationToken)
         {
             var itemUnit = await _pointDbContext.ItemUnit
-                .Include(i => i.Cost)
+                .Include(i => i.CostReference)
                 .FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken)
                 ?? throw new NotFoundException("Item Unit not found");
 
-            itemUnit.Cost = new Domain.Entities.Cost
+            itemUnit.CostReference = new Domain.Entities.CostReference
             {
                 InitialAmount = request.InitialAmount,
                 FinalAmount = request.FinalAmount

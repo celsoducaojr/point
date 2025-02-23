@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -172,7 +172,8 @@ namespace Point.Infrastructure.Persistence.Migrations
                         name: "FK_ItemTag_Item_ItemId",
                         column: x => x.ItemId,
                         principalTable: "Item",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -282,7 +283,7 @@ namespace Point.Infrastructure.Persistence.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "PurchaseCost",
+                name: "CostReference",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
@@ -293,9 +294,9 @@ namespace Point.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PurchaseCost", x => x.Id);
+                    table.PrimaryKey("PK_CostReference", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PurchaseCost_ItemUnit_Id",
+                        name: "FK_CostReference_ItemUnit_Id",
                         column: x => x.Id,
                         principalTable: "ItemUnit",
                         principalColumn: "Id",
@@ -313,23 +314,23 @@ namespace Point.Infrastructure.Persistence.Migrations
                     Percentage = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
                     Remarks = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PurchaseCostId = table.Column<int>(type: "int", nullable: true)
+                    CostReferenceId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DiscountVariation", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DiscountVariation_PurchaseCost_PurchaseCostId",
-                        column: x => x.PurchaseCostId,
-                        principalTable: "PurchaseCost",
+                        name: "FK_DiscountVariation_CostReference_CostReferenceId",
+                        column: x => x.CostReferenceId,
+                        principalTable: "CostReference",
                         principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DiscountVariation_PurchaseCostId",
+                name: "IX_DiscountVariation_CostReferenceId",
                 table: "DiscountVariation",
-                column: "PurchaseCostId");
+                column: "CostReferenceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemTag_ItemId",
@@ -391,7 +392,7 @@ namespace Point.Infrastructure.Persistence.Migrations
                 name: "Unit");
 
             migrationBuilder.DropTable(
-                name: "PurchaseCost");
+                name: "CostReference");
 
             migrationBuilder.DropTable(
                 name: "Sale");

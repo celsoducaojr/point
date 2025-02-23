@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using Point.API.Startup;
 using Point.Infrastructure.Identity.Domain.Entities;
 

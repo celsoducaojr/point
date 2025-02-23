@@ -14,7 +14,7 @@ namespace Point.Core.Application.Contracts
         DbSet<Item> Item { get; }
         DbSet<ItemTag> ItemTag { get; }
         DbSet<ItemUnit> ItemUnit { get; }
-        DbSet<Cost> Cost { get; }
+        DbSet<CostReference> CostReference { get; }
         DbSet<Stock> Stock { get; }
         DbSet<Customer> Customer { get; }
         DbSet<Sale> Sale { get; }
