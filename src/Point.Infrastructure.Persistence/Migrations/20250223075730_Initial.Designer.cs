@@ -12,8 +12,8 @@ using Point.Infrastructure.Persistence;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PointDbContext))]
-    [Migration("20250223040635_initial")]
-    partial class initial
+    [Migration("20250223075730_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,7 +39,7 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.CostReference", b =>
@@ -61,33 +61,7 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CostReference");
-                });
-
-            modelBuilder.Entity("Point.Core.Domain.Entities.Customer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("LastModified")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Mobile")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Customer");
+                    b.ToTable("CostReferences");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.DiscountVariation", b =>
@@ -114,7 +88,7 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CostReferenceId");
 
-                    b.ToTable("DiscountVariation");
+                    b.ToTable("DiscountVariations");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Item", b =>
@@ -143,7 +117,7 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Item");
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.ItemTag", b =>
@@ -164,7 +138,7 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("ItemTag");
+                    b.ToTable("ItemTags");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.ItemUnit", b =>
@@ -209,110 +183,7 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("ItemUnit");
-                });
-
-            modelBuilder.Entity("Point.Core.Domain.Entities.Payment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("LastModified")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("Mode")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Reference")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Remarks")
-                        .HasColumnType("longtext");
-
-                    b.Property<int?>("SaleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SaleId");
-
-                    b.ToTable("Payment");
-                });
-
-            modelBuilder.Entity("Point.Core.Domain.Entities.SaleItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<decimal?>("Discount")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<int>("ItemUnitId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LastModified")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SaleId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SaleId");
-
-                    b.ToTable("SaleItem");
-                });
-
-            modelBuilder.Entity("Point.Core.Domain.Entities.Stock", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("ItemUnitId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LastModified")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Threshold")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Stock");
+                    b.ToTable("ItemUnits");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Supplier", b =>
@@ -338,7 +209,7 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Supplier");
+                    b.ToTable("Suppliers");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.SupplierTag", b =>
@@ -359,7 +230,7 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("SupplierTag");
+                    b.ToTable("SupplierTags");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Tag", b =>
@@ -376,7 +247,7 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tag");
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Unit", b =>
@@ -393,41 +264,7 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Unit");
-                });
-
-            modelBuilder.Entity("Point.Order.Core.Domain.Entities.Sale", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("Discount")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<DateTime>("LastModified")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("PaymentTerm")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Sale");
+                    b.ToTable("Units");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.CostReference", b =>
@@ -465,20 +302,6 @@ namespace Point.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Point.Core.Domain.Entities.Payment", b =>
-                {
-                    b.HasOne("Point.Order.Core.Domain.Entities.Sale", null)
-                        .WithMany("Payments")
-                        .HasForeignKey("SaleId");
-                });
-
-            modelBuilder.Entity("Point.Core.Domain.Entities.SaleItem", b =>
-                {
-                    b.HasOne("Point.Order.Core.Domain.Entities.Sale", null)
-                        .WithMany("Items")
-                        .HasForeignKey("SaleId");
-                });
-
             modelBuilder.Entity("Point.Core.Domain.Entities.SupplierTag", b =>
                 {
                     b.HasOne("Point.Core.Domain.Entities.Supplier", null)
@@ -506,13 +329,6 @@ namespace Point.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Point.Core.Domain.Entities.Supplier", b =>
                 {
                     b.Navigation("Tags");
-                });
-
-            modelBuilder.Entity("Point.Order.Core.Domain.Entities.Sale", b =>
-                {
-                    b.Navigation("Items");
-
-                    b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618
         }

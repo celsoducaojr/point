@@ -10,19 +10,16 @@ namespace Point.Infrastructure.Persistence
     public class PointDbContext(DbContextOptions<PointDbContext> options)
         : DbContext(options), IPointDbContext 
     {
-        public DbSet<Tag> Tag => Set<Tag>();
-        public DbSet<Unit> Unit => Set<Unit>();
-        public DbSet<Category> Category => Set<Category>();
-        public DbSet<Supplier> Supplier => Set<Supplier>();
-        public DbSet<SupplierTag> SupplierTag => Set<SupplierTag>();
-        public DbSet<Item> Item => Set<Item>();
-        public DbSet<ItemTag> ItemTag => Set<ItemTag>();
-        public DbSet<ItemUnit> ItemUnit => Set<ItemUnit>();
-        public DbSet<CostReference> CostReference => Set<CostReference>();
-        public DbSet<Stock> Stock => Set<Stock>();
-        public DbSet<Customer> Customer => Set<Customer>();
-        public DbSet<Sale> Sale => Set<Sale>();
-
+        public DbSet<Tag> Tags => Set<Tag>();
+        public DbSet<Unit> Units => Set<Unit>();
+        public DbSet<Category> Categories => Set<Category>();
+        public DbSet<Supplier> Suppliers => Set<Supplier>();
+        public DbSet<SupplierTag> SupplierTags => Set<SupplierTag>();
+        public DbSet<Item> Items => Set<Item>();
+        public DbSet<ItemTag> ItemTags => Set<ItemTag>();
+        public DbSet<ItemUnit> ItemUnits => Set<ItemUnit>();
+        public DbSet<CostReference> CostReferences => Set<CostReference>();
+        public DbSet<DiscountVariation> DiscountVariations => Set<DiscountVariation>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

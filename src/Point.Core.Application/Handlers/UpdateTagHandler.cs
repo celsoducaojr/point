@@ -15,17 +15,17 @@ namespace Point.Core.Application.Handlers
 
         public async Task<Unit> Handle(UpdateTagRequest request, CancellationToken cancellationToken)
         {
-            var tag = (await _pointDbContext.Tag.FindAsync(request.Id, cancellationToken))
+            var tag = (await _pointDbContext.Tags.FindAsync(request.Id, cancellationToken))
                 ?? throw new NotFoundException("Tag not found.");
 
-            if (await _pointDbContext.Tag.AnyAsync(t => t.Id != request.Id && t.Name == request.Name, cancellationToken))
+            if (await _pointDbContext.Tags.AnyAsync(t => t.Id != request.Id && t.Name == request.Name, cancellationToken))
             {
                 throw new DomainException("Tag already exist.");
             }
 
             tag.Name = request.Name;
 
-            _pointDbContext.Tag.Update(tag);
+            _pointDbContext.Tags.Update(tag);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

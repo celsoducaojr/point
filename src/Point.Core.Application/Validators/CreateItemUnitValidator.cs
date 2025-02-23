@@ -9,8 +9,7 @@ namespace Point.Core.Application.Validators
         {
             RuleFor(x => x.ItemCode)
                 .MaximumLength(50)
-                .When(x => x.ItemCode != null)
-                .WithMessage("Item Code cannot exceed 50 characters.");
+                .When(x => x.ItemCode != null);
 
             RuleFor(x => x.RetailPrice)
                 .GreaterThan(0);
@@ -20,13 +19,11 @@ namespace Point.Core.Application.Validators
 
             RuleFor(x => x.PriceCode)
                 .MaximumLength(50)
-                .When(x => x.PriceCode != null)
-                .WithMessage("Price Code cannot exceed 50 characters.");
+                .When(x => x.PriceCode != null);
 
             RuleFor(x => x.Remarks)
                 .MaximumLength(250)
-                .When(x => x.Remarks != null)
-                .WithMessage("Remarks cannot exceed 250 characters.");
+                .When(x => x.Remarks != null);
         }
     }
 }

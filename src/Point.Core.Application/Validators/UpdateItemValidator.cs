@@ -13,8 +13,7 @@ namespace Point.Core.Application.Validators
 
             RuleFor(x => x.Description)
                 .MaximumLength(250)
-                .When(x => x.Description != null)
-                .WithMessage("Description cannot exceed 250 characters.");
+                .When(x => x.Description != null);
         }
     }
 }

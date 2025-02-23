@@ -34,7 +34,7 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var unit = await _pointDbContext.Unit.FindAsync(id)
+            var unit = await _pointDbContext.Units.FindAsync(id)
                 ?? throw new NotFoundException("Unit not found.");
 
             return Ok(unit);
@@ -43,7 +43,7 @@ namespace Point.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _pointDbContext.Unit.ToListAsync());
+            return Ok(await _pointDbContext.Units.ToListAsync());
         }
     }
 }

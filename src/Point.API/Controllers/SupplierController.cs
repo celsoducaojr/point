@@ -67,9 +67,9 @@ namespace Point.API.Controllers
         {
             var query = @"SELECT s.Id, s.Name, s.Remarks,
                         st.Id AS SupplierTagId, st.Id, t.Name
-                        FROM Supplier s
-                        LEFT JOIN SupplierTag st ON s.Id = st.SupplierId
-                        LEFT JOIN Tag t ON st.TagId = t.Id";
+                        FROM Suppliers s
+                        LEFT JOIN SupplierTags st ON s.Id = st.SupplierId
+                        LEFT JOIN Tags t ON st.TagId = t.Id";
 
             if (id.HasValue)
             {

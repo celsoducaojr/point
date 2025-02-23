@@ -14,7 +14,7 @@ namespace Point.Core.Application.Handlers
 
         public async Task<int> Handle(CreateUnitRequest request, CancellationToken cancellationToken)
         {
-            if (await _pointDbContext.Unit.AnyAsync(t => t.Name == request.Name, cancellationToken))
+            if (await _pointDbContext.Units.AnyAsync(t => t.Name == request.Name, cancellationToken))
             {
                 throw new DomainException("Unit already exist.");
             }
@@ -24,7 +24,7 @@ namespace Point.Core.Application.Handlers
                 Name = request.Name
             };
 
-            _pointDbContext.Unit.Add(unit);
+            _pointDbContext.Units.Add(unit);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return unit.Id;

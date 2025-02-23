@@ -33,10 +33,11 @@ namespace Point.API.Controllers
         }
 
         [HttpPut("{id}/cost")]
-        public async Task<IActionResult> UpdateCost([FromRoute] int id, [FromBody] UpdateCostDto dto)
+        public async Task<IActionResult> UpdateCost([FromRoute] int id, [FromBody] UpdateCostReferenceDto dto)
         {
             await _mediator.Send(new UpdateCostReferenceRequest(
-                id, dto.InitialAmount, dto.FinalAmount));
+                id, dto.InitialAmount, dto.FinalAmount, 
+                dto.Variations?.Select(x => new UpdateDiscountVariationRequest(x.Amount, x.Percentage, x.Remarks)).ToList()));
 
             return NoContent();
         }
@@ -44,7 +45,7 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var itemUnit = await _pointDbContext.ItemUnit
+            var itemUnit = await _pointDbContext.ItemUnits
                 .Include(i => i.CostReference)
                 .FirstOrDefaultAsync(i => i.Id == id)
                 ?? throw new NotFoundException("Item Unit not found.");
@@ -55,7 +56,7 @@ namespace Point.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _pointDbContext.ItemUnit.ToListAsync());
+            return Ok(await _pointDbContext.ItemUnits.ToListAsync());
         }
     }
 }

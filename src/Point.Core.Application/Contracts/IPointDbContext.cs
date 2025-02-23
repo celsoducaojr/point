@@ -6,18 +6,16 @@ namespace Point.Core.Application.Contracts
 {
     public interface IPointDbContext
     {
-        DbSet<Tag> Tag { get; }
-        DbSet<Unit> Unit { get; }
-        DbSet<Category> Category { get; }
-        DbSet<Supplier> Supplier { get; }
-        DbSet<SupplierTag> SupplierTag { get; }
-        DbSet<Item> Item { get; }
-        DbSet<ItemTag> ItemTag { get; }
-        DbSet<ItemUnit> ItemUnit { get; }
-        DbSet<CostReference> CostReference { get; }
-        DbSet<Stock> Stock { get; }
-        DbSet<Customer> Customer { get; }
-        DbSet<Sale> Sale { get; }
+        DbSet<Tag> Tags { get; }
+        DbSet<Unit> Units { get; }
+        DbSet<Category> Categories { get; }
+        DbSet<Supplier> Suppliers { get; }
+        DbSet<SupplierTag> SupplierTags { get; }
+        DbSet<Item> Items { get; }
+        DbSet<ItemTag> ItemTags { get; }
+        DbSet<ItemUnit> ItemUnits { get; }
+        DbSet<CostReference> CostReferences { get; }
+        DbSet<DiscountVariation> DiscountVariations { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

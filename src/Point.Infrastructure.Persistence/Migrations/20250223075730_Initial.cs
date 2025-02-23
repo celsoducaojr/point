@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace Point.Infrastructure.Persistence.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Category",
+                name: "Categories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -26,31 +26,12 @@ namespace Point.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.Id);
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Customer",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    FullName = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Mobile = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Customer", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Item",
+                name: "Items",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -65,50 +46,12 @@ namespace Point.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Item", x => x.Id);
+                    table.PrimaryKey("PK_Items", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Sale",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: true),
-                    Discount = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
-                    Total = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    PaymentTerm = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sale", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Stock",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    ItemUnitId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    Threshold = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Stock", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Supplier",
+                name: "Suppliers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -122,12 +65,12 @@ namespace Point.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Supplier", x => x.Id);
+                    table.PrimaryKey("PK_Suppliers", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Tag",
+                name: "Tags",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -137,12 +80,12 @@ namespace Point.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tag", x => x.Id);
+                    table.PrimaryKey("PK_Tags", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Unit",
+                name: "Units",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -152,12 +95,12 @@ namespace Point.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Unit", x => x.Id);
+                    table.PrimaryKey("PK_Units", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "ItemTag",
+                name: "ItemTags",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -167,18 +110,18 @@ namespace Point.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ItemTag", x => x.Id);
+                    table.PrimaryKey("PK_ItemTags", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ItemTag_Item_ItemId",
+                        name: "FK_ItemTags_Items_ItemId",
                         column: x => x.ItemId,
-                        principalTable: "Item",
+                        principalTable: "Items",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "ItemUnit",
+                name: "ItemUnits",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -199,71 +142,18 @@ namespace Point.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ItemUnit", x => x.Id);
+                    table.PrimaryKey("PK_ItemUnits", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ItemUnit_Item_ItemId",
+                        name: "FK_ItemUnits_Items_ItemId",
                         column: x => x.ItemId,
-                        principalTable: "Item",
+                        principalTable: "Items",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Payment",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Amount = table.Column<int>(type: "int", nullable: false),
-                    Mode = table.Column<int>(type: "int", nullable: false),
-                    Reference = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Remarks = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    SaleId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Payment", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Payment_Sale_SaleId",
-                        column: x => x.SaleId,
-                        principalTable: "Sale",
-                        principalColumn: "Id");
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "SaleItem",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    ItemUnitId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    Discount = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
-                    Total = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    SaleId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SaleItem", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SaleItem_Sale_SaleId",
-                        column: x => x.SaleId,
-                        principalTable: "Sale",
-                        principalColumn: "Id");
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "SupplierTag",
+                name: "SupplierTags",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -273,17 +163,17 @@ namespace Point.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SupplierTag", x => x.Id);
+                    table.PrimaryKey("PK_SupplierTags", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SupplierTag_Supplier_SupplierId",
+                        name: "FK_SupplierTags_Suppliers_SupplierId",
                         column: x => x.SupplierId,
-                        principalTable: "Supplier",
+                        principalTable: "Suppliers",
                         principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "CostReference",
+                name: "CostReferences",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
@@ -294,18 +184,18 @@ namespace Point.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CostReference", x => x.Id);
+                    table.PrimaryKey("PK_CostReferences", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CostReference_ItemUnit_Id",
+                        name: "FK_CostReferences_ItemUnits_Id",
                         column: x => x.Id,
-                        principalTable: "ItemUnit",
+                        principalTable: "ItemUnits",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "DiscountVariation",
+                name: "DiscountVariations",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -318,43 +208,33 @@ namespace Point.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DiscountVariation", x => x.Id);
+                    table.PrimaryKey("PK_DiscountVariations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DiscountVariation_CostReference_CostReferenceId",
+                        name: "FK_DiscountVariations_CostReferences_CostReferenceId",
                         column: x => x.CostReferenceId,
-                        principalTable: "CostReference",
+                        principalTable: "CostReferences",
                         principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DiscountVariation_CostReferenceId",
-                table: "DiscountVariation",
+                name: "IX_DiscountVariations_CostReferenceId",
+                table: "DiscountVariations",
                 column: "CostReferenceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemTag_ItemId",
-                table: "ItemTag",
+                name: "IX_ItemTags_ItemId",
+                table: "ItemTags",
                 column: "ItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemUnit_ItemId",
-                table: "ItemUnit",
+                name: "IX_ItemUnits_ItemId",
+                table: "ItemUnits",
                 column: "ItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payment_SaleId",
-                table: "Payment",
-                column: "SaleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SaleItem_SaleId",
-                table: "SaleItem",
-                column: "SaleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SupplierTag_SupplierId",
-                table: "SupplierTag",
+                name: "IX_SupplierTags_SupplierId",
+                table: "SupplierTags",
                 column: "SupplierId");
         }
 
@@ -362,49 +242,34 @@ namespace Point.Infrastructure.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "Categories");
 
             migrationBuilder.DropTable(
-                name: "Customer");
+                name: "DiscountVariations");
 
             migrationBuilder.DropTable(
-                name: "DiscountVariation");
+                name: "ItemTags");
 
             migrationBuilder.DropTable(
-                name: "ItemTag");
+                name: "SupplierTags");
 
             migrationBuilder.DropTable(
-                name: "Payment");
+                name: "Tags");
 
             migrationBuilder.DropTable(
-                name: "SaleItem");
+                name: "Units");
 
             migrationBuilder.DropTable(
-                name: "Stock");
+                name: "CostReferences");
 
             migrationBuilder.DropTable(
-                name: "SupplierTag");
+                name: "Suppliers");
 
             migrationBuilder.DropTable(
-                name: "Tag");
+                name: "ItemUnits");
 
             migrationBuilder.DropTable(
-                name: "Unit");
-
-            migrationBuilder.DropTable(
-                name: "CostReference");
-
-            migrationBuilder.DropTable(
-                name: "Sale");
-
-            migrationBuilder.DropTable(
-                name: "Supplier");
-
-            migrationBuilder.DropTable(
-                name: "ItemUnit");
-
-            migrationBuilder.DropTable(
-                name: "Item");
+                name: "Items");
         }
     }
 }

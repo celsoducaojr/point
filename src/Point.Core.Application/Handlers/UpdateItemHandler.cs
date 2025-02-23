@@ -18,20 +18,20 @@ namespace Point.Core.Application.Handlers
 
         public async Task<Unit> Handle(UpdateItemRequest request, CancellationToken cancellationToken)
         {
-            var item = (await _pointDbContext.Item
+            var item = (await _pointDbContext.Items
                 .Include(s => s.Tags)
                 .FirstOrDefaultAsync(s => s.Id == request.Id, cancellationToken))
                 ?? throw new NotFoundException("Item not found.");
 
             if (request.CategoryId.HasValue)
             {
-                var category = (await _pointDbContext.Category.FindAsync(request.CategoryId, cancellationToken))
+                var category = (await _pointDbContext.Categories.FindAsync(request.CategoryId, cancellationToken))
                     ?? throw new NotFoundException("Category not found.");
             }
 
             if (request.Tags?.Count > 0)
             {
-                var tags = await _pointDbContext.Tag
+                var tags = await _pointDbContext.Tags
                 .Where(t => request.Tags.Contains(t.Id))
                 .Select(t => t.Id)
                 .ToListAsync(cancellationToken);
@@ -43,14 +43,14 @@ namespace Point.Core.Application.Handlers
                 }
             }
 
-            if (await _pointDbContext.Item.AnyAsync(i => i.Id != request.Id && i.Name == request.Name && i.CategoryId == request.CategoryId, cancellationToken))
+            if (await _pointDbContext.Items.AnyAsync(i => i.Id != request.Id && i.Name == request.Name && i.CategoryId == request.CategoryId, cancellationToken))
             {
                 throw new DomainException("Item already exist.");
             }
 
             if (item.Tags.Count > 0)
             {
-                _pointDbContext.ItemTag.RemoveRange(item.Tags);
+                _pointDbContext.ItemTags.RemoveRange(item.Tags);
             }
 
             item.Name = request.Name;
@@ -58,7 +58,7 @@ namespace Point.Core.Application.Handlers
             item.CategoryId = request.CategoryId;
             item.Tags = request.Tags?.Select(tagId => new Domain.Entities.ItemTag { TagId = tagId }).ToList();
 
-            _pointDbContext.Item.Update(item);
+            _pointDbContext.Items.Update(item);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

@@ -76,10 +76,10 @@ namespace Point.API.Controllers
             var query = @"SELECT i.Id, i.Name, i.Description, 
                         i.CategoryId, c.Id, c.Name,
                         it.Id AS ItemTagId, it.Id, t.Name
-                        FROM Item i
-                        LEFT JOIN Category c ON i.CategoryId = c.Id
-                        LEFT JOIN ItemTag it ON i.Id = it.ItemId
-                        LEFT JOIN Tag t ON it.TagId = t.Id";
+                        FROM Items i
+                        LEFT JOIN Categories c ON i.CategoryId = c.Id
+                        LEFT JOIN ItemTags it ON i.Id = it.ItemId
+                        LEFT JOIN Tags t ON it.TagId = t.Id";
 
             if (id.HasValue)
             {

@@ -18,14 +18,14 @@ namespace Point.Core.Application.Handlers
 
         public async Task<int> Handle(CreateItemRequest request, CancellationToken cancellationToken)
         {
-            if (request.CategoryId.HasValue && await _pointDbContext.Category.FindAsync(request.CategoryId, cancellationToken) == null)
+            if (request.CategoryId.HasValue && await _pointDbContext.Categories.FindAsync(request.CategoryId, cancellationToken) == null)
             {
                 throw new NotFoundException("Category not found.");
             }
 
             if (request.Tags?.Count > 0)
             {
-                var tags = await _pointDbContext.Tag
+                var tags = await _pointDbContext.Tags
                 .Where(t => request.Tags.Contains(t.Id))
                 .Select(t => t.Id)
                 .ToListAsync(cancellationToken);
@@ -37,7 +37,7 @@ namespace Point.Core.Application.Handlers
                 }
             }
 
-            if (await _pointDbContext.Item.AnyAsync(i => i.Name == request.Name && i.CategoryId == request.CategoryId, cancellationToken))
+            if (await _pointDbContext.Items.AnyAsync(i => i.Name == request.Name && i.CategoryId == request.CategoryId, cancellationToken))
             {
                 throw new DomainException("Item already exist.");
             }
@@ -50,7 +50,7 @@ namespace Point.Core.Application.Handlers
                 Tags = request.Tags?.Select(tagId => new ItemTag { TagId = tagId }).ToList()
             };
 
-            _pointDbContext.Item.Add(item);
+            _pointDbContext.Items.Add(item);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return item.Id;

@@ -13,8 +13,7 @@ namespace Point.Core.Application.Validators
 
             RuleFor(x => x.Remarks)
                 .MaximumLength(250)
-                .When(x => x.Remarks != null)
-                .WithMessage("Remarks cannot exceed 250 characters.");
+                .When(x => x.Remarks != null);
         }
     }
 }

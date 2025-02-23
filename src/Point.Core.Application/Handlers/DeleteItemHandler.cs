@@ -13,10 +13,10 @@ namespace Point.Core.Application.Handlers
         private readonly IPointDbContext _pointDbContext = pointDbContext;
         public async Task Handle(DeleteItemRequest request, CancellationToken cancellationToken)
         {
-            var item = await _pointDbContext.Item.FindAsync(request.Id, cancellationToken)
+            var item = await _pointDbContext.Items.FindAsync(request.Id, cancellationToken)
                 ?? throw new NotFoundException("Item not found.");
 
-            _pointDbContext.Item.Remove(item);
+            _pointDbContext.Items.Remove(item);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
         }
     }

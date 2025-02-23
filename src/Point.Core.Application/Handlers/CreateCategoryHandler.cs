@@ -15,7 +15,7 @@ namespace Point.Core.Application.Handlers
 
         public async Task<int> Handle(CreateCategoryRequest request, CancellationToken cancellationToken)
         {
-            if (await _pointDbContext.Category.AnyAsync(c => c.Name == request.Name, cancellationToken))
+            if (await _pointDbContext.Categories.AnyAsync(c => c.Name == request.Name, cancellationToken))
             {
                 throw new DomainException("Category already exist.");
             }
@@ -25,7 +25,7 @@ namespace Point.Core.Application.Handlers
                 Name = request.Name
             };
 
-            _pointDbContext.Category.Add(category);
+            _pointDbContext.Categories.Add(category);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return category.Id;

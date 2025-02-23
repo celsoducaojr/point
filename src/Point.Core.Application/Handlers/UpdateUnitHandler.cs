@@ -14,17 +14,17 @@ namespace Point.Core.Application.Handlers
         private readonly IPointDbContext _pointDbContext = pointDbContext;
         public async Task<Unit> Handle(UpdateUnitRequest request, CancellationToken cancellationToken)
         {
-            var unit = (await _pointDbContext.Unit.FindAsync(request.Id, cancellationToken))
+            var unit = (await _pointDbContext.Units.FindAsync(request.Id, cancellationToken))
                 ?? throw new NotFoundException("Unit not found.");
 
-            if (await _pointDbContext.Unit.AnyAsync(t => t.Id != request.Id && t.Name == request.Name, cancellationToken))
+            if (await _pointDbContext.Units.AnyAsync(t => t.Id != request.Id && t.Name == request.Name, cancellationToken))
             {
                 throw new DomainException("Unit already exist.");
             }
 
             unit.Name = request.Name;
 
-            _pointDbContext.Unit.Update(unit);
+            _pointDbContext.Units.Update(unit);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

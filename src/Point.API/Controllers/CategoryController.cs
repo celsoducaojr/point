@@ -35,7 +35,7 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var supplier = (await _pointDbContext.Category.FindAsync(id))
+            var supplier = (await _pointDbContext.Categories.FindAsync(id))
                 ?? throw new NotFoundException("Category not found.");
 
             return Ok(supplier);
@@ -44,7 +44,7 @@ namespace Point.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _pointDbContext.Category.ToListAsync());
+            return Ok(await _pointDbContext.Categories.ToListAsync());
         }
     }
 }

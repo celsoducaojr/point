@@ -19,7 +19,7 @@ namespace Point.Core.Application.Handlers.Order
         {
             if (request.Tags?.Count > 0)
             {
-                var tags = await _pointDbContext.Tag
+                var tags = await _pointDbContext.Tags
                 .Where(t => request.Tags.Contains(t.Id))
                 .Select(t => t.Id)
                 .ToListAsync(cancellationToken);
@@ -31,7 +31,7 @@ namespace Point.Core.Application.Handlers.Order
                 }
             }
             
-            if (await _pointDbContext.Supplier.AnyAsync(s => s.Name == request.Name, cancellationToken))
+            if (await _pointDbContext.Suppliers.AnyAsync(s => s.Name == request.Name, cancellationToken))
             {
                 throw new DomainException("Supplier already exist.");
             }
@@ -43,7 +43,7 @@ namespace Point.Core.Application.Handlers.Order
                 Tags = request.Tags?.Select(tagId => new SupplierTag { TagId = tagId }).ToList()
             };
 
-            _pointDbContext.Supplier.Add(supplier);
+            _pointDbContext.Suppliers.Add(supplier);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return supplier.Id;

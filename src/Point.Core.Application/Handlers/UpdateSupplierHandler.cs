@@ -17,14 +17,14 @@ namespace Point.Core.Application.Handlers.Order
 
         public async Task<Unit> Handle(UpdateSupplierRequest request, CancellationToken cancellationToken)
         {
-            var supplier = (await _pointDbContext.Supplier
+            var supplier = (await _pointDbContext.Suppliers
                 .Include(s => s.Tags)
                 .FirstOrDefaultAsync(s => s.Id == request.Id, cancellationToken))
                 ?? throw new NotFoundException("Supplier not found.");
 
             if (request.Tags?.Count > 0)
             {
-                var tags = await _pointDbContext.Tag
+                var tags = await _pointDbContext.Tags
                 .Where(t => request.Tags.Contains(t.Id))
                 .Select(t => t.Id)
                 .ToListAsync(cancellationToken);
@@ -36,21 +36,21 @@ namespace Point.Core.Application.Handlers.Order
                 }
             }
 
-            if (await _pointDbContext.Supplier.AnyAsync(s => s.Id != request.Id && s.Name == request.Name, cancellationToken))
+            if (await _pointDbContext.Suppliers.AnyAsync(s => s.Id != request.Id && s.Name == request.Name, cancellationToken))
             {
                 throw new DomainException("Supplier already exist.");
             }
 
             if (supplier.Tags.Count > 0)
             {
-                _pointDbContext.SupplierTag.RemoveRange(supplier.Tags);
+                _pointDbContext.SupplierTags.RemoveRange(supplier.Tags);
             }
 
             supplier.Name = request.Name;
             supplier.Remarks = request.Remarks;
             supplier.Tags = request.Tags?.Select(tagId => new Domain.Entities.SupplierTag { TagId = tagId }).ToList();
 
-            _pointDbContext.Supplier.Update(supplier);
+            _pointDbContext.Suppliers.Update(supplier);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

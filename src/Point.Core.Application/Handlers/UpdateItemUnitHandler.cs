@@ -21,20 +21,20 @@ namespace Point.Core.Application.Handlers
 
         public async Task<Unit> Handle(UpdateItemUnitRequest request, CancellationToken cancellationToken)
         {
-            var itemUnit = (await _pointDbContext.ItemUnit.FindAsync(request.Id, cancellationToken))
+            var itemUnit = (await _pointDbContext.ItemUnits.FindAsync(request.Id, cancellationToken))
                            ?? throw new NotFoundException("Item Unit not found.");
 
-            if (await _pointDbContext.Item.FindAsync(request.ItemId, cancellationToken) == null)
+            if (await _pointDbContext.Items.FindAsync(request.ItemId, cancellationToken) == null)
             {
                 throw new NotFoundException("Item not found.");
             }
 
-            if (await _pointDbContext.Unit.FindAsync(request.UnitId) == null)
+            if (await _pointDbContext.Units.FindAsync(request.UnitId) == null)
             {
                 throw new NotFoundException("Unit not found.");
             }
 
-            if (await _pointDbContext.ItemUnit.AnyAsync(i => i.Id != request.Id && i.ItemId == request.ItemId && i.UnitId == request.UnitId, cancellationToken))
+            if (await _pointDbContext.ItemUnits.AnyAsync(i => i.Id != request.Id && i.ItemId == request.ItemId && i.UnitId == request.UnitId, cancellationToken))
             {
                 throw new DomainException("Item Unit already exist.");
             }
@@ -47,7 +47,7 @@ namespace Point.Core.Application.Handlers
             itemUnit.PriceCode = request.PriceCode;
             itemUnit.Remarks = request.Remarks;
 
-            _pointDbContext.ItemUnit.Update(itemUnit);
+            _pointDbContext.ItemUnits.Update(itemUnit);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

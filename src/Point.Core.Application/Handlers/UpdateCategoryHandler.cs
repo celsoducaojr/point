@@ -15,17 +15,17 @@ namespace Point.Core.Application.Handlers
 
         public async Task<Unit> Handle(UpdateCategoryRequest request, CancellationToken cancellationToken)
         {
-            var category = (await _pointDbContext.Category.FindAsync(request.Id, cancellationToken))
+            var category = (await _pointDbContext.Categories.FindAsync(request.Id, cancellationToken))
                ?? throw new NotFoundException("Category not found.");
 
-            if (await _pointDbContext.Category.AnyAsync(c => c.Id != request.Id && c.Name == request.Name, cancellationToken))
+            if (await _pointDbContext.Categories.AnyAsync(c => c.Id != request.Id && c.Name == request.Name, cancellationToken))
             {
                 throw new DomainException("Category already exist.");
             }
 
             category.Name = request.Name;
 
-            _pointDbContext.Category.Update(category);
+            _pointDbContext.Categories.Update(category);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

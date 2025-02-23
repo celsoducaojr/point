@@ -2,35 +2,55 @@
 using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
+using Point.Core.Domain.Entities;
 
 namespace Point.Core.Application.Handlers
 {
     public sealed record UpdateCostReferenceRequest(
         int Id,
         decimal InitialAmount,
-        decimal FinalAmount)
-        : IRequest<Unit>;
-    public class UpdateCostReferenceHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateCostReferenceRequest, Unit>
+        decimal FinalAmount,
+        List<UpdateDiscountVariationRequest>? Variations)
+        : IRequest<MediatR.Unit>;
+
+    public sealed record UpdateDiscountVariationRequest(
+        decimal? Amount,
+        decimal? Percentage,
+        string? Remarks);
+    public class UpdateCostReferenceHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateCostReferenceRequest, MediatR.Unit>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
-        public async Task<Unit> Handle(UpdateCostReferenceRequest request, CancellationToken cancellationToken)
+        public async Task<MediatR.Unit> Handle(UpdateCostReferenceRequest request, CancellationToken cancellationToken)
         {
-            var itemUnit = await _pointDbContext.ItemUnit
+            var itemUnit = await _pointDbContext.ItemUnits
                 .Include(i => i.CostReference)
+                .Include(i => i.CostReference.Variations)
                 .FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken)
                 ?? throw new NotFoundException("Item Unit not found");
 
-            itemUnit.CostReference = new Domain.Entities.CostReference
+            if ((itemUnit.CostReference?.Variations?.Count > 0))
+            {
+                _pointDbContext.DiscountVariations.RemoveRange(itemUnit.CostReference.Variations);
+            }
+
+            itemUnit.CostReference = new CostReference
             {
                 InitialAmount = request.InitialAmount,
-                FinalAmount = request.FinalAmount
+                FinalAmount = request.FinalAmount,
+                Variations = request.Variations?
+                    .Select(x => new DiscountVariation
+                    {
+                        Amount = x.Amount,
+                        Percentage = x.Percentage, 
+                        Remarks = x.Remarks
+                    }).ToList()
             };
 
-            _pointDbContext.ItemUnit.Update(itemUnit);
+            _pointDbContext.ItemUnits.Update(itemUnit);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return MediatR.Unit.Value;
         }
     }
 }

@@ -21,17 +21,17 @@ namespace Point.Core.Application.Handlers
 
         public async Task<int> Handle(CreateItemUnitRequest request, CancellationToken cancellationToken)
         {
-            if (await _pointDbContext.Item.FindAsync(request.ItemId, cancellationToken) == null)
+            if (await _pointDbContext.Items.FindAsync(request.ItemId, cancellationToken) == null)
             {
                 throw new NotFoundException("Item not found.");
             }
 
-            if (await _pointDbContext.Unit.FindAsync(request.UnitId) == null)
+            if (await _pointDbContext.Units.FindAsync(request.UnitId) == null)
             {
                 throw new NotFoundException("Unit not found.");
             }
 
-            if (await _pointDbContext.ItemUnit.AnyAsync(i => i.ItemId == request.ItemId && i.UnitId == request.UnitId, cancellationToken))
+            if (await _pointDbContext.ItemUnits.AnyAsync(i => i.ItemId == request.ItemId && i.UnitId == request.UnitId, cancellationToken))
             {
                 throw new DomainException("Item Unit already exist.");
             }
@@ -47,7 +47,7 @@ namespace Point.Core.Application.Handlers
                 Remarks = request.Remarks
             };
 
-            _pointDbContext.ItemUnit.Add(itemUnit);
+            _pointDbContext.ItemUnits.Add(itemUnit);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return itemUnit.Id;

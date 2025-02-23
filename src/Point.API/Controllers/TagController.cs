@@ -36,7 +36,7 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var tag = await _pointDbContext.Tag.FindAsync(id)
+            var tag = await _pointDbContext.Tags.FindAsync(id)
                 ?? throw new NotFoundException("Tag not found.");
 
             return Ok(tag);
@@ -45,7 +45,7 @@ namespace Point.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _pointDbContext.Tag.ToListAsync());
+            return Ok(await _pointDbContext.Tags.ToListAsync());
         }
     }
 }
