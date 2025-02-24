@@ -47,6 +47,7 @@ namespace Point.API.Controllers
         {
             var itemUnit = await _pointDbContext.ItemUnits
                 .Include(i => i.CostReference)
+                //.Include(i => i.CostReference.Variations)
                 .FirstOrDefaultAsync(i => i.Id == id)
                 ?? throw new NotFoundException("Item Unit not found.");
 

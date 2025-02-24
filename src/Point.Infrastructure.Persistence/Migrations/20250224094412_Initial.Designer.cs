@@ -12,7 +12,7 @@ using Point.Infrastructure.Persistence;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PointDbContext))]
-    [Migration("20250223075730_Initial")]
+    [Migration("20250224094412_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
