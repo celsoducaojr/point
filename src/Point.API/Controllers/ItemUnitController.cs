@@ -6,11 +6,15 @@ using Point.API.Dtos;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Application.Handlers;
+using Point.Infrastructure.Persistence.Contracts;
 
 namespace Point.API.Controllers
 {
     [Route("api/v{version:apiversion}/item-units")]
-    public class ItemUnitController(IMediator mediator, IPointDbContext pointDbContext) : BaseController
+    public class ItemUnitController(
+        IMediator mediator, 
+        IPointDbContext pointDbContext,
+        IPointDbConnection pointDbConnection) : BaseController
     {
         private readonly IMediator _mediator = mediator;
         private readonly IPointDbContext _pointDbContext = pointDbContext;
@@ -40,24 +44,6 @@ namespace Point.API.Controllers
                 dto.Variations?.Select(x => new UpdateDiscountVariationRequest(x.Amount, x.Percentage, x.Remarks)).ToList()));
 
             return NoContent();
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var itemUnit = await _pointDbContext.ItemUnits
-                .Include(i => i.CostReference)
-                //.Include(i => i.CostReference.Variations)
-                .FirstOrDefaultAsync(i => i.Id == id)
-                ?? throw new NotFoundException("Item Unit not found.");
-
-            return Ok(itemUnit);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            return Ok(await _pointDbContext.ItemUnits.ToListAsync());
         }
     }
 }
