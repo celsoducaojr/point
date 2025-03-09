@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Point.API.Constants;
 using Point.API.Controllers.Base;
 using Point.API.Dtos;
 using Point.Core.Application.Contracts;
@@ -50,7 +51,7 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var item = await GetItemsAsync(id);
+            var item = await SearchItemsAsync(id);
 
             if (!item.Any())
             {
@@ -63,23 +64,34 @@ namespace Point.API.Controllers
             
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] List<string>? fields)
         {
-            return Ok((await GetItemsAsync()).Distinct().ToList());
+            fields ??= [];
+
+            if (fields.Except(ApiConstants.Items.QueryFields).ToList().Any())
+            {
+                throw new DomainException("Invalid fields requested.");
+            }
+
+            return Ok((await SearchItemsAsync(fields: fields)).Distinct().ToList());
         }
 
         #region Common Query
 
-        private async Task<IEnumerable<GetItemResponseDto>> GetItemsAsync(int? id = null)
+        private async Task<IEnumerable<GetItemResponseDto>> SearchItemsAsync(int? id = null, List<string>? fields = null)
         {
-            var query = @"SELECT i.Id, i.Name, i.Description, 
-                        i.CategoryId, c.Id, c.Name,
-                        it.Id AS ItemTagId, it.Id, t.Name
-                        FROM Items i
-                        LEFT JOIN Categories c ON i.CategoryId = c.Id
-                        LEFT JOIN ItemTags it ON i.Id = it.ItemId
-                        LEFT JOIN Tags t ON it.TagId = t.Id";
+            fields ??= [];
+
+            var query = @"SELECT
+                i.Id, i.Name, i.Description,
+                c.Id, c.Name,
+                it.Id, t.Name
+                FROM Items i
+                LEFT JOIN Categories c ON i.CategoryId = c.Id
+                LEFT JOIN ItemTags it ON i.Id = it.ItemId
+                LEFT JOIN Tags t ON it.TagId = t.Id";
 
             if (id.HasValue)
             {
@@ -98,14 +110,14 @@ namespace Point.API.Controllers
                         {
                             Id = item.Id,
                             Name = item.Name,
-                            Description = item.Description,
-                            Category = category?.Id != 0 ? category.Name : null,
-                            Tags = itemTag?.Id != 0 ? [] : null
+                            Description = fields.Contains(ApiConstants.Items.Fields.Description, StringComparer.OrdinalIgnoreCase) ? item.Description : null,
+                            Category = fields.Contains(ApiConstants.Items.Fields.Category, StringComparer.OrdinalIgnoreCase) && category?.Id > 0 ? category.Name : null,
+                            Tags = fields.Contains(ApiConstants.Items.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id != 0 ? [] : null
                         };
                         itemDictionary[item.Id] = itemEntry;
                     }
 
-                    if (itemTag?.Id != 0)
+                    if (fields.Contains(ApiConstants.Items.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id != 0)
                     {
                         itemEntry.Tags.Add(itemTag.Name);
                     }
@@ -113,13 +125,12 @@ namespace Point.API.Controllers
                     return itemEntry;
                 },
                 id.HasValue ? new { Id = id.Value } : null,
-                splitOn: "CategoryId, ItemTagId"
+                splitOn: "Id"
             );
 
             return item;
         }
 
         #endregion
-
     }
 }

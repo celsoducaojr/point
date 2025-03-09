@@ -6,7 +6,7 @@ using Point.API.Conventions;
 using Point.Infrastructure.Identity;
 using Point.Infrastructure.Identity.Domain.Entities;
 using Point.Infrastructure.Persistence;
-using System.Reflection;
+using System.Text.Json.Serialization;
 
 namespace Point.API.Startup
 {
@@ -25,6 +25,10 @@ namespace Point.API.Startup
             services.AddControllers(options =>
             {
                 options.Conventions.Add(new LowercaseControllerNameConvention());
+                
+            }).AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
 
             // Handlers
