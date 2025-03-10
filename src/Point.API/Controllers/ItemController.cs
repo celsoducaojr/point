@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Point.API.Constants;
 using Point.API.Controllers.Base;
 using Point.API.Dtos;
@@ -51,86 +52,11 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var item = await SearchItemsAsync(id);
+            var itemUnit = await _pointDbContext.Items
+                .FirstOrDefaultAsync(i => i.Id == id)
+                ?? throw new NotFoundException("Item not found.");
 
-            if (!item.Any())
-            {
-                throw new NotFoundException("Item not found.");
-            }
-            else
-            {
-                return Ok(item.FirstOrDefault());
-            }
-            
+            return Ok(itemUnit);
         }
-
-
-        [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] List<string>? fields)
-        {
-            fields ??= [];
-
-            if (fields.Except(ApiConstants.Items.QueryFields).ToList().Any())
-            {
-                throw new DomainException("Invalid fields requested.");
-            }
-
-            return Ok((await SearchItemsAsync(fields: fields)).Distinct().ToList());
-        }
-
-        #region Common Query
-
-        private async Task<IEnumerable<GetItemResponseDto>> SearchItemsAsync(int? id = null, List<string>? fields = null)
-        {
-            fields ??= [];
-
-            var query = @"SELECT
-                i.Id, i.Name, i.Description,
-                c.Id, c.Name,
-                it.Id, t.Name
-                FROM Items i
-                LEFT JOIN Categories c ON i.CategoryId = c.Id
-                LEFT JOIN ItemTags it ON i.Id = it.ItemId
-                LEFT JOIN Tags t ON it.TagId = t.Id";
-
-            if (id.HasValue)
-            {
-                query += " WHERE i.Id = @Id";
-            }
-
-            var itemDictionary = new Dictionary<int, GetItemResponseDto>();
-
-            var item = await _dbConnection.QueryAsync<Item, Category, Tag, GetItemResponseDto>(
-                query,
-                (item, category, itemTag) =>
-                {
-                    if (!itemDictionary.TryGetValue(item.Id, out var itemEntry))
-                    {
-                        itemEntry = new GetItemResponseDto
-                        {
-                            Id = item.Id,
-                            Name = item.Name,
-                            Description = fields.Contains(ApiConstants.Items.Fields.Description, StringComparer.OrdinalIgnoreCase) ? item.Description : null,
-                            Category = fields.Contains(ApiConstants.Items.Fields.Category, StringComparer.OrdinalIgnoreCase) && category?.Id > 0 ? category.Name : null,
-                            Tags = fields.Contains(ApiConstants.Items.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id != 0 ? [] : null
-                        };
-                        itemDictionary[item.Id] = itemEntry;
-                    }
-
-                    if (fields.Contains(ApiConstants.Items.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id != 0)
-                    {
-                        itemEntry.Tags.Add(itemTag.Name);
-                    }
-
-                    return itemEntry;
-                },
-                id.HasValue ? new { Id = id.Value } : null,
-                splitOn: "Id"
-            );
-
-            return item;
-        }
-
-        #endregion
     }
 }
