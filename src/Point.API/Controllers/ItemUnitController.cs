@@ -104,14 +104,14 @@ namespace Point.API.Controllers
                 i.Id, i.Name, i.Description,
                 c.Id, c.Name,
                 it.Id, t.Name,
-                iu.Id, iu.UnitId, iu.ItemCode, iu.RetailPrice, iu.WholesalePrice, iu.PriceCode,
+                iu.Id, iu.UnitId, iu.ItemCode, iu.RetailPrice, iu.WholesalePrice, iu.PriceCode, iu.Remarks,
                 u.Id, u.Name
                 FROM Items i
                 LEFT JOIN Categories c ON i.CategoryId = c.Id
                 LEFT JOIN ItemTags it ON it.ItemId = i.Id
                 LEFT JOIN Tags t ON t.Id = it.TagId
                 INNER JOIN ItemUnits iu ON iu.ItemId = i.Id
-                LEFT JOIN Units u ON u.Id = iu.UnitId";
+                INNER JOIN Units u ON u.Id = iu.UnitId";
 
             var conditions = new List<string>();
             var parameters = new DynamicParameters();
@@ -167,11 +167,12 @@ namespace Point.API.Controllers
                             Description = fields.Contains(ApiConstants.Items.Fields.Description, StringComparer.OrdinalIgnoreCase) ? item.Description : null,
                             Category = fields.Contains(ApiConstants.Items.Fields.Category, StringComparer.OrdinalIgnoreCase) && category?.Id > 0 ? category.Name : null,
                             Tags = fields.Contains(ApiConstants.Items.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id != 0 ? [] : null,
-                            Unit = unit?.Name,
-                            ItemCode = itemUnit?.ItemCode,
-                            RetailPrice = itemUnit?.RetailPrice,
-                            WholesalePrice = itemUnit?.WholesalePrice,
-                            PriceCode = itemUnit?.PriceCode
+                            Unit = unit.Name,
+                            ItemCode = itemUnit.ItemCode,
+                            RetailPrice = itemUnit.RetailPrice,
+                            WholesalePrice = itemUnit.WholesalePrice,
+                            PriceCode = itemUnit.PriceCode,
+                            Remarks = fields.Contains(ApiConstants.Items.Fields.Remarks, StringComparer.OrdinalIgnoreCase) ? itemUnit.Remarks : null
                         };
                         itemDictionary[item.Id] = itemEntry;
                     }
