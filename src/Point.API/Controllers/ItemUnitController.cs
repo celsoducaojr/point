@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Utilities;
 using Point.API.Constants;
 using Point.API.Controllers.Base;
 using Point.API.Dtos;
@@ -53,10 +54,18 @@ namespace Point.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(int id, [FromQuery] List<string>? fields)
         {
-            var itemUnit = await _pointDbContext.ItemUnits
-                .FirstOrDefaultAsync(i => i.Id == id)
+           var itemUnit = (await LookupAsync(id: id, fields: fields)).FirstOrDefault()
+                ?? throw new NotFoundException("Item Unit not found.");
+
+            return Ok(itemUnit);
+        }
+
+        [HttpGet("code/{code}")]
+        public async Task<IActionResult> GetByCode(string code, [FromQuery] List<string>? fields)
+        {
+            var itemUnit = (await LookupAsync(code: code, fields: fields)).FirstOrDefault()
                 ?? throw new NotFoundException("Item Unit not found.");
 
             return Ok(itemUnit);
@@ -68,6 +77,19 @@ namespace Point.API.Controllers
             [FromQuery] int? categoryId,
             [FromQuery] List<int>? tags,
             [FromQuery] List<string>? fields)
+        {
+            return Ok(await LookupAsync(name: name, categoryId: categoryId, tags: tags, fields: fields));
+        }
+
+        #region Queries
+
+        private async Task<IEnumerable<GetItemUnitResponseDto>> LookupAsync(
+            int? id = null,
+            string? code = null,
+            string? name = null,
+            int? categoryId = null,
+            List<int>? tags = null,
+            List<string>? fields = null)
         {
             name = name?.Trim();
             tags ??= [];
@@ -81,31 +103,48 @@ namespace Point.API.Controllers
             var query = @"SELECT
                 i.Id, i.Name, i.Description,
                 c.Id, c.Name,
-                it.Id, t.Name
+                it.Id, t.Name,
+                iu.Id, iu.UnitId, iu.ItemCode, iu.RetailPrice, iu.WholesalePrice, iu.PriceCode,
+                u.Id, u.Name
                 FROM Items i
                 LEFT JOIN Categories c ON i.CategoryId = c.Id
-                LEFT JOIN ItemTags it ON i.Id = it.ItemId
-                LEFT JOIN Tags t ON it.TagId = t.Id";
+                LEFT JOIN ItemTags it ON it.ItemId = i.Id
+                LEFT JOIN Tags t ON t.Id = it.TagId
+                INNER JOIN ItemUnits iu ON iu.ItemId = i.Id
+                LEFT JOIN Units u ON u.Id = iu.UnitId";
 
             var conditions = new List<string>();
             var parameters = new DynamicParameters();
 
-            if (!string.IsNullOrEmpty(name))
+            if (id.HasValue)
             {
-                conditions.Add("i.Name LIKE @Name");
-                parameters.Add("Name", $"%{name}%");
+                conditions.Add("iu.Id = @Id");
+                parameters.Add("Id", id);
             }
-
-            if (categoryId.HasValue)
+            else if (!string.IsNullOrEmpty(code))
             {
-                conditions.Add("i.CategoryId = @CategoryId");
-                parameters.Add("CategoryId", categoryId);
+                conditions.Add("iu.ItemCode = @ItemCode");
+                parameters.Add("ItemCode", code);
             }
-
-            if (tags.Any())
+            else
             {
-                conditions.Add("t.Id IN @TagIds");
-                parameters.Add("TagIds", tags);
+                if (!string.IsNullOrEmpty(name))
+                {
+                    conditions.Add("i.Name LIKE @Name");
+                    parameters.Add("Name", $"%{name}%");
+                }
+
+                if (categoryId.HasValue)
+                {
+                    conditions.Add("i.CategoryId = @CategoryId");
+                    parameters.Add("CategoryId", categoryId);
+                }
+
+                if (tags.Any())
+                {
+                    conditions.Add("t.Id IN @TagIds");
+                    parameters.Add("TagIds", tags);
+                }
             }
 
             if (conditions.Any())
@@ -113,21 +152,26 @@ namespace Point.API.Controllers
                 query += " WHERE " + string.Join(" AND ", conditions);
             }
 
-            var itemDictionary = new Dictionary<int, GetItemResponseDto>();
+            var itemDictionary = new Dictionary<int, GetItemUnitResponseDto>();
 
-            var items = await _pointDbConnection.QueryAsync<Item, Category, Tag, GetItemResponseDto>(
+            var itemUnits = await _pointDbConnection.QueryAsync<Item, Category, Tag, ItemUnit, Core.Domain.Entities.Unit, GetItemUnitResponseDto>(
                 query,
-                (item, category, itemTag) =>
+                (item, category, itemTag, itemUnit, unit) =>
                 {
                     if (!itemDictionary.TryGetValue(item.Id, out var itemEntry))
                     {
-                        itemEntry = new GetItemResponseDto
+                        itemEntry = new GetItemUnitResponseDto
                         {
                             Id = item.Id,
                             Name = item.Name,
                             Description = fields.Contains(ApiConstants.Items.Fields.Description, StringComparer.OrdinalIgnoreCase) ? item.Description : null,
                             Category = fields.Contains(ApiConstants.Items.Fields.Category, StringComparer.OrdinalIgnoreCase) && category?.Id > 0 ? category.Name : null,
-                            Tags = fields.Contains(ApiConstants.Items.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id != 0 ? [] : null
+                            Tags = fields.Contains(ApiConstants.Items.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id != 0 ? [] : null,
+                            Unit = unit?.Name,
+                            ItemCode = itemUnit?.ItemCode,
+                            RetailPrice = itemUnit?.RetailPrice,
+                            WholesalePrice = itemUnit?.WholesalePrice,
+                            PriceCode = itemUnit?.PriceCode
                         };
                         itemDictionary[item.Id] = itemEntry;
                     }
@@ -143,7 +187,9 @@ namespace Point.API.Controllers
                 splitOn: "Id"
             );
 
-            return Ok(items.Distinct().ToList());
+            return itemUnits.Distinct().ToList();
         }
+
+        #endregion
     }
 }
