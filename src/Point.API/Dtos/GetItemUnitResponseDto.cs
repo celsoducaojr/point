@@ -16,6 +16,5 @@
         public decimal WholesalePrice { get; set; }
         public string? PriceCode { get; set; }
         public string? Remarks { get; set; }
-        public bool? IsDeleted { get; set; }
     }
 }
