@@ -23,9 +23,9 @@ namespace Point.API.Startup.Versioning
         {
             var info = new OpenApiInfo()
             {
-                Title = "Oasis Web API",
+                Title = "Point Web API",
                 Version = description.ApiVersion.ToString(),
-                Description = "Travel and Tour Agency Web API"
+                Description = "POS API"
             };
 
             if (description.IsDeprecated)
