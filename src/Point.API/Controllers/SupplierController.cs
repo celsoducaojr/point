@@ -89,12 +89,12 @@ namespace Point.API.Controllers
                             Id = supplier.Id,
                             Name = supplier.Name,
                             Remarks = supplier.Remarks,
-                            Tags = supplierTag?.Id != 0 ? [] : null
+                            Tags = supplierTag?.Id > 0 ? [] : null
                         };
                         supplierDictionary[supplier.Id] = supplierEntry;
                     }
 
-                    if (supplierTag?.Id != 0)
+                    if (supplierTag?.Id > 0)
                     {
                         supplierEntry.Tags.Add(supplierTag.Name);
                     }

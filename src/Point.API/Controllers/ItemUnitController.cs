@@ -95,7 +95,7 @@ namespace Point.API.Controllers
             tags ??= [];
             fields ??= [];
 
-            if (fields.Except(ApiConstants.Items.QueryFields).ToList().Any())
+            if (fields.Except(ApiConstants.ItemUnit.Fields).ToList().Any())
             {
                 throw new DomainException("Invalid fields requested.");
             }
@@ -158,31 +158,31 @@ namespace Point.API.Controllers
                 query,
                 (item, category, itemTag, itemUnit, unit) =>
                 {
-                    if (!itemDictionary.TryGetValue(item.Id, out var itemEntry))
+                    if (!itemDictionary.TryGetValue(item.Id, out var itemUnitEntry))
                     {
-                        itemEntry = new GetItemUnitResponseDto
+                        itemUnitEntry = new GetItemUnitResponseDto
                         {
                             Id = item.Id,
                             Name = item.Name,
-                            Description = fields.Contains(ApiConstants.Items.Fields.Description, StringComparer.OrdinalIgnoreCase) ? item.Description : null,
-                            Category = fields.Contains(ApiConstants.Items.Fields.Category, StringComparer.OrdinalIgnoreCase) && category?.Id > 0 ? category.Name : null,
-                            Tags = fields.Contains(ApiConstants.Items.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id != 0 ? [] : null,
+                            Description = fields.Contains(ApiConstants.Fields.Description, StringComparer.OrdinalIgnoreCase) ? item.Description : null,
+                            Category = fields.Contains(ApiConstants.Fields.Category, StringComparer.OrdinalIgnoreCase) && category?.Id > 0 ? category.Name : null,
+                            Tags = fields.Contains(ApiConstants.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id > 0 ? [] : null,
                             Unit = unit.Name,
                             ItemCode = itemUnit.ItemCode,
                             RetailPrice = itemUnit.RetailPrice,
                             WholesalePrice = itemUnit.WholesalePrice,
                             PriceCode = itemUnit.PriceCode,
-                            Remarks = fields.Contains(ApiConstants.Items.Fields.Remarks, StringComparer.OrdinalIgnoreCase) ? itemUnit.Remarks : null
+                            Remarks = fields.Contains(ApiConstants.Fields.Remarks, StringComparer.OrdinalIgnoreCase) ? itemUnit.Remarks : null
                         };
-                        itemDictionary[item.Id] = itemEntry;
+                        itemDictionary[item.Id] = itemUnitEntry;
                     }
 
-                    if (fields.Contains(ApiConstants.Items.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id != 0)
+                    if (fields.Contains(ApiConstants.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id > 0)
                     {
-                        itemEntry.Tags.Add(itemTag.Name);
+                        itemUnitEntry.Tags.Add(itemTag.Name);
                     }
 
-                    return itemEntry;
+                    return itemUnitEntry;
                 },
                 parameters,
                 splitOn: "Id"
