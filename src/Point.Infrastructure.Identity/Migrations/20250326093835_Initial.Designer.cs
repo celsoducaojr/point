@@ -12,8 +12,8 @@ using Point.Infrastructure.Identity;
 namespace Point.Infrastructure.Identity.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20250212094621_initial")]
-    partial class initial
+    [Migration("20250326093835_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

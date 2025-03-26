@@ -12,6 +12,5 @@ namespace Point.Core.Domain.Entities
         public string? Description { get; set; }
         public int? CategoryId { get; set; }
         public List<ItemTag>? Tags { get; set; }
-        public List<ItemUnit>? Units { get; set; }
     }
 }

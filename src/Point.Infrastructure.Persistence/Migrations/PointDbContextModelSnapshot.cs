@@ -178,8 +178,6 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemId");
-
                     b.ToTable("ItemUnits");
                 });
 
@@ -290,15 +288,6 @@ namespace Point.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Point.Core.Domain.Entities.ItemUnit", b =>
-                {
-                    b.HasOne("Point.Core.Domain.Entities.Item", null)
-                        .WithMany("Units")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Point.Core.Domain.Entities.SupplierTag", b =>
                 {
                     b.HasOne("Point.Core.Domain.Entities.Supplier", null)
@@ -314,8 +303,6 @@ namespace Point.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Point.Core.Domain.Entities.Item", b =>
                 {
                     b.Navigation("Tags");
-
-                    b.Navigation("Units");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.ItemUnit", b =>

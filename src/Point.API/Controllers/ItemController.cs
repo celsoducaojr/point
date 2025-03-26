@@ -55,5 +55,11 @@ namespace Point.API.Controllers
 
             return Ok(itemUnit);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            return Ok(await _pointDbContext.Categories.ToListAsync());
+        }
     }
 }

@@ -31,6 +31,32 @@ namespace Point.Infrastructure.Persistence.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ItemUnits",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ItemId = table.Column<int>(type: "int", nullable: false),
+                    UnitId = table.Column<int>(type: "int", nullable: false),
+                    ItemCode = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    RetailPrice = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    WholesalePrice = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    PriceCode = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Remarks = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemUnits", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Items",
                 columns: table => new
                 {
@@ -100,6 +126,28 @@ namespace Point.Infrastructure.Persistence.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "CostReferences",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    InitialAmount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    FinalAmount = table.Column<decimal>(type: "decimal(65,30)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CostReferences", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CostReferences_ItemUnits_Id",
+                        column: x => x.Id,
+                        principalTable: "ItemUnits",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "ItemTags",
                 columns: table => new
                 {
@@ -113,38 +161,6 @@ namespace Point.Infrastructure.Persistence.Migrations
                     table.PrimaryKey("PK_ItemTags", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ItemTags_Items_ItemId",
-                        column: x => x.ItemId,
-                        principalTable: "Items",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "ItemUnits",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    ItemId = table.Column<int>(type: "int", nullable: false),
-                    UnitId = table.Column<int>(type: "int", nullable: false),
-                    ItemCode = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    RetailPrice = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    WholesalePrice = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    PriceCode = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Remarks = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ItemUnits", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ItemUnits_Items_ItemId",
                         column: x => x.ItemId,
                         principalTable: "Items",
                         principalColumn: "Id",
@@ -169,28 +185,6 @@ namespace Point.Infrastructure.Persistence.Migrations
                         column: x => x.SupplierId,
                         principalTable: "Suppliers",
                         principalColumn: "Id");
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "CostReferences",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    InitialAmount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    FinalAmount = table.Column<decimal>(type: "decimal(65,30)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CostReferences", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CostReferences_ItemUnits_Id",
-                        column: x => x.Id,
-                        principalTable: "ItemUnits",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -228,11 +222,6 @@ namespace Point.Infrastructure.Persistence.Migrations
                 column: "ItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemUnits_ItemId",
-                table: "ItemUnits",
-                column: "ItemId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_SupplierTags_SupplierId",
                 table: "SupplierTags",
                 column: "SupplierId");
@@ -263,13 +252,13 @@ namespace Point.Infrastructure.Persistence.Migrations
                 name: "CostReferences");
 
             migrationBuilder.DropTable(
+                name: "Items");
+
+            migrationBuilder.DropTable(
                 name: "Suppliers");
 
             migrationBuilder.DropTable(
                 name: "ItemUnits");
-
-            migrationBuilder.DropTable(
-                name: "Items");
         }
     }
 }

@@ -24,13 +24,9 @@ namespace Point.Infrastructure.Persistence
         {
             base.OnModelCreating(modelBuilder);
 
+            // Cascade delete
             modelBuilder.Entity<Item>()
                 .HasMany(i => i.Tags)
-                .WithOne()
-                .OnDelete(DeleteBehavior.Cascade); 
-
-            modelBuilder.Entity<Item>()
-                .HasMany(i => i.Units)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
 
