@@ -121,14 +121,14 @@ namespace Point.API.Controllers
                 conditions.Add("iu.Id = @Id");
                 parameters.Add("Id", id);
             }
-            else if (!string.IsNullOrEmpty(code))
+            else if (!string.IsNullOrWhiteSpace(code))
             {
                 conditions.Add("iu.ItemCode = @ItemCode");
                 parameters.Add("ItemCode", code);
             }
             else
             {
-                if (!string.IsNullOrEmpty(name))
+                if (!string.IsNullOrWhiteSpace(name))
                 {
                     conditions.Add("i.Name LIKE @Name");
                     parameters.Add("Name", $"%{name}%");

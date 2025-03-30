@@ -106,7 +106,7 @@ namespace Point.API.Controllers
             }
             else
             {
-                if (!string.IsNullOrEmpty(name))
+                if (!string.IsNullOrWhiteSpace(name))
                 {
                     conditions.Add("i.Name LIKE @Name");
                     parameters.Add("Name", $"%{name}%");
