@@ -63,10 +63,10 @@ namespace Point.API.Controllers
         public async Task<IActionResult> Search(
             [FromQuery] string? name,
             [FromQuery] int? categoryId,
-            [FromQuery] List<int>? tags,
+            [FromQuery] List<int>? tagIds,
             [FromQuery] List<string>? fields)
         {
-            return Ok(await LookupAsync(name: name, categoryId: categoryId, tags: tags, fields: fields));
+            return Ok(await LookupAsync(name: name, categoryId: categoryId, tagIds: tagIds, fields: fields));
         }
 
         #region Queries
@@ -75,11 +75,11 @@ namespace Point.API.Controllers
             int? id = null,
             string? name = null,
             int? categoryId = null,
-            List<int>? tags = null,
+            List<int>? tagIds = null,
             List<string>? fields = null)
         {
             name = name?.Trim();
-            tags ??= [];
+            tagIds ??= [];
             fields ??= [];
 
             if (fields.Except(ApiConstants.Item.Fields).ToList().Any())
@@ -118,10 +118,10 @@ namespace Point.API.Controllers
                     parameters.Add("CategoryId", categoryId);
                 }
 
-                if (tags.Any())
+                if (tagIds.Any())
                 {
                     conditions.Add("t.Id IN @TagIds");
-                    parameters.Add("TagIds", tags);
+                    parameters.Add("TagIds", tagIds);
                 }
             }
 
