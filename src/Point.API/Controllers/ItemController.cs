@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Point.API.Constants;
 using Point.API.Controllers.Base;
@@ -53,26 +54,39 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id, [FromQuery] List<string>? fields)
         {
-            var itemUnit = (await LookupAsync(id: id, fields: fields)).FirstOrDefault()
-                 ?? throw new NotFoundException("Item not found.");
+            //var itemUnit = (await LookupAsync(id: id, fields: fields)).FirstOrDefault()
+            //     ?? throw new NotFoundException("Item not found.");
 
-            return Ok(itemUnit);
+            //return Ok(itemUnit);
+
+            return Ok();
         }
 
         [HttpGet("search")]
         public async Task<IActionResult> Search(
-            [FromQuery] string? name,
-            [FromQuery] int? categoryId,
-            [FromQuery] List<int>? tagIds,
-            [FromQuery] List<string>? fields)
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 25,
+            [FromQuery] string? name = null,
+            [FromQuery] int? categoryId = null,
+            [FromQuery] List<int>? tagIds = null,
+            [FromQuery] List<string>? fields = null)
         {
-            return Ok(await LookupAsync(name: name, categoryId: categoryId, tagIds: tagIds, fields: fields));
+            var result = await LookupAsync(page: page, pageSize: pageSize, name: name, categoryId: categoryId, tagIds: tagIds, fields: fields);
+
+            return Ok(new {
+                data = result.Items,
+                totalCount = result.TotalCount,
+                page,
+                pageSize
+            });
         }
 
         #region Queries
 
-        private async Task<IEnumerable<GetItemResponseDto>> LookupAsync(
+        private async Task<(IEnumerable<GetItemResponseDto> Items, int TotalCount)> LookupAsync(
             int? id = null,
+            int page = 1,
+            int pageSize = 25,
             string? name = null,
             int? categoryId = null,
             List<int>? tagIds = null,
@@ -87,11 +101,16 @@ namespace Point.API.Controllers
                 throw new DomainException("Invalid fields requested.");
             }
 
-            var query = @"SELECT
+            var countQuery = @"SELECT COUNT(DISTINCT i.Id) FROM Items i";
+
+            var pageQuery = @"SELECT
                 i.Id, i.Name, i.Description,
                 c.Id, c.Name,
                 it.Id, t.Name
-                FROM Items i
+                FROM (SELECT Id FROM Items ORDER BY Name LIMIT @PageSize OFFSET @Offset) AS limitedIds
+                JOIN Items i ON i.Id = limitedIds.Id";
+
+            var filter = @"
                 LEFT JOIN Categories c ON i.CategoryId = c.Id
                 LEFT JOIN ItemTags it ON it.ItemId = i.Id
                 LEFT JOIN Tags t ON t.Id = it.TagId";
@@ -106,6 +125,9 @@ namespace Point.API.Controllers
             }
             else
             {
+                parameters.Add("Offset", (page - 1) * pageSize);
+                parameters.Add("PageSize", pageSize);
+
                 if (!string.IsNullOrWhiteSpace(name))
                 {
                     conditions.Add("i.Name LIKE @Name");
@@ -127,13 +149,19 @@ namespace Point.API.Controllers
 
             if (conditions.Any())
             {
-                query += " WHERE " + string.Join(" AND ", conditions);
+                filter += " WHERE " + string.Join(" AND ", conditions);
             }
+
+            countQuery += $" {filter};";
+
+            pageQuery += $" {filter};";
+
+            var totalCount = await _pointDbConnection.QuerySingleAsync<int>(countQuery, parameters);
 
             var itemDictionary = new Dictionary<int, GetItemResponseDto>();
 
             var itemUnits = await _pointDbConnection.QueryAsync<Item, Category, Tag, GetItemResponseDto>(
-                query,
+                pageQuery,
                 (item, category, itemTag) =>
                 {
                     if (!itemDictionary.TryGetValue(item.Id, out var itemEntry))
@@ -160,7 +188,7 @@ namespace Point.API.Controllers
                 splitOn: "Id"
             );
 
-            return itemUnits.Distinct().ToList();
+            return (itemUnits.Distinct().ToList(), totalCount);
         }
 
         #endregion
