@@ -51,14 +51,12 @@ namespace Point.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var query = @"SELECT
+            var query = $@"SELECT
                 i.Id, i.Name, i.Description,
                 c.Id, c.Name,
                 it.Id, t.Name
                 FROM Items i
-                LEFT JOIN Categories c ON i.CategoryId = c.Id
-                LEFT JOIN ItemTags it ON it.ItemId = i.Id
-                LEFT JOIN Tags t ON t.Id = it.TagId
+                {JoinQueryExpression}
                 WHERE i.Id = @Id";
 
             var parameters = new DynamicParameters();
@@ -93,8 +91,12 @@ namespace Point.API.Controllers
 
         #region Queries
 
+        private const string JoinQueryExpression = @"
+            LEFT JOIN Categories c ON i.CategoryId = c.Id
+            LEFT JOIN ItemTags it ON it.ItemId = i.Id
+            LEFT JOIN Tags t ON t.Id = it.TagId";
+
         private async Task<(IEnumerable<GetItemResponseDto> Items, int TotalCount)> LookupAsync(
-            int? id = null,
             int page = 1,
             int pageSize = 25,
             string? name = null,
@@ -116,66 +118,59 @@ namespace Point.API.Controllers
                 throw new DomainException("Invalid pagination requested.");
             }
 
-            var countQuery = @"SELECT COUNT(DISTINCT i.Id) FROM Items i";
-
-            var pageQuery = @"SELECT
-                i.Id, i.Name, i.Description,
-                c.Id, c.Name,
-                it.Id, t.Name
-                FROM (SELECT Id FROM Items ORDER BY Name LIMIT @PageSize OFFSET @Offset) AS limitedIds
-                JOIN Items i ON i.Id = limitedIds.Id";
-
-            var filter = @"
-                LEFT JOIN Categories c ON i.CategoryId = c.Id
-                LEFT JOIN ItemTags it ON it.ItemId = i.Id
-                LEFT JOIN Tags t ON t.Id = it.TagId";
+            var idsQuery = $@"
+                SELECT DISTINCT i.Id, i.Name 
+                FROM Items i
+                {JoinQueryExpression}";
 
             var conditions = new List<string>();
             var parameters = new DynamicParameters();
 
-            if (id.HasValue)
+            if (!string.IsNullOrWhiteSpace(name))
             {
-                conditions.Add("i.Id = @Id");
-                parameters.Add("Id", id);
+                conditions.Add("i.Name LIKE @Name");
+                parameters.Add("Name", $"%{name}%");
             }
-            else
+            if (categoryId.HasValue)
             {
-                parameters.Add("Offset", (page - 1) * pageSize);
-                parameters.Add("PageSize", pageSize);
-
-                if (!string.IsNullOrWhiteSpace(name))
-                {
-                    conditions.Add("i.Name LIKE @Name");
-                    parameters.Add("Name", $"%{name}%");
-                }
-
-                if (categoryId.HasValue)
-                {
-                    conditions.Add("i.CategoryId = @CategoryId");
-                    parameters.Add("CategoryId", categoryId);
-                }
-
-                if (tagIds.Any())
-                {
-                    conditions.Add("t.Id IN @TagIds");
-                    parameters.Add("TagIds", tagIds);
-                }
+                conditions.Add("i.CategoryId = @CategoryId");
+                parameters.Add("CategoryId", categoryId);
+            }
+            if (tagIds.Any())
+            {
+                conditions.Add("t.Id IN @TagIds");
+                parameters.Add("TagIds", tagIds);
             }
 
             if (conditions.Any())
             {
-                filter += " WHERE " + string.Join(" AND ", conditions);
+                idsQuery += " WHERE " + string.Join(" AND ", conditions);
             }
+            idsQuery += " ORDER BY i.Name";
 
-            countQuery += $" {filter};";
+            var ids = await _pointDbConnection.QueryAsync<int>(idsQuery, parameters);
 
-            pageQuery += $" {filter};";
+            var pageIds = ids
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
-            var totalCount = await _pointDbConnection.QuerySingleAsync<int>(countQuery, parameters);
+            parameters = new DynamicParameters();
+            parameters.Add("Ids", pageIds);
+
+            var pageQuery = $@"
+                SELECT
+                i.Id, i.Name, i.Description,
+                c.Id, c.Name,
+                it.Id, t.Name
+                FROM Items i
+                {JoinQueryExpression}
+                WHERE i.Id in @Ids
+                ORDER By i.Name";
 
             var items = await QueryItems(pageQuery, parameters, fields);
 
-            return (items, totalCount);
+            return (items, ids.Count());
         }
 
         private async Task<IEnumerable<GetItemResponseDto>> QueryItems(string query, DynamicParameters parameters, List<string> fields)
