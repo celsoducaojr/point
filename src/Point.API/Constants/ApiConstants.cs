@@ -2,7 +2,7 @@
 {
     public static class ApiConstants
     {
-        public static class Fields
+        public static class EntityFields
         {
             public const string Category = "category";
             public const string Cost = "cost";
@@ -11,26 +11,20 @@
             public const string Tags = "tags";
         }
 
-        public static class Item
-        {
-            public static List<string> Fields =
+        public static List<string> ItemFields =
             [
-                ApiConstants.Fields.Description,
-                ApiConstants.Fields.Category,
-                ApiConstants.Fields.Tags
+                EntityFields.Description,
+                EntityFields.Category,
+                EntityFields.Tags
             ];
-        }
 
-        public static class ItemUnit
-        {
-            public static List<string> Fields =
+        public static List<string> ItemUnitFields =
             [
-                ApiConstants.Fields.Category,
-                ApiConstants.Fields.Cost,
-                ApiConstants.Fields.Description,
-                ApiConstants.Fields.Remarks,
-                ApiConstants.Fields.Tags
+                EntityFields.Category,
+                EntityFields.Cost,
+                EntityFields.Description,
+                EntityFields.Remarks,
+                EntityFields.Tags
             ];
-        }
     }
 }

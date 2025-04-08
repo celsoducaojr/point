@@ -1,8 +1,7 @@
-﻿using Dapper;
+﻿using System.Data;
+using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Point.API.Constants;
 using Point.API.Controllers.Base;
 using Point.API.Dtos;
@@ -10,9 +9,7 @@ using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Application.Handlers;
 using Point.Core.Domain.Entities;
-using Point.Infrastructure.Persistence;
 using Point.Infrastructure.Persistence.Contracts;
-using System.Data;
 
 namespace Point.API.Controllers
 {
@@ -52,14 +49,27 @@ namespace Point.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id, [FromQuery] List<string>? fields)
+        public async Task<IActionResult> GetById(int id)
         {
-            //var itemUnit = (await LookupAsync(id: id, fields: fields)).FirstOrDefault()
-            //     ?? throw new NotFoundException("Item not found.");
+            var query = @"SELECT
+                i.Id, i.Name, i.Description,
+                c.Id, c.Name,
+                it.Id, t.Name
+                FROM Items i
+                LEFT JOIN Categories c ON i.CategoryId = c.Id
+                LEFT JOIN ItemTags it ON it.ItemId = i.Id
+                LEFT JOIN Tags t ON t.Id = it.TagId
+                WHERE i.Id = @Id";
 
-            //return Ok(itemUnit);
+            var parameters = new DynamicParameters();
+            parameters.Add("Id", id);
 
-            return Ok();
+            var fields = ApiConstants.ItemFields;
+
+            var item = (await QueryItems(query, parameters, fields)).FirstOrDefault()
+                 ?? throw new NotFoundException("Item not found.");
+
+            return Ok(item);
         }
 
         [HttpGet("search")]
@@ -96,9 +106,14 @@ namespace Point.API.Controllers
             tagIds ??= [];
             fields ??= [];
 
-            if (fields.Except(ApiConstants.Item.Fields).ToList().Any())
+            if (fields.Except(ApiConstants.ItemFields).ToList().Any())
             {
                 throw new DomainException("Invalid fields requested.");
+            }
+
+            if (page < 1 || pageSize < 1)
+            {
+                throw new DomainException("Invalid pagination requested.");
             }
 
             var countQuery = @"SELECT COUNT(DISTINCT i.Id) FROM Items i";
@@ -158,10 +173,16 @@ namespace Point.API.Controllers
 
             var totalCount = await _pointDbConnection.QuerySingleAsync<int>(countQuery, parameters);
 
-            var itemDictionary = new Dictionary<int, GetItemResponseDto>();
+            var items = await QueryItems(pageQuery, parameters, fields);
 
+            return (items, totalCount);
+        }
+
+        private async Task<IEnumerable<GetItemResponseDto>> QueryItems(string query, DynamicParameters parameters, List<string> fields)
+        {
+            var itemDictionary = new Dictionary<int, GetItemResponseDto>();
             var itemUnits = await _pointDbConnection.QueryAsync<Item, Category, Tag, GetItemResponseDto>(
-                pageQuery,
+                query,
                 (item, category, itemTag) =>
                 {
                     if (!itemDictionary.TryGetValue(item.Id, out var itemEntry))
@@ -170,14 +191,14 @@ namespace Point.API.Controllers
                         {
                             Id = item.Id,
                             Name = item.Name,
-                            Description = fields.Contains(ApiConstants.Fields.Description, StringComparer.OrdinalIgnoreCase) ? item.Description : null,
-                            Category = fields.Contains(ApiConstants.Fields.Category, StringComparer.OrdinalIgnoreCase) && category?.Id > 0 ? category : null,
-                            Tags = fields.Contains(ApiConstants.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id > 0 ? [] : null
+                            Description = fields.Contains(ApiConstants.EntityFields.Description, StringComparer.OrdinalIgnoreCase) ? item.Description : null,
+                            Category = fields.Contains(ApiConstants.EntityFields.Category, StringComparer.OrdinalIgnoreCase) && category?.Id > 0 ? category : null,
+                            Tags = fields.Contains(ApiConstants.EntityFields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id > 0 ? [] : null
                         };
                         itemDictionary[item.Id] = itemEntry;
                     }
 
-                    if (fields.Contains(ApiConstants.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id > 0)
+                    if (fields.Contains(ApiConstants.EntityFields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id > 0)
                     {
                         itemEntry.Tags.Add(itemTag);
                     }
@@ -188,7 +209,7 @@ namespace Point.API.Controllers
                 splitOn: "Id"
             );
 
-            return (itemUnits.Distinct().ToList(), totalCount);
+            return itemUnits.Distinct().ToList();
         }
 
         #endregion

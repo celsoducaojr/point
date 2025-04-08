@@ -95,7 +95,7 @@ namespace Point.API.Controllers
             tags ??= [];
             fields ??= [];
 
-            if (fields.Except(ApiConstants.ItemUnit.Fields).ToList().Any())
+            if (fields.Except(ApiConstants.ItemUnitFields).ToList().Any())
             {
                 throw new DomainException("Invalid fields requested.");
             }
@@ -164,20 +164,20 @@ namespace Point.API.Controllers
                         {
                             Id = item.Id,
                             Name = item.Name,
-                            Description = fields.Contains(ApiConstants.Fields.Description, StringComparer.OrdinalIgnoreCase) ? item.Description : null,
-                            Category = fields.Contains(ApiConstants.Fields.Category, StringComparer.OrdinalIgnoreCase) && category?.Id > 0 ? category.Name : null,
-                            Tags = fields.Contains(ApiConstants.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id > 0 ? [] : null,
+                            Description = fields.Contains(ApiConstants.EntityFields.Description, StringComparer.OrdinalIgnoreCase) ? item.Description : null,
+                            Category = fields.Contains(ApiConstants.EntityFields.Category, StringComparer.OrdinalIgnoreCase) && category?.Id > 0 ? category.Name : null,
+                            Tags = fields.Contains(ApiConstants.EntityFields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id > 0 ? [] : null,
                             Unit = unit.Name,
                             ItemCode = itemUnit.ItemCode,
                             RetailPrice = itemUnit.RetailPrice,
                             WholesalePrice = itemUnit.WholesalePrice,
                             PriceCode = itemUnit.PriceCode,
-                            Remarks = fields.Contains(ApiConstants.Fields.Remarks, StringComparer.OrdinalIgnoreCase) ? itemUnit.Remarks : null
+                            Remarks = fields.Contains(ApiConstants.EntityFields.Remarks, StringComparer.OrdinalIgnoreCase) ? itemUnit.Remarks : null
                         };
                         itemDictionary[item.Id] = itemUnitEntry;
                     }
 
-                    if (fields.Contains(ApiConstants.Fields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id > 0)
+                    if (fields.Contains(ApiConstants.EntityFields.Tags, StringComparer.OrdinalIgnoreCase) && itemTag?.Id > 0)
                     {
                         itemUnitEntry.Tags.Add(itemTag.Name);
                     }
