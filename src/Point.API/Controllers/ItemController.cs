@@ -56,7 +56,7 @@ namespace Point.API.Controllers
                 c.Id, c.Name,
                 it.Id, t.Name
                 FROM Items i
-                {JoinQueryExpression}
+                {_joinQueryExpression}
                 WHERE i.Id = @Id";
 
             var parameters = new DynamicParameters();
@@ -64,7 +64,7 @@ namespace Point.API.Controllers
 
             var fields = ApiConstants.ItemFields;
 
-            var item = (await QueryItems(query, parameters, fields)).FirstOrDefault()
+            var item = (await LookupAsync(query, parameters, fields)).FirstOrDefault()
                  ?? throw new NotFoundException("Item not found.");
 
             return Ok(item);
@@ -78,31 +78,6 @@ namespace Point.API.Controllers
             [FromQuery] int? categoryId = null,
             [FromQuery] List<int>? tagIds = null,
             [FromQuery] List<string>? fields = null)
-        {
-            var result = await LookupAsync(page: page, pageSize: pageSize, name: name, categoryId: categoryId, tagIds: tagIds, fields: fields);
-
-            return Ok(new {
-                data = result.Items,
-                totalCount = result.TotalCount,
-                page,
-                pageSize
-            });
-        }
-
-        #region Queries
-
-        private const string JoinQueryExpression = @"
-            LEFT JOIN Categories c ON i.CategoryId = c.Id
-            LEFT JOIN ItemTags it ON it.ItemId = i.Id
-            LEFT JOIN Tags t ON t.Id = it.TagId";
-
-        private async Task<(IEnumerable<GetItemResponseDto> Items, int TotalCount)> LookupAsync(
-            int page = 1,
-            int pageSize = 25,
-            string? name = null,
-            int? categoryId = null,
-            List<int>? tagIds = null,
-            List<string>? fields = null)
         {
             name = name?.Trim();
             tagIds ??= [];
@@ -121,7 +96,7 @@ namespace Point.API.Controllers
             var idsQuery = $@"
                 SELECT DISTINCT i.Id, i.Name 
                 FROM Items i
-                {JoinQueryExpression}";
+                {_joinQueryExpression}";
 
             var conditions = new List<string>();
             var parameters = new DynamicParameters();
@@ -142,12 +117,14 @@ namespace Point.API.Controllers
                 parameters.Add("TagIds", tagIds);
             }
 
+            // Add search criteria
             if (conditions.Any())
             {
                 idsQuery += " WHERE " + string.Join(" AND ", conditions);
             }
             idsQuery += " ORDER BY i.Name";
 
+            // Execute Ids query
             var ids = await _pointDbConnection.QueryAsync<int>(idsQuery, parameters);
 
             var pageIds = ids
@@ -164,16 +141,29 @@ namespace Point.API.Controllers
                 c.Id, c.Name,
                 it.Id, t.Name
                 FROM Items i
-                {JoinQueryExpression}
+                {_joinQueryExpression}
                 WHERE i.Id in @Ids
                 ORDER By i.Name";
 
-            var items = await QueryItems(pageQuery, parameters, fields);
+            // Execute page query
+            var items = await LookupAsync(pageQuery, parameters, fields);
 
-            return (items, ids.Count());
+            return Ok(new {
+                data = items,
+                totalCount = ids.Count(),
+                page,
+                pageSize
+            });
         }
 
-        private async Task<IEnumerable<GetItemResponseDto>> QueryItems(string query, DynamicParameters parameters, List<string> fields)
+        #region Queries
+
+        private const string _joinQueryExpression = @"
+            LEFT JOIN Categories c ON i.CategoryId = c.Id
+            LEFT JOIN ItemTags it ON it.ItemId = i.Id
+            LEFT JOIN Tags t ON t.Id = it.TagId";
+
+        private async Task<IEnumerable<GetItemResponseDto>> LookupAsync(string query, DynamicParameters parameters, List<string> fields)
         {
             var itemDictionary = new Dictionary<int, GetItemResponseDto>();
             var itemUnits = await _pointDbConnection.QueryAsync<Item, Category, Tag, GetItemResponseDto>(
