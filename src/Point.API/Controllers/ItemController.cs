@@ -139,7 +139,7 @@ namespace Point.API.Controllers
                 SELECT
                 i.Id, i.Name, i.Description,
                 c.Id, c.Name,
-                it.Id, t.Name
+                t.Id, t.Name
                 FROM Items i
                 {_joinQueryExpression}
                 WHERE i.Id in @Ids
