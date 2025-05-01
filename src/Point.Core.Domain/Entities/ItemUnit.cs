@@ -11,9 +11,8 @@ namespace Point.Core.Domain.Entities
         public int ItemId { get; set; }
         public int UnitId { get; set; }
         public string? ItemCode { get; set; }
-        public decimal RetailPrice { get; set; }
-        public decimal WholesalePrice { get; set; }
         public string? PriceCode { get; set; }
+        public List<Price>? Prices { get; set; }
         public string? Remarks { get; set; }
         public CostReference? CostReference { get; set; }
         public bool IsDeleted { get; set; }

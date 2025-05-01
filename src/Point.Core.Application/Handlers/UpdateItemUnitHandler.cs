@@ -42,8 +42,6 @@ namespace Point.Core.Application.Handlers
             itemUnit.ItemId = request.ItemId;
             itemUnit.UnitId = request.UnitId;
             itemUnit.ItemCode = request.ItemCode;
-            itemUnit.RetailPrice = request.RetailPrice;
-            itemUnit.WholesalePrice = request.WholeSalePrice;
             itemUnit.PriceCode = request.PriceCode;
             itemUnit.Remarks = request.Remarks;
 
