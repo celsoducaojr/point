@@ -8,6 +8,7 @@ namespace Point.Core.Application.Contracts
     {
         DbSet<Tag> Tags { get; }
         DbSet<Unit> Units { get; }
+        DbSet<PriceType> PriceTypes { get; }
         DbSet<Category> Categories { get; }
         DbSet<Supplier> Suppliers { get; }
         DbSet<SupplierTag> SupplierTags { get; }

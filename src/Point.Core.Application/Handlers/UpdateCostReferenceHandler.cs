@@ -17,6 +17,7 @@ namespace Point.Core.Application.Handlers
         decimal? Amount,
         decimal? Percentage,
         string? Remarks);
+
     public class UpdateCostReferenceHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateCostReferenceRequest, MediatR.Unit>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;

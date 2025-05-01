@@ -12,7 +12,7 @@ using Point.Infrastructure.Persistence;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PointDbContext))]
-    [Migration("20250326093700_Initial")]
+    [Migration("20250501102946_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -170,18 +170,53 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.Property<string>("Remarks")
                         .HasColumnType("longtext");
 
-                    b.Property<decimal>("RetailPrice")
-                        .HasColumnType("decimal(65,30)");
-
                     b.Property<int>("UnitId")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("WholesalePrice")
-                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
 
                     b.ToTable("ItemUnits");
+                });
+
+            modelBuilder.Entity("Point.Core.Domain.Entities.Price", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int?>("ItemUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PriceTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemUnitId");
+
+                    b.ToTable("Price");
+                });
+
+            modelBuilder.Entity("Point.Core.Domain.Entities.PriceType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PriceTypes");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Supplier", b =>
@@ -291,6 +326,13 @@ namespace Point.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Point.Core.Domain.Entities.Price", b =>
+                {
+                    b.HasOne("Point.Core.Domain.Entities.ItemUnit", null)
+                        .WithMany("Prices")
+                        .HasForeignKey("ItemUnitId");
+                });
+
             modelBuilder.Entity("Point.Core.Domain.Entities.SupplierTag", b =>
                 {
                     b.HasOne("Point.Core.Domain.Entities.Supplier", null)
@@ -311,6 +353,8 @@ namespace Point.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Point.Core.Domain.Entities.ItemUnit", b =>
                 {
                     b.Navigation("CostReference");
+
+                    b.Navigation("Prices");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Supplier", b =>

@@ -12,8 +12,8 @@ using Point.Infrastructure.Persistence;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PointDbContext))]
-    [Migration("20250501090732_ItemUnitPrice")]
-    partial class ItemUnitPrice
+    [Migration("20250501103101_PriceTypeDisplayIndex")]
+    partial class PriceTypeDisplayIndex
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -200,6 +200,26 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.HasIndex("ItemUnitId");
 
                     b.ToTable("Price");
+                });
+
+            modelBuilder.Entity("Point.Core.Domain.Entities.PriceType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DisplayIndex")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PriceTypes");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Supplier", b =>

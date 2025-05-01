@@ -23,13 +23,13 @@ namespace Point.API.Controllers
         private readonly IPointDbContext _pointDbContext = pointDbContext;
         private readonly IDbConnection _pointDbConnection = pointDbConnection.Connection;
 
-        //[HttpPost]
-        //public async Task<IActionResult> Add([FromBody] CreateItemUnitRequest request)
-        //{
-        //    var id = await _mediator.Send(request);
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] CreateItemUnitRequest request)
+        {
+            var id = await _mediator.Send(request);
 
-        //    return CreatedAtAction(nameof(GetById), new { id }, new { id });
-        //}
+            return CreatedAtAction(nameof(GetById), new { id }, new { id });
+        }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateItemUnitDto dto)
@@ -50,30 +50,30 @@ namespace Point.API.Controllers
             return NoContent();
         }
 
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetById(int id)
-        //{
-        //    var query = $@"
-        //        SELECT
-        //        i.Id, i.Name, i.Description,
-        //        c.Id, c.Name,
-        //        it.Id, t.Name,
-        //        iu.Id, iu.UnitId, iu.ItemCode, iu.RetailPrice, iu.WholesalePrice, iu.PriceCode, iu.Remarks,
-        //        u.Id, u.Name
-        //        FROM Items i
-        //        {_joinQueryExpression}
-        //        WHERE iu.Id = @Id";
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            //var query = $@"
+            //    SELECT
+            //    i.Id, i.Name, i.Description,
+            //    c.Id, c.Name,
+            //    it.Id, t.Name,
+            //    iu.Id, iu.UnitId, iu.ItemCode, iu.RetailPrice, iu.WholesalePrice, iu.PriceCode, iu.Remarks,
+            //    u.Id, u.Name
+            //    FROM Items i
+            //    {_joinQueryExpression}
+            //    WHERE iu.Id = @Id";
 
-        //    var parameters = new DynamicParameters();
-        //    parameters.Add("Id", id);
+            //var parameters = new DynamicParameters();
+            //parameters.Add("Id", id);
 
-        //    var fields = ApiConstants.ItemUnitFields;
+            //var fields = ApiConstants.ItemUnitFields;
 
-        //    var itemUnit = (await LookupAsync(query, parameters, fields)).FirstOrDefault()
-        //         ?? throw new NotFoundException("Item Unit not found.");
+            //var itemUnit = (await LookupAsync(query, parameters, fields)).FirstOrDefault()
+            //     ?? throw new NotFoundException("Item Unit not found.");
 
-        //    return Ok(itemUnit);
-        //}
+            return Ok(new ItemUnit());
+        }
 
         //[HttpGet("code/{code}")]
         //public async Task<IActionResult> GetByCode(string code)

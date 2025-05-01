@@ -12,6 +12,7 @@ namespace Point.Infrastructure.Persistence
     {
         public DbSet<Tag> Tags => Set<Tag>();
         public DbSet<Unit> Units => Set<Unit>();
+        public DbSet<PriceType> PriceTypes => Set<PriceType>();
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<Supplier> Suppliers => Set<Supplier>();
         public DbSet<SupplierTag> SupplierTags => Set<SupplierTag>();

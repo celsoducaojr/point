@@ -13,7 +13,6 @@ namespace Point.Core.Domain.Entities
         public string? ItemCode { get; set; }
         public string? PriceCode { get; set; }
         public List<Price>? Prices { get; set; }
-        public string? Remarks { get; set; }
         public CostReference? CostReference { get; set; }
         public bool IsDeleted { get; set; }
     }

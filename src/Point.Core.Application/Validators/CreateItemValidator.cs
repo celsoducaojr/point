@@ -14,6 +14,16 @@ namespace Point.Core.Application.Validators
             RuleFor(x => x.Description)
                 .MaximumLength(250)
                 .When(x => x.Description != null);
+
+            RuleFor(x => x.Tags)
+                .Must(HasUniqueTags)
+                .When(x => x.Tags?.Count > 0)
+                .WithMessage("'Tags' must be unique.");
+        }
+
+        private bool HasUniqueTags(List<int>? tags)
+        {
+            return tags.Count == tags.Distinct().Count();
         }
     }
 }

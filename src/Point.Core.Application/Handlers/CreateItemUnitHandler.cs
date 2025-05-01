@@ -10,11 +10,15 @@ namespace Point.Core.Application.Handlers
         int ItemId,
         int UnitId,
         string? ItemCode,
-        decimal RetailPrice,
-        decimal WholeSalePrice,
         string? PriceCode,
+        List<CreatePriceRequest>? Prices,
         string? Remarks)
         : IRequest<int>;
+
+    public sealed record CreatePriceRequest(
+        int PriceTypeId,
+        int Amount);
+
     public class CreateItemUnitHandler(IPointDbContext pointDbContext) : IRequestHandler<CreateItemUnitRequest, int>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
@@ -36,13 +40,28 @@ namespace Point.Core.Application.Handlers
                 throw new DomainException("Item Unit already exist.");
             }
 
+            if (request.Prices?.Count > 0)
+            {
+                var ids = request.Prices.Select(p => p.PriceTypeId).ToList();
+                var types = await _pointDbContext.PriceTypes
+                .Where(t => ids.Contains(t.Id))
+                .Select(t => t.Id)
+                .ToListAsync(cancellationToken);
+
+                var missingTags = ids.Except(types).ToList();
+                if (missingTags.Any())
+                {
+                    throw new NotFoundException($"Price Type(s) not found: {string.Join(", ", missingTags)}");
+                }
+            }
+
             var itemUnit = new ItemUnit 
             {
                 ItemId = request.ItemId,
                 UnitId = request.UnitId,
                 ItemCode = request.ItemCode,
                 PriceCode = request.PriceCode,
-                Remarks = request.Remarks
+                Prices = request.Prices?.Select(price => new Price { Amount = price.Amount, PriceTypeId = price.PriceTypeId}).ToList()
             };
 
             _pointDbContext.ItemUnits.Add(itemUnit);

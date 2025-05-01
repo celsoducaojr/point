@@ -43,7 +43,6 @@ namespace Point.Core.Application.Handlers
             itemUnit.UnitId = request.UnitId;
             itemUnit.ItemCode = request.ItemCode;
             itemUnit.PriceCode = request.PriceCode;
-            itemUnit.Remarks = request.Remarks;
 
             _pointDbContext.ItemUnits.Update(itemUnit);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
