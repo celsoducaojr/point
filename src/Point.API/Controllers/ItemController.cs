@@ -32,10 +32,10 @@ namespace Point.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateItemDto dto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateItemDto updateItemDto)
         {
             await _mediator.Send(new UpdateItemRequest(
-                id, dto.Name, dto.Description, dto.CategoryId, dto.Tags));
+                id, updateItemDto.Name, updateItemDto.Description, updateItemDto.CategoryId, updateItemDto.Tags));
 
             return NoContent();
         }

@@ -9,6 +9,7 @@ namespace Point.Core.Application.Handlers
         int Id,
         string Name)
         : IRequest<Unit>;
+
     public class UpdateCategoryHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateCategoryRequest, Unit>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
