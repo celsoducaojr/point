@@ -7,8 +7,7 @@ using Point.Core.Domain.Entities;
 namespace Point.Core.Application.Handlers
 {
     public sealed record CreatePriceTypeRequest(
-        string Name,
-        int DisplayIndex)
+        string Name)
         : IRequest<int>;
 
     public class CreatePriceTypeHandler(IPointDbContext pointDbContext) : IRequestHandler<CreatePriceTypeRequest, int>
@@ -24,8 +23,7 @@ namespace Point.Core.Application.Handlers
 
             var priceType = new PriceType
             {
-                Name = request.Name,
-                DisplayIndex = request.DisplayIndex
+                Name = request.Name
             };
 
             _pointDbContext.PriceTypes.Add(priceType);

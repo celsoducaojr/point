@@ -10,9 +10,6 @@ namespace Point.Core.Application.Validators
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .MaximumLength(30);
-
-            RuleFor(x => x.DisplayIndex)
-                .GreaterThan(0);
         }
     }
 }

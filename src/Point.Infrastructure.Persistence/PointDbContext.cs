@@ -1,9 +1,8 @@
-﻿using Google.Protobuf.Reflection;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Domain.Contracts.Entities;
 using Point.Core.Domain.Entities;
-using Point.Order.Core.Domain.Entities;
+using Point.Infrastructure.Persistence.Migrations;
 
 namespace Point.Infrastructure.Persistence
 {
@@ -19,6 +18,7 @@ namespace Point.Infrastructure.Persistence
         public DbSet<Item> Items => Set<Item>();
         public DbSet<ItemTag> ItemTags => Set<ItemTag>();
         public DbSet<ItemUnit> ItemUnits => Set<ItemUnit>();
+        public DbSet<Price> Prices => Set<Price>();
         public DbSet<CostReference> CostReferences => Set<CostReference>();
         public DbSet<DiscountVariation> DiscountVariations => Set<DiscountVariation>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)

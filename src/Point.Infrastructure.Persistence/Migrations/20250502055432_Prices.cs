@@ -5,25 +5,25 @@
 namespace Point.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class ItemUnit : Migration
+    public partial class Prices : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Remarks",
-                table: "ItemUnits");
+                name: "DisplayIndex",
+                table: "PriceTypes");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "Remarks",
-                table: "ItemUnits",
-                type: "longtext",
-                nullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4");
+            migrationBuilder.AddColumn<int>(
+                name: "DisplayIndex",
+                table: "PriceTypes",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
         }
     }
 }

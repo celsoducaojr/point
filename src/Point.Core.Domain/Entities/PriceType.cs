@@ -6,6 +6,5 @@ namespace Point.Core.Domain.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int DisplayIndex { get; set; }
     }
 }
