@@ -31,6 +31,14 @@ namespace Point.API.Controllers
             return NoContent();
         }
 
+        [HttpPut("indexes")]
+        public async Task<IActionResult> UpdateDisplayIndexes([FromBody] Dictionary<int, int> priceTypeIndexes)
+        {
+            await _mediator.Send(new UpdatePriceTypeDisplayIndexRequest(priceTypeIndexes));
+
+            return NoContent();
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
