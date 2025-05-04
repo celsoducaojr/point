@@ -2,7 +2,6 @@
 using Point.Core.Application.Contracts;
 using Point.Core.Domain.Contracts.Entities;
 using Point.Core.Domain.Entities;
-using Point.Infrastructure.Persistence.Migrations;
 
 namespace Point.Infrastructure.Persistence
 {
