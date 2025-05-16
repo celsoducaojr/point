@@ -196,7 +196,9 @@ namespace Point.API.Controllers
                 splitOn: "Id"
             );
 
-            var unitQuery = $@"
+            if (fields.Contains(ApiConstants.EntityFields.Units, StringComparer.OrdinalIgnoreCase))
+            {
+                var unitQuery = $@"
                 SELECT
                 iu.Id, iu.ItemId, iu.ItemCode, iu.PriceCode,
                 u.Id, u.Name,
@@ -208,43 +210,44 @@ namespace Point.API.Controllers
                 LEFT JOIN PriceTypes pt on pt.Id = p.PriceTypeId
                 WHERE iu.ItemId in @Ids";
 
-            var unitDictionary = new Dictionary<int, GetItemUnitResponseDto>();
-            var itemUnits = await _pointDbConnection.QueryAsync<ItemUnit, Core.Domain.Entities.Unit, Price, PriceType, GetItemUnitResponseDto>(
-                unitQuery,
-                (itemUnit, unit, price, priceType) =>
-                {
-                    if (!unitDictionary.TryGetValue(itemUnit.Id, out var unitEntry))
+                var unitDictionary = new Dictionary<int, GetItemUnitResponseDto>();
+                var itemUnits = await _pointDbConnection.QueryAsync<ItemUnit, Core.Domain.Entities.Unit, Price, PriceType, GetItemUnitResponseDto>(
+                    unitQuery,
+                    (itemUnit, unit, price, priceType) =>
                     {
-                        unitEntry = new GetItemUnitResponseDto
+                        if (!unitDictionary.TryGetValue(itemUnit.Id, out var unitEntry))
                         {
-                            Id = itemUnit.Id,
-                            Unit = unit?.Id > 0 ? unit : null,
-                            ItemCode = itemUnit.ItemCode,
-                            PriceCode = itemUnit.PriceCode,
-                            Prices = price?.Id > 0 ? [] : null
-                        };
-                        unitDictionary[itemUnit.Id] = unitEntry;
-                        itemDictionary[itemUnit.ItemId].AddUnit(unitEntry);
-                    }
-
-                    if (price?.Id > 0)
-                    {
-                        unitEntry.Prices.Add(new GetPriceResponseDto
-                        {
-                            PriceType = new PriceType
+                            unitEntry = new GetItemUnitResponseDto
                             {
-                                Id = priceType.Id,
-                                Name = priceType.Name
-                            },
-                            Amount = price.Amount
-                        });
-                    }
+                                Id = itemUnit.Id,
+                                Unit = unit?.Id > 0 ? unit : null,
+                                ItemCode = itemUnit.ItemCode,
+                                PriceCode = itemUnit.PriceCode,
+                                Prices = price?.Id > 0 ? [] : null
+                            };
+                            unitDictionary[itemUnit.Id] = unitEntry;
+                            itemDictionary[itemUnit.ItemId].AddUnit(unitEntry);
+                        }
 
-                    return unitEntry;
-                },
-                parameters,
-                splitOn: "Id"
-            );
+                        if (price?.Id > 0)
+                        {
+                            unitEntry.Prices.Add(new GetPriceResponseDto
+                            {
+                                PriceType = new PriceType
+                                {
+                                    Id = priceType.Id,
+                                    Name = priceType.Name
+                                },
+                                Amount = price.Amount
+                            });
+                        }
+
+                        return unitEntry;
+                    },
+                    parameters,
+                    splitOn: "Id"
+                );
+            }
 
             return items.Distinct().ToList();
         }
