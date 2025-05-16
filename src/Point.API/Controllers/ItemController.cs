@@ -233,7 +233,7 @@ namespace Point.API.Controllers
                         {
                             unitEntry.Prices.Add(new GetPriceResponseDto
                             {
-                                PriceType = new PriceType
+                                PriceType = new GetPriceTypeResponseDto
                                 {
                                     Id = priceType.Id,
                                     Name = priceType.Name

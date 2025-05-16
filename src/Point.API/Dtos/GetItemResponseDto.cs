@@ -30,8 +30,13 @@ namespace Point.API.Dtos
 
     public sealed class  GetPriceResponseDto
     {
-        public PriceType PriceType { get; init; }
+        public GetPriceTypeResponseDto PriceType { get; init; }
         public decimal Amount { get; init; }
     }
 
+    public sealed class GetPriceTypeResponseDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 }
