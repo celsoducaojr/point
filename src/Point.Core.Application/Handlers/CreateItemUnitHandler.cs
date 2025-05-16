@@ -11,8 +11,7 @@ namespace Point.Core.Application.Handlers
         int UnitId,
         string? ItemCode,
         string? PriceCode,
-        List<CreatePriceRequest>? Prices,
-        string? Remarks)
+        List<CreatePriceRequest>? Prices)
         : IRequest<int>;
 
     public sealed record CreatePriceRequest(

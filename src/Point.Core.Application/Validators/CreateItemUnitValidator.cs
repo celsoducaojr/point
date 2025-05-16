@@ -28,10 +28,6 @@ namespace Point.Core.Application.Validators
                 .Must(HasUniquePriceTypes)
                 .When(x => x.Prices?.Count > 0)
                 .WithMessage("'Prices' must be unique.");
-
-            RuleFor(x => x.Remarks)
-                .MaximumLength(250)
-                .When(x => x.Remarks != null);
         }
 
         private bool HasUniquePriceTypes(List<CreatePriceRequest>? price)
