@@ -16,7 +16,7 @@ namespace Point.Core.Application.Handlers
 
     public sealed record CreatePriceRequest(
         int PriceTypeId,
-        int Amount);
+        decimal Amount);
 
     public class CreateItemUnitHandler(IPointDbContext pointDbContext) : IRequestHandler<CreateItemUnitRequest, int>
     {
@@ -36,7 +36,7 @@ namespace Point.Core.Application.Handlers
 
             if (await _pointDbContext.ItemUnits.AnyAsync(i => i.ItemId == request.ItemId && i.UnitId == request.UnitId, cancellationToken))
             {
-                throw new DomainException("Item Unit already exist.");
+                throw new DomainException("Item-unit already exist.");
             }
 
             if (request.Prices?.Count > 0)
@@ -60,7 +60,12 @@ namespace Point.Core.Application.Handlers
                 UnitId = request.UnitId,
                 ItemCode = request.ItemCode,
                 PriceCode = request.PriceCode,
-                Prices = request.Prices?.Select(price => new Price { Amount = price.Amount, PriceTypeId = price.PriceTypeId}).ToList()
+                Prices = request.Prices?.Select(price => 
+                    new Price 
+                    {
+                        Amount = price.Amount, 
+                        PriceTypeId = price.PriceTypeId})
+                    .ToList()
             };
 
             _pointDbContext.ItemUnits.Add(itemUnit);

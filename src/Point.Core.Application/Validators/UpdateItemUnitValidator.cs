@@ -11,19 +11,27 @@ namespace Point.Core.Application.Validators
                 .MaximumLength(50)
                 .When(x => x.ItemCode != null);
 
-            RuleFor(x => x.RetailPrice)
-                .GreaterThan(0);
-
-            RuleFor(x => x.WholeSalePrice)
-                .GreaterThan(0);
-
             RuleFor(x => x.PriceCode)
                 .MaximumLength(50)
                 .When(x => x.PriceCode != null);
 
-            RuleFor(x => x.Remarks)
-                .MaximumLength(250)
-                .When(x => x.Remarks != null);
+            RuleForEach(x => x.Prices)
+               .ChildRules(price =>
+               {
+                   price.RuleFor(x => x.Amount)
+                       .GreaterThanOrEqualTo(0);
+               })
+               .When(x => x.Prices?.Count > 0);
+
+            RuleFor(x => x.Prices)
+                .Must(HasUniquePriceTypes)
+                .When(x => x.Prices?.Count > 0)
+                .WithMessage("'Prices' must be unique.");
+        }
+
+        private bool HasUniquePriceTypes(List<CreatePriceRequest>? price)
+        {
+            return price?.Select(i => i.PriceTypeId).Distinct().Count() == price.Count;
         }
     }
 }

@@ -48,7 +48,7 @@ namespace Point.Core.Application.Handlers
                 throw new DomainException("Item already exist.");
             }
 
-            if (item.Tags.Count > 0)
+            if (item.Tags?.Count > 0)
             {
                 _pointDbContext.ItemTags.RemoveRange(item.Tags);
             }

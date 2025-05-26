@@ -10,10 +10,8 @@ namespace Point.Core.Application.Handlers
         int ItemId,
         int UnitId,
         string? ItemCode,
-        decimal RetailPrice,
-        decimal WholeSalePrice,
         string? PriceCode,
-        string? Remarks)
+        List<CreatePriceRequest>? Prices)
         : IRequest<Unit>;
     public class UpdateItemUnitHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateItemUnitRequest, Unit>
     {
@@ -21,8 +19,9 @@ namespace Point.Core.Application.Handlers
 
         public async Task<Unit> Handle(UpdateItemUnitRequest request, CancellationToken cancellationToken)
         {
-            var itemUnit = (await _pointDbContext.ItemUnits.FindAsync(request.Id, cancellationToken))
-                           ?? throw new NotFoundException("Item Unit not found.");
+            var unit = (await _pointDbContext.ItemUnits
+                    .Include(unit => unit.Prices).FirstOrDefaultAsync(unit => unit.Id == request.Id, cancellationToken))
+                           ?? throw new NotFoundException($"Item-unit not found.");
 
             if (await _pointDbContext.Items.FindAsync(request.ItemId, cancellationToken) == null)
             {
@@ -36,15 +35,26 @@ namespace Point.Core.Application.Handlers
 
             if (await _pointDbContext.ItemUnits.AnyAsync(i => i.Id != request.Id && i.ItemId == request.ItemId && i.UnitId == request.UnitId, cancellationToken))
             {
-                throw new DomainException("Item Unit already exist.");
+                throw new DomainException("Item-unit already exist.");
             }
 
-            itemUnit.ItemId = request.ItemId;
-            itemUnit.UnitId = request.UnitId;
-            itemUnit.ItemCode = request.ItemCode;
-            itemUnit.PriceCode = request.PriceCode;
+            if (unit.Prices?.Count > 0)
+            {
+                _pointDbContext.Prices.RemoveRange(unit.Prices);
+            }
 
-            _pointDbContext.ItemUnits.Update(itemUnit);
+            unit.ItemId = request.ItemId;
+            unit.UnitId = request.UnitId;
+            unit.ItemCode = request.ItemCode;
+            unit.PriceCode = request.PriceCode;
+            unit.Prices = request.Prices?.Select(price => 
+                new Domain.Entities.Price 
+                { 
+                    Amount = price.Amount, 
+                    PriceTypeId = price.PriceTypeId })
+                .ToList();
+
+            _pointDbContext.ItemUnits.Update(unit);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

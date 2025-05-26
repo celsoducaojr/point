@@ -15,6 +15,7 @@ namespace Point.Core.Application.Contracts
         DbSet<Item> Items { get; }
         DbSet<ItemTag> ItemTags { get; }
         DbSet<ItemUnit> ItemUnits { get; }
+        DbSet<Price> Prices { get; }
         DbSet<CostReference> CostReferences { get; }
         DbSet<DiscountVariation> DiscountVariations { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
