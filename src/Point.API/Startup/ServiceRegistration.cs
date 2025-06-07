@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Point.API.Constants;
 using Point.API.Conventions;
+using Point.Core.Domain.Services;
 using Point.Infrastructure.Identity;
 using Point.Infrastructure.Identity.Domain.Entities;
 using Point.Infrastructure.Persistence;
@@ -30,6 +31,9 @@ namespace Point.API.Startup
             {
                 options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
+
+            // Services
+            services.AddTransient<IOrderService, OrderService>();
 
             // Handlers
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
