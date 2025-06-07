@@ -1,7 +1,7 @@
 ﻿using Point.Core.Domain.Contracts.Entities;
-using Point.Core.Domain.Entities.Enums;
+using Point.Core.Domain.Enums;
 
-namespace Point.Core.Domain.Entities
+namespace Point.Core.Domain.Entities.Orders
 {
     public class Payment : IEntities, IAuditable
     {

@@ -10,7 +10,7 @@ namespace Point.Core.Application.Handlers
         int ItemId,
         int UnitId,
         string? ItemCode,
-        string? PriceCode,
+        string? CostPriceCode,
         List<CreatePriceRequest>? Prices)
         : IRequest<Unit>;
     public class UpdateItemUnitHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateItemUnitRequest, Unit>
@@ -46,7 +46,7 @@ namespace Point.Core.Application.Handlers
             unit.ItemId = request.ItemId;
             unit.UnitId = request.UnitId;
             unit.ItemCode = request.ItemCode;
-            unit.PriceCode = request.PriceCode;
+            unit.CostPriceCode = request.CostPriceCode;
             unit.Prices = request.Prices?.Select(price => 
                 new Domain.Entities.Price 
                 { 

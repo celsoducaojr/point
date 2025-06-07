@@ -1,6 +1,6 @@
 ﻿using Point.Core.Domain.Contracts.Entities;
 
-namespace Point.Core.Domain.Entities
+namespace Point.Core.Domain.Entities.Orders
 {
     public class Customer : IEntities, IAuditable
     {
@@ -8,7 +8,6 @@ namespace Point.Core.Domain.Entities
         public DateTime Created { get; set; }
         public DateTime LastModified { get; set; }
 
-        public string FullName { get; set; }
-        public string? Mobile { get; set; }
+        public string Name { get; set; }
     }
 }

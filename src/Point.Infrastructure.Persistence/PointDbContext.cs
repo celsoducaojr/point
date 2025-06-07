@@ -2,6 +2,7 @@
 using Point.Core.Application.Contracts;
 using Point.Core.Domain.Contracts.Entities;
 using Point.Core.Domain.Entities;
+using Point.Core.Domain.Entities.Orders;
 
 namespace Point.Infrastructure.Persistence
 {
@@ -20,6 +21,12 @@ namespace Point.Infrastructure.Persistence
         public DbSet<Price> Prices => Set<Price>();
         public DbSet<CostReference> CostReferences => Set<CostReference>();
         public DbSet<DiscountVariation> DiscountVariations => Set<DiscountVariation>();
+
+        public DbSet<Order> Orders => Set<Order>();
+        public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+        public DbSet<Payment> Payments => Set<Payment>();
+        public DbSet<Customer> Customers => Set<Customer>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

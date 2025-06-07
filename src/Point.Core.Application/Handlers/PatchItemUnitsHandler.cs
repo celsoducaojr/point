@@ -12,7 +12,7 @@ namespace Point.Core.Application.Handlers
     public sealed record PatchItemUnitRequest(
         int Id,
         string? ItemCode,
-        string? PriceCode,
+        string? CostPriceCode,
         List<CreatePriceRequest>? Prices);
 
     public class PatchItemUnitsHandler(IPointDbContext pointDbContext) : IRequestHandler<PatchItemUnitsRequest, Unit>
@@ -33,7 +33,7 @@ namespace Point.Core.Application.Handlers
                 }
 
                 unit.ItemCode = u.ItemCode;
-                unit.PriceCode = u.PriceCode;
+                unit.CostPriceCode = u.CostPriceCode;
                 unit.Prices = u.Prices?
                     .Where(price => price.Amount > 0) // Don't save if amoun = 0
                     .Select(price =>

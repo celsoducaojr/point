@@ -12,8 +12,8 @@ using Point.Infrastructure.Persistence;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PointDbContext))]
-    [Migration("20250504070020_Initial")]
-    partial class Initial
+    [Migration("20250607053715_Inital")]
+    partial class Inital
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -149,6 +149,9 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CostPriceCode")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");
 
@@ -164,15 +167,141 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("PriceCode")
-                        .HasColumnType("longtext");
-
                     b.Property<int>("UnitId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.ToTable("ItemUnits");
+                });
+
+            modelBuilder.Entity("Point.Core.Domain.Entities.Orders.Customer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("Point.Core.Domain.Entities.Orders.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("PaymentTerm")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Point.Core.Domain.Entities.Orders.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("ItemUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("Point.Core.Domain.Entities.Orders.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Mode")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Price", b =>
@@ -326,6 +455,20 @@ namespace Point.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Point.Core.Domain.Entities.Orders.OrderItem", b =>
+                {
+                    b.HasOne("Point.Core.Domain.Entities.Orders.Order", null)
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId");
+                });
+
+            modelBuilder.Entity("Point.Core.Domain.Entities.Orders.Payment", b =>
+                {
+                    b.HasOne("Point.Core.Domain.Entities.Orders.Order", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("OrderId");
+                });
+
             modelBuilder.Entity("Point.Core.Domain.Entities.Price", b =>
                 {
                     b.HasOne("Point.Core.Domain.Entities.ItemUnit", null)
@@ -355,6 +498,13 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.Navigation("CostReference");
 
                     b.Navigation("Prices");
+                });
+
+            modelBuilder.Entity("Point.Core.Domain.Entities.Orders.Order", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Supplier", b =>

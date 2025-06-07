@@ -11,9 +11,9 @@ namespace Point.Core.Application.Validators
                 .MaximumLength(50)
                 .When(x => x.ItemCode != null);
 
-            RuleFor(x => x.PriceCode)
+            RuleFor(x => x.CostPriceCode)
                 .MaximumLength(50)
-                .When(x => x.PriceCode != null);
+                .When(x => x.CostPriceCode != null);
 
             RuleForEach(x => x.Prices)
                .ChildRules(price =>

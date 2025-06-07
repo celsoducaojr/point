@@ -1,4 +1,6 @@
-﻿namespace Point.Core.Domain.Entities.Enums
+﻿using System.ComponentModel;
+
+namespace Point.Core.Domain.Enums
 {
     public enum PaymentMode
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Point.Core.Domain.Entities;
-using Point.Order.Core.Domain.Entities;
+using Point.Core.Domain.Entities.Orders;
 
 namespace Point.Core.Application.Contracts
 {
@@ -18,6 +18,12 @@ namespace Point.Core.Application.Contracts
         DbSet<Price> Prices { get; }
         DbSet<CostReference> CostReferences { get; }
         DbSet<DiscountVariation> DiscountVariations { get; }
+
+        DbSet<Order> Orders { get; }
+        DbSet<OrderItem> OrderItems { get; }
+        DbSet<Payment> Payments { get; }
+        DbSet<Customer> Customers { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

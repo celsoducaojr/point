@@ -1,8 +1,8 @@
-﻿namespace Point.Core.Domain.Entities.Enums
+﻿namespace Point.Core.Domain.Enums
 {
-    public enum SaleStatus
+    public enum OrderStatus
     {
-        Pending,
+        New,
         Released,
         PartiallyPaid,
         Paid,

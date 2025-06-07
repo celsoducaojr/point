@@ -200,7 +200,7 @@ namespace Point.API.Controllers
             {
                 var unitQuery = $@"
                 SELECT
-                iu.Id, iu.ItemId, iu.ItemCode, iu.PriceCode,
+                iu.Id, iu.ItemId, iu.ItemCode, iu.CostPriceCode,
                 u.Id, u.Name,
                 p.Id, p.Amount, p.PriceTypeId,
                 pt.Id, pt.Name
@@ -222,7 +222,7 @@ namespace Point.API.Controllers
                                 Id = itemUnit.Id,
                                 Unit = unit?.Id > 0 ? unit : null,
                                 ItemCode = itemUnit.ItemCode,
-                                PriceCode = itemUnit.PriceCode,
+                                CostPriceCode = itemUnit.CostPriceCode,
                                 Prices = price?.Id > 0 ? [] : null
                             };
                             unitDictionary[itemUnit.Id] = unitEntry;

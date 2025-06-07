@@ -10,7 +10,7 @@ namespace Point.Core.Application.Handlers
         int ItemId,
         int UnitId,
         string? ItemCode,
-        string? PriceCode,
+        string? CostPriceCode,
         List<CreatePriceRequest>? Prices)
         : IRequest<int>;
 
@@ -59,7 +59,7 @@ namespace Point.Core.Application.Handlers
                 ItemId = request.ItemId,
                 UnitId = request.UnitId,
                 ItemCode = request.ItemCode,
-                PriceCode = request.PriceCode,
+                CostPriceCode = request.CostPriceCode,
                 Prices = request.Prices?.Select(price => 
                     new Price 
                     {
