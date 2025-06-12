@@ -43,7 +43,7 @@ namespace Point.API.Controllers.Orders
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _pointDbContext.Customers.ToListAsync());
+            return Ok(await _pointDbContext.Customers.OrderBy(customer => customer.Name).ToListAsync());
         }
 
         [HttpGet("search")]
@@ -51,6 +51,7 @@ namespace Point.API.Controllers.Orders
         {
             var unit = await _pointDbContext.Customers
                 .Where(customer => EF.Functions.Like(customer.Name, $"%{name}%"))
+                .OrderBy(customer => customer.Name)
                 .ToListAsync();
 
             return Ok(unit);
