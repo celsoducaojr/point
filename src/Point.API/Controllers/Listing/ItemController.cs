@@ -204,7 +204,7 @@ namespace Point.API.Controllers.Listing
                 iu.Id, iu.ItemId, iu.ItemCode, iu.CostPriceCode,
                 u.Id, u.Name,
                 p.Id, p.Amount, p.PriceTypeId,
-                pt.Id, pt.Name
+                pt.Id, pt.Name, pt.DisplayIndex
                 FROM ItemUnits iu
                 LEFT JOIN Units u ON u.Id = iu.UnitId
                 LEFT JOIN Prices p ON p.ItemUnitId = iu.Id
@@ -237,7 +237,8 @@ namespace Point.API.Controllers.Listing
                                 PriceType = new GetPriceTypeResponseDto
                                 {
                                     Id = priceType.Id,
-                                    Name = priceType.Name
+                                    Name = priceType.Name,
+                                    DisplayIndex = priceType.DisplayIndex
                                 },
                                 Amount = price.Amount
                             });

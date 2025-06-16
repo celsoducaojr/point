@@ -38,5 +38,6 @@ namespace Point.API.Dtos.Listing
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int DisplayIndex { get; set; }
     }
 }
