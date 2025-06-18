@@ -211,14 +211,14 @@ namespace Point.API.Controllers.Listing
                 LEFT JOIN PriceTypes pt on pt.Id = p.PriceTypeId
                 WHERE iu.ItemId in @Ids";
 
-                var unitDictionary = new Dictionary<int, GetItemUnitResponseDto>();
+                var itemUnitDictionary = new Dictionary<int, GetItemUnitResponseDto>();
                 var itemUnits = await _pointDbConnection.QueryAsync<ItemUnit, Core.Domain.Entities.Unit, Price, PriceType, GetItemUnitResponseDto>(
                     unitQuery,
                     (itemUnit, unit, price, priceType) =>
                     {
-                        if (!unitDictionary.TryGetValue(itemUnit.Id, out var unitEntry))
+                        if (!itemUnitDictionary.TryGetValue(itemUnit.Id, out var itemUnitEntry))
                         {
-                            unitEntry = new GetItemUnitResponseDto
+                            itemUnitEntry = new GetItemUnitResponseDto
                             {
                                 Id = itemUnit.Id,
                                 Unit = unit?.Id > 0 ? unit : null,
@@ -226,13 +226,13 @@ namespace Point.API.Controllers.Listing
                                 CostPriceCode = itemUnit.CostPriceCode,
                                 Prices = price?.Id > 0 ? [] : null
                             };
-                            unitDictionary[itemUnit.Id] = unitEntry;
-                            itemDictionary[itemUnit.ItemId].AddUnit(unitEntry);
+                            itemUnitDictionary[itemUnit.Id] = itemUnitEntry;
+                            itemDictionary[itemUnit.ItemId].AddUnit(itemUnitEntry);
                         }
 
                         if (price?.Id > 0)
                         {
-                            unitEntry.Prices.Add(new GetPriceResponseDto
+                            itemUnitEntry.Prices.Add(new GetPriceResponseDto
                             {
                                 PriceType = new GetPriceTypeResponseDto
                                 {
@@ -244,7 +244,7 @@ namespace Point.API.Controllers.Listing
                             });
                         }
 
-                        return unitEntry;
+                        return itemUnitEntry;
                     },
                     parameters,
                     splitOn: "Id"
