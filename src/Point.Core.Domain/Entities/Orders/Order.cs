@@ -11,10 +11,12 @@ namespace Point.Core.Domain.Entities.Orders
 
         public string Number { get; set; } // Order Number
         public int? CustomerId { get; set; }
+        public decimal SubTotal { get; set; } 
+        public decimal Discount { get; set; } 
         public decimal Total { get; set; } 
         public OrderStatus Status { get; set; }
-        public PaymentTerm? PaymentTerm { get; set; }
         public List<OrderItem> Items { get; set; }
+        public PaymentTerm? PaymentTerm { get; set; }
         public List<Payment>? Payments { get; set; }
     }
 }

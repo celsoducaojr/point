@@ -7,12 +7,14 @@ namespace Point.Core.Application.Validators.Orders
     {
         public CreateOrderValidator() 
         {
-            RuleFor(x => x.Total)
+            RuleFor(x => x.SubTotal)
                 .GreaterThan(0);
 
-            RuleFor(x => x.PaymentTerm)
-                .IsInEnum()
-                .When(x => x.PaymentTerm != null);
+            RuleFor(x => x.Discount)
+                .GreaterThanOrEqualTo(0);
+
+            RuleFor(x => x.Total)
+                .GreaterThan(0);
 
             RuleFor(x => x.Items)
                 .Must(items => items?.Count > 0)
@@ -21,6 +23,10 @@ namespace Point.Core.Application.Validators.Orders
             RuleForEach(x => x.Items)
                 .SetValidator(new CreateOrderItemValidator())
                 .When(x => x.Items != null);
+
+            RuleFor(x => x.PaymentTerm)
+                .IsInEnum()
+                .When(x => x.PaymentTerm != null);
 
             RuleFor(x => x.Payment)
                 .SetValidator(new CreatePaymentValidator())

@@ -10,9 +10,11 @@ namespace Point.Core.Application.Handlers.Orders
 {
     public sealed record CreateOrderRequest(
         int? CustomerId,
+        decimal SubTotal,
+        decimal Discount,
         decimal Total,
-        PaymentTerm? PaymentTerm,
         List<CreateOrderItemRequest> Items,
+        PaymentTerm? PaymentTerm,
         CreatePaymentRequest? Payment)
         : IRequest<string>;
 
@@ -90,10 +92,12 @@ namespace Point.Core.Application.Handlers.Orders
             {
                 Number = _orderService.GenerateOrderNumber(),
                 CustomerId = request.CustomerId,
+                SubTotal = request.SubTotal,
+                Discount = request.Discount,
                 Total = request.Total,
                 Status = status,
-                PaymentTerm = request.PaymentTerm,
                 Items = orderItems,
+                PaymentTerm = request.PaymentTerm,
                 Payments = payments
             };
 
