@@ -16,7 +16,7 @@ namespace Point.API.Controllers.Orders
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CreateCustomerRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateCustomerRequest request)
         {
             var id = await _mediator.Send(request);
 

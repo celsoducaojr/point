@@ -20,7 +20,7 @@ namespace Point.API.Controllers.Listing
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CreateTagRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateTagRequest request)
         {
             var id = await _mediator.Send(request);
 

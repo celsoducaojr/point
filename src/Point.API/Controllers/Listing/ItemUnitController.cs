@@ -17,15 +17,13 @@ namespace Point.API.Controllers.Listing
     [Route("api/v{version:apiversion}/item-units")]
     public class ItemUnitController(
         IMediator mediator, 
-        IPointDbContext pointDbContext,
-        IPointDbConnection pointDbConnection) : BaseController
+        IPointDbContext pointDbContext) : BaseController
     {
         private readonly IMediator _mediator = mediator;
         private readonly IPointDbContext _pointDbContext = pointDbContext;
-        private readonly IDbConnection _pointDbConnection = pointDbConnection.Connection;
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CreateItemUnitRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateItemUnitRequest request)
         {
             var id = await _mediator.Send(request);
 

@@ -4,7 +4,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Point.API.Controllers.Base;
 using Point.API.Dtos.Listing;
-using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Application.Handlers.Listing;
 using Point.Core.Domain.Entities;
@@ -15,15 +14,13 @@ namespace Point.API.Controllers.Listing
     [Route("api/v{version:apiversion}/suppliers")]
     public class SupplierController(
         IMediator mediator, 
-        IPointDbContext pointDbContext,
         IPointDbConnection pointDbConnection) : BaseController
     {
         private readonly IMediator _mediator = mediator;
-        private readonly IPointDbContext _pointDbContext = pointDbContext;
         private readonly IDbConnection _dbConnection = pointDbConnection.Connection;
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CreateSupplierRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateSupplierRequest request)
         {
             var id = await _mediator.Send(request);
 

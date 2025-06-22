@@ -16,7 +16,7 @@ namespace Point.API.Controllers.Listing
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CreateCategoryRequest createTagRequest)
+        public async Task<IActionResult> Create([FromBody] CreateCategoryRequest createTagRequest)
         {
             var id = await _mediator.Send(createTagRequest);
 

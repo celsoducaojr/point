@@ -5,9 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Point.API.Constants;
 using Point.API.Controllers.Base;
 using Point.API.Dtos.Listing;
-using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
-using Point.Core.Application.Handlers;
 using Point.Core.Application.Handlers.Listing;
 using Point.Core.Domain.Entities;
 using Point.Infrastructure.Persistence.Contracts;
@@ -17,15 +15,13 @@ namespace Point.API.Controllers.Listing
     [Route("api/v{version:apiversion}/items")]
     public class ItemController(
         IMediator mediator, 
-        IPointDbContext pointDbContext, 
         IPointDbConnection pointDbConnection) : BaseController
     {
         private readonly IMediator _mediator = mediator;
-        private readonly IPointDbContext _pointDbContext = pointDbContext;
         private readonly IDbConnection _pointDbConnection = pointDbConnection.Connection;
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CreateItemRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateItemRequest request)
         {
             var id = await _mediator.Send(request);
 

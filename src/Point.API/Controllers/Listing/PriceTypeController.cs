@@ -5,7 +5,6 @@ using Point.API.Controllers.Base;
 using Point.API.Dtos.Listing;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
-using Point.Core.Application.Handlers;
 using Point.Core.Application.Handlers.Listing;
 
 namespace Point.API.Controllers.Listing
@@ -17,7 +16,7 @@ namespace Point.API.Controllers.Listing
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CreatePriceTypeRequest createPriceTypeRequest)
+        public async Task<IActionResult> Create([FromBody] CreatePriceTypeRequest createPriceTypeRequest)
         {
             var id = await _mediator.Send(createPriceTypeRequest);
 

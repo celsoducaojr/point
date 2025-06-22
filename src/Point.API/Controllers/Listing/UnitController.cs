@@ -17,7 +17,7 @@ namespace Point.API.Controllers.Listing
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CreateUnitRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateUnitRequest request)
         {
             var id = await _mediator.Send(request);
 

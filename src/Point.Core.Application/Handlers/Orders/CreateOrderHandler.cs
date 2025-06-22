@@ -16,7 +16,7 @@ namespace Point.Core.Application.Handlers.Orders
         List<CreateOrderItemRequest> Items,
         PaymentTerm? PaymentTerm,
         CreatePaymentRequest? Payment)
-        : IRequest<string>;
+        : IRequest<int>;
 
     public sealed record CreateOrderItemRequest(
         int ItemUnitId,
@@ -31,12 +31,12 @@ namespace Point.Core.Application.Handlers.Orders
         string? Reference,
         string? Remarks);
 
-    public class CreateOrderHandler(IPointDbContext pointDbContext, IOrderService orderService) : IRequestHandler<CreateOrderRequest, string>
+    public class CreateOrderHandler(IPointDbContext pointDbContext, IOrderService orderService) : IRequestHandler<CreateOrderRequest, int>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
         private readonly IOrderService _orderService = orderService;
 
-        public async Task<string> Handle(CreateOrderRequest request, CancellationToken cancellationToken)
+        public async Task<int> Handle(CreateOrderRequest request, CancellationToken cancellationToken)
         {
             if (request.CustomerId.HasValue && await _pointDbContext.Customers.FindAsync(request.CustomerId, cancellationToken) == null)
             {
@@ -104,7 +104,7 @@ namespace Point.Core.Application.Handlers.Orders
             _pointDbContext.Orders.Add(order);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
-            return order.Number;
+            return order.Id;
         }
     }
 }
