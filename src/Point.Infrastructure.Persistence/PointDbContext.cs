@@ -43,6 +43,30 @@ namespace Point.Infrastructure.Persistence
                 .HasForeignKey<CostReference>(c => c.Id) // FK = PK
                 .IsRequired() // Enforce relationship
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Price>()
+                .Property(p => p.Amount)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.SubTotal)
+                .HasPrecision(18, 2);
+            modelBuilder.Entity<Order>()
+                .Property(o => o.Discount)
+                .HasPrecision(18, 2);
+            modelBuilder.Entity<Order>()
+                .Property(o => o.Total)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<OrderItem>()
+                .Property(o => o.Price)
+                .HasPrecision(18, 2);
+            modelBuilder.Entity<OrderItem>()
+                .Property(o => o.Discount)
+                .HasPrecision(18, 2);
+            modelBuilder.Entity<OrderItem>()
+                .Property(o => o.Total)
+                .HasPrecision(18, 2);
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
