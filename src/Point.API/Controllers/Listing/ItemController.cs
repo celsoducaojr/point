@@ -162,16 +162,16 @@ namespace Point.API.Controllers.Listing
             LEFT JOIN ItemTags it ON it.ItemId = i.Id
             LEFT JOIN Tags t ON t.Id = it.TagId";
 
-        private async Task<IEnumerable<GetItemResponseDto>> LookupAsync(string query, DynamicParameters parameters, List<string> fields)
+        private async Task<IEnumerable<SearchItemResponseDto>> LookupAsync(string query, DynamicParameters parameters, List<string> fields)
         {
-            var itemDictionary = new Dictionary<int, GetItemResponseDto>();
-            var items = await _pointDbConnection.QueryAsync<Item, Category, Tag, GetItemResponseDto>(
+            var itemDictionary = new Dictionary<int, SearchItemResponseDto>();
+            var items = await _pointDbConnection.QueryAsync<Item, Category, Tag, SearchItemResponseDto>(
                 query,
                 (item, category, itemTag) =>
                 {
                     if (!itemDictionary.TryGetValue(item.Id, out var itemEntry))
                     {
-                        itemEntry = new GetItemResponseDto
+                        itemEntry = new SearchItemResponseDto
                         {
                             Id = item.Id,
                             Name = item.Name,
@@ -207,14 +207,14 @@ namespace Point.API.Controllers.Listing
                 LEFT JOIN PriceTypes pt on pt.Id = p.PriceTypeId
                 WHERE iu.ItemId in @Ids";
 
-                var itemUnitDictionary = new Dictionary<int, GetItemUnitResponseDto>();
-                var itemUnits = await _pointDbConnection.QueryAsync<ItemUnit, Core.Domain.Entities.Unit, Price, PriceType, GetItemUnitResponseDto>(
+                var itemUnitDictionary = new Dictionary<int, SearchItemUnitResponseDto>();
+                var itemUnits = await _pointDbConnection.QueryAsync<ItemUnit, Core.Domain.Entities.Unit, Price, PriceType, SearchItemUnitResponseDto>(
                     unitQuery,
                     (itemUnit, unit, price, priceType) =>
                     {
                         if (!itemUnitDictionary.TryGetValue(itemUnit.Id, out var itemUnitEntry))
                         {
-                            itemUnitEntry = new GetItemUnitResponseDto
+                            itemUnitEntry = new SearchItemUnitResponseDto
                             {
                                 Id = itemUnit.Id,
                                 Unit = unit?.Id > 0 ? unit : null,
@@ -228,9 +228,9 @@ namespace Point.API.Controllers.Listing
 
                         if (price?.Id > 0)
                         {
-                            itemUnitEntry.Prices.Add(new GetPriceResponseDto
+                            itemUnitEntry.Prices.Add(new SearchPriceResponseDto
                             {
-                                PriceType = new GetPriceTypeResponseDto
+                                PriceType = new SearchPriceTypeResponseDto
                                 {
                                     Id = priceType.Id,
                                     Name = priceType.Name,

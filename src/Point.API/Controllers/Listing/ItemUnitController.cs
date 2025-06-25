@@ -1,16 +1,11 @@
 ﻿using System.Data;
-using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Point.API.Constants;
 using Point.API.Controllers.Base;
 using Point.API.Dtos.Listing;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
-using Point.Core.Application.Handlers;
 using Point.Core.Application.Handlers.Listing;
-using Point.Core.Domain.Entities;
-using Point.Infrastructure.Persistence.Contracts;
 
 namespace Point.API.Controllers.Listing
 {
