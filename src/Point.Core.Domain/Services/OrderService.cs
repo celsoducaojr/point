@@ -11,7 +11,7 @@ namespace Point.Core.Domain.Services
     {
         public string GenerateOrderNumber()
         {
-            return DateTime.Now.ToString("yyddMM-HHmmss");
+            return DateTime.Now.ToString("yyMMdd-HHmm");
         }
     }
 }
