@@ -33,6 +33,23 @@ namespace Point.API.Controllers.Orders
             return CreatedAtAction(nameof(GetById), new { id }, new { id });
         }
 
+        [HttpPut("{id}/release")]
+        public async Task<IActionResult> Release([FromRoute] int id)
+        {
+            await _mediator.Send(new UpdateOrderStatusRequest(id, OrderStatus.Released));
+
+            return NoContent();
+        }
+
+
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> Cancel([FromRoute] int id)
+        {
+            await _mediator.Send(new UpdateOrderStatusRequest(id, OrderStatus.Cancelled));
+
+            return NoContent();
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
