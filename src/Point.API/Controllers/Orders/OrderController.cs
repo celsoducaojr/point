@@ -2,13 +2,12 @@
 using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Point.API.Constants;
 using Point.API.Controllers.Base;
 using Point.API.Dtos.Listing;
+using Point.API.Dtos.Orders;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Application.Handlers.Orders;
-using Point.Core.Domain.Entities;
 using Point.Core.Domain.Entities.Orders;
 using Point.Core.Domain.Enums;
 using Point.Infrastructure.Persistence.Contracts;
@@ -31,6 +30,15 @@ namespace Point.API.Controllers.Orders
             var id = await _mediator.Send(request);
 
             return CreatedAtAction(nameof(GetById), new { id }, new { id });
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateOrderDto updateOrderDto)
+        {
+            await _mediator.Send(new UpdateOrderRequest(id, updateOrderDto.CustomerId,
+                updateOrderDto.SubTotal, updateOrderDto.Discount, updateOrderDto.Total, updateOrderDto.Items));
+
+            return NoContent();
         }
 
         [HttpPut("{id}/release")]

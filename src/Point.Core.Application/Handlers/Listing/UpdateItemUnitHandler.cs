@@ -21,7 +21,7 @@ namespace Point.Core.Application.Handlers.Listing
         {
             var unit = await _pointDbContext.ItemUnits
                     .Include(unit => unit.Prices).FirstOrDefaultAsync(unit => unit.Id == request.Id, cancellationToken)
-                           ?? throw new NotFoundException($"Item-unit not found.");
+                    ?? throw new NotFoundException($"Item-unit not found.");
 
             if (await _pointDbContext.Items.FindAsync(request.ItemId, cancellationToken) == null)
             {

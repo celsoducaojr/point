@@ -14,7 +14,12 @@ namespace Point.Core.Domain.Services
     {
         public string GenerateOrderNumber()
         {
-            return DateTime.Now.ToString("yyMMdd-HHmm");
+            DateTime now = DateTime.UtcNow;
+            long ticks = now.Ticks;
+            string base64 = Convert.ToBase64String(BitConverter.GetBytes(ticks));
+
+            // Make it URL/file-safe
+            return base64.Replace("+", "-").Replace("/", "_").TrimEnd('=').ToUpper(); 
         }
 
         public bool IsStatusChangeAllowed(OrderStatus from, OrderStatus to)
