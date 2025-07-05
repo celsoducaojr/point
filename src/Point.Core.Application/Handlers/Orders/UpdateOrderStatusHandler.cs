@@ -8,9 +8,9 @@ namespace Point.Core.Application.Handlers.Orders
 {
     public sealed record UpdateOrderStatusRequest(
       int Id,
-      OrderStatus OrderStatus)
+      OrderStatus OrderStatus,
+      PaymentTerm? PaymentTerm = null)
       : IRequest<Unit>;
-
 
     public class UpdateOrderStatusHandler(IPointDbContext pointDbContext, IOrderService orderService) : IRequestHandler<UpdateOrderStatusRequest, Unit>
     {
@@ -27,7 +27,13 @@ namespace Point.Core.Application.Handlers.Orders
                 throw new DomainException($"Order Status update from '{order.Status}' to '{request.OrderStatus}' is now allowed.");
             }
 
+            if (request.OrderStatus == OrderStatus.Released && !request.PaymentTerm.HasValue)
+            {
+                throw new DomainException($"Payment Term is required to Release an Order.");
+            }
+
             order.Status = request.OrderStatus;
+            order.PaymentTerm = request.PaymentTerm;
 
             _pointDbContext.Orders.Update(order);
             await _pointDbContext.SaveChangesAsync(cancellationToken);

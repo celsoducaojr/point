@@ -42,9 +42,9 @@ namespace Point.API.Controllers.Orders
         }
 
         [HttpPut("{id}/release")]
-        public async Task<IActionResult> Release([FromRoute] int id)
+        public async Task<IActionResult> Release([FromRoute] int id, [FromBody] ReleaseOrderDto releaseOrderDto)
         {
-            await _mediator.Send(new UpdateOrderStatusRequest(id, OrderStatus.Released));
+            await _mediator.Send(new UpdateOrderStatusRequest(id, OrderStatus.Released, releaseOrderDto.PaymentTerm));
 
             return NoContent();
         }
