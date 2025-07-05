@@ -1,4 +1,5 @@
-﻿using Point.Core.Domain.Contracts.Services;
+﻿using System.Text.RegularExpressions;
+using Point.Core.Domain.Contracts.Services;
 using Point.Core.Domain.Enums;
 using Point.Core.Domain.Services.Constants;
 
@@ -14,12 +15,9 @@ namespace Point.Core.Domain.Services
     {
         public string GenerateOrderNumber()
         {
-            DateTime now = DateTime.UtcNow;
-            long ticks = now.Ticks;
-            string base64 = Convert.ToBase64String(BitConverter.GetBytes(ticks));
+            var base64 = Convert.ToBase64String(BitConverter.GetBytes(DateTime.UtcNow.Ticks));
 
-            // Make it URL/file-safe
-            return base64.Replace("+", "-").Replace("/", "_").TrimEnd('=').ToUpper(); 
+            return Regex.Replace(base64, "[^a-zA-Z0-9]", string.Empty).ToUpper();
         }
 
         public bool IsStatusChangeAllowed(OrderStatus from, OrderStatus to)
