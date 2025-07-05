@@ -14,7 +14,6 @@ namespace Point.Core.Application.Handlers.Orders
         decimal Discount,
         decimal Total,
         List<CreateOrderItemRequest> Items,
-        PaymentTerm? PaymentTerm,
         CreatePaymentRequest? Payment)
         : IRequest<int>;
 
@@ -97,7 +96,6 @@ namespace Point.Core.Application.Handlers.Orders
                 Total = request.Total,
                 Status = status,
                 Items = orderItems,
-                PaymentTerm = request.PaymentTerm,
                 Payments = payments
             };
 

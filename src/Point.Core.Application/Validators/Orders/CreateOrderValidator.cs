@@ -24,10 +24,6 @@ namespace Point.Core.Application.Validators.Orders
                 .SetValidator(new CreateOrderItemValidator())
                 .When(x => x.Items != null);
 
-            RuleFor(x => x.PaymentTerm)
-                .IsInEnum()
-                .When(x => x.PaymentTerm != null);
-
             RuleFor(x => x.Payment)
                 .SetValidator(new CreatePaymentValidator())
                 .When(x => x.Payment != null);
