@@ -41,6 +41,14 @@ namespace Point.API.Controllers.Orders
             return NoContent();
         }
 
+        [HttpPost("{id}/payment")]
+        public async Task<IActionResult> AddPayment([FromRoute] int id, [FromBody] CreatePaymentRequest createPaymentRequest)
+        {
+            var orderStatus = await _mediator.Send(new AddOrderPaymentRequest(id, createPaymentRequest));
+
+            return Ok(new { orderStatus });
+        }
+
         [HttpPut("{id}/release")]
         public async Task<IActionResult> Release([FromRoute] int id, [FromBody] ReleaseOrderDto releaseOrderDto)
         {

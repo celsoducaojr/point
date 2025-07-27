@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Point.Core.Domain.Contracts.Services;
+using Point.Core.Domain.Entities.Orders;
 using Point.Core.Domain.Enums;
 using Point.Core.Domain.Services.Constants;
 
@@ -9,6 +10,7 @@ namespace Point.Core.Domain.Services
     {
         string GenerateOrderNumber();
         bool IsStatusChangeAllowed(OrderStatus from, OrderStatus to);
+        decimal GenerateBalance(Order order);
     }
 
     public class OrderService : IOrderService
@@ -29,6 +31,13 @@ namespace Point.Core.Domain.Services
             }
 
             return false;
+        }
+
+        public decimal GenerateBalance(Order order)
+        {
+            var payments = order.Payments?.Sum(payment => payment.Amount) ?? 0;
+
+            return order.Total - payments;
         }
     }
 }
