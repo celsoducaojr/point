@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Inital : Migration
+    public partial class initialbuild : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -97,8 +97,12 @@ namespace Point.Infrastructure.Persistence.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Number = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CustomerId = table.Column<int>(type: "int", nullable: true),
-                    Total = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    SubTotal = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Discount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Total = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     PaymentTerm = table.Column<int>(type: "int", nullable: true)
                 },
@@ -186,12 +190,12 @@ namespace Point.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CostReferences", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CostReferences_ItemUnits_Id",
-                        column: x => x.Id,
-                        principalTable: "ItemUnits",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    //table.ForeignKey(
+                    //    name: "FK_CostReferences_ItemUnits_Id",
+                    //    column: x => x.Id,
+                    //    principalTable: "ItemUnits",
+                    //    principalColumn: "Id",
+                    //    onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -201,18 +205,18 @@ namespace Point.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Amount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     PriceTypeId = table.Column<int>(type: "int", nullable: false),
                     ItemUnitId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Prices", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Prices_ItemUnits_ItemUnitId",
-                        column: x => x.ItemUnitId,
-                        principalTable: "ItemUnits",
-                        principalColumn: "Id");
+                    //table.ForeignKey(
+                    //    name: "FK_Prices_ItemUnits_ItemUnitId",
+                    //    column: x => x.ItemUnitId,
+                    //    principalTable: "ItemUnits",
+                    //    principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -228,12 +232,12 @@ namespace Point.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ItemTags", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ItemTags_Items_ItemId",
-                        column: x => x.ItemId,
-                        principalTable: "Items",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    //table.ForeignKey(
+                    //    name: "FK_ItemTags_Items_ItemId",
+                    //    column: x => x.ItemId,
+                    //    principalTable: "Items",
+                    //    principalColumn: "Id",
+                    //    onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -246,20 +250,25 @@ namespace Point.Infrastructure.Persistence.Migrations
                     Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     ItemUnitId = table.Column<int>(type: "int", nullable: false),
+                    ItemName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UnitId = table.Column<int>(type: "int", nullable: false),
+                    UnitName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    Discount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    Total = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Discount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Total = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrderItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OrderItems_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "Id");
+                    //table.ForeignKey(
+                    //    name: "FK_OrderItems_Orders_OrderId",
+                    //    column: x => x.OrderId,
+                    //    principalTable: "Orders",
+                    //    principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -271,7 +280,7 @@ namespace Point.Infrastructure.Persistence.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Amount = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     Mode = table.Column<int>(type: "int", nullable: false),
                     Reference = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -282,11 +291,11 @@ namespace Point.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Payments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Payments_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "Id");
+                    //table.ForeignKey(
+                    //    name: "FK_Payments_Orders_OrderId",
+                    //    column: x => x.OrderId,
+                    //    principalTable: "Orders",
+                    //    principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -302,11 +311,11 @@ namespace Point.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SupplierTags", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SupplierTags_Suppliers_SupplierId",
-                        column: x => x.SupplierId,
-                        principalTable: "Suppliers",
-                        principalColumn: "Id");
+                    //table.ForeignKey(
+                    //    name: "FK_SupplierTags_Suppliers_SupplierId",
+                    //    column: x => x.SupplierId,
+                    //    principalTable: "Suppliers",
+                    //    principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -325,11 +334,11 @@ namespace Point.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DiscountVariations", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DiscountVariations_CostReferences_CostReferenceId",
-                        column: x => x.CostReferenceId,
-                        principalTable: "CostReferences",
-                        principalColumn: "Id");
+                    //table.ForeignKey(
+                    //    name: "FK_DiscountVariations_CostReferences_CostReferenceId",
+                    //    column: x => x.CostReferenceId,
+                    //    principalTable: "CostReferences",
+                    //    principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 

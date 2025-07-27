@@ -122,21 +122,28 @@ namespace Point.API.Controllers.Orders
             parameters = new DynamicParameters();
             parameters.Add("Ids", pageIds);
 
-            var pageQuery = $@"
+            var orderQuery = $@"
                 SELECT
                 o.Id, o.Created, o.Number, o.CustomerId, o.SubTotal, o.Discount, o.Total, o.Status, o.PaymentTerm,
                 c.Id, c.Name,
-                oi.Id, oi.ItemUnitId, oi.ItemName, oi.UnitId, oi.UnitName, oi.Quantity, oi.Price, oi.Discount, oi.Total,
-                p.Id, p.Created, p.Amount, p.Mode, p.Reference, p.Remarks
+                oi.Id, oi.ItemUnitId, oi.ItemName, oi.UnitId, oi.UnitName, oi.Quantity, oi.Price, oi.Discount, oi.Total
                 FROM Orders o
                 LEFT JOIN Customers c ON c.Id = o.CustomerId
                 LEFT JOIN OrderItems oi ON oi.OrderId = o.Id
+                WHERE o.Id in @Ids
+                ORDER BY o.Created DESC";
+
+            var paymentsQuery = $@"
+                SELECT
+                o.Id,
+                p.Id, p.Created, p.Amount, p.Mode, p.Reference, p.Remarks
+                FROM Orders o
                 LEFT JOIN Payments p ON p.OrderId = o.Id
                 WHERE o.Id in @Ids
                 ORDER BY o.Created DESC";
 
             // Execute page query
-            var orders = await LookupAsync(pageQuery, parameters);
+            var orders = await LookupAsync(orderQuery, paymentsQuery, parameters);
 
             return Ok(new
             {
@@ -149,12 +156,12 @@ namespace Point.API.Controllers.Orders
 
         #region Queries
 
-        private async Task<IEnumerable<SearchOrderResponseDto>> LookupAsync(string query, DynamicParameters parameters)
+        private async Task<IEnumerable<SearchOrderResponseDto>> LookupAsync(string orderQuery, string paymentsQuery, DynamicParameters parameters)
         {
             var orderDictionary = new Dictionary<int, SearchOrderResponseDto>();
-            var orders = await _pointDbConnection.QueryAsync<Order, Customer, OrderItem, Payment, SearchOrderResponseDto>(
-                query,
-                (order, customer, orderItem, payment) =>
+            var orders = await _pointDbConnection.QueryAsync<Order, Customer, OrderItem, SearchOrderResponseDto>(
+                orderQuery,
+                (order, customer, orderItem) =>
                 {
                     if (!orderDictionary.TryGetValue(order.Id, out var orderEntry))
                     {
@@ -170,7 +177,7 @@ namespace Point.API.Controllers.Orders
                             Status = order.Status,
                             Items = [],
                             PaymentTerm = order.PaymentTerm,
-                            Payments = payment?.Id > 0 ? [] : null
+                            Payments = null
                         };
                         orderDictionary[order.Id] = orderEntry;
                     }
@@ -188,9 +195,22 @@ namespace Point.API.Controllers.Orders
                         Total = orderItem.Total
                     });
 
+                    return orderEntry;
+                },
+                parameters,
+                splitOn: "Id"
+            );
+            
+            await _pointDbConnection.QueryAsync<Order, Payment, SearchPaymentResponseDto>(
+                paymentsQuery,
+                (order, payment) =>
+                {
+                    var orderEntry = orderDictionary[order.Id];
+                    SearchPaymentResponseDto paymentDto = null;
                     if (payment?.Id > 0)
                     {
-                        orderEntry.Payments.Add(new SearchPaymentResponseDto
+                        if (orderEntry.Payments == null) orderEntry.Payments = [];
+                        paymentDto = new SearchPaymentResponseDto
                         {
                             Id = payment.Id,
                             Created = payment.Created,
@@ -198,10 +218,12 @@ namespace Point.API.Controllers.Orders
                             Mode = payment.Mode,
                             Reference = payment.Reference,
                             Remarks = payment.Remarks
-                        });
+                        };
+
+                        orderEntry.Payments.Add(paymentDto);
                     }
 
-                    return orderEntry;
+                    return paymentDto;
                 },
                 parameters,
                 splitOn: "Id"
