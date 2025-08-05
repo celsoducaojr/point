@@ -27,26 +27,26 @@ namespace Point.API.Controllers.Orders
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
         {
-            var id = await _mediator.Send(request);
+            var order = await _mediator.Send(request);
 
-            return CreatedAtAction(nameof(GetById), new { id }, new { id });
+            return CreatedAtAction(nameof(GetById), new { order.Id, order.Status });
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateOrderDto updateOrderDto)
         {
-            await _mediator.Send(new UpdateOrderRequest(id, updateOrderDto.CustomerId,
-                updateOrderDto.SubTotal, updateOrderDto.Discount, updateOrderDto.Total, updateOrderDto.Items));
+            var status = await _mediator.Send(new UpdateOrderRequest(id, updateOrderDto.CustomerId,
+                updateOrderDto.SubTotal, updateOrderDto.Discount, updateOrderDto.Total, updateOrderDto.Items, updateOrderDto.Payment));
 
-            return NoContent();
+            return Ok(new { status });
         }
 
         [HttpPost("{id}/payment")]
         public async Task<IActionResult> AddPayment([FromRoute] int id, [FromBody] CreatePaymentRequest createPaymentRequest)
         {
-            var orderStatus = await _mediator.Send(new AddOrderPaymentRequest(id, createPaymentRequest));
+            var status = await _mediator.Send(new AddOrderPaymentRequest(id, createPaymentRequest));
 
-            return Ok(new { orderStatus });
+            return Ok(new { status });
         }
 
         [HttpPut("{id}/release")]

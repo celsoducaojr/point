@@ -15,7 +15,7 @@ namespace Point.Core.Application.Handlers.Orders
         decimal Total,
         List<CreateOrderItemRequest> Items,
         CreatePaymentRequest? Payment)
-        : IRequest<int>;
+        : IRequest<Order>;
 
     public sealed record CreateOrderItemRequest(
         int ItemUnitId,
@@ -30,19 +30,31 @@ namespace Point.Core.Application.Handlers.Orders
         string? Reference,
         string? Remarks);
 
-    public class CreateOrderHandler(IPointDbContext pointDbContext, IOrderService orderService) : IRequestHandler<CreateOrderRequest, int>
+    public class CreateOrderHandler(IPointDbContext pointDbContext, IOrderService orderService) : IRequestHandler<CreateOrderRequest, Order>
     {
         private readonly IPointDbContext _pointDbContext = pointDbContext;
         private readonly IOrderService _orderService = orderService;
 
-        public async Task<int> Handle(CreateOrderRequest request, CancellationToken cancellationToken)
+        public async Task<Order> Handle(CreateOrderRequest request, CancellationToken cancellationToken)
         {
             if (request.CustomerId.HasValue && await _pointDbContext.Customers.FindAsync(request.CustomerId, cancellationToken) == null)
             {
                 throw new NotFoundException("Customer not found.");
             }
 
-            var orderItems = new List<OrderItem>();
+            var order = new Order
+            {
+                Number = _orderService.GenerateOrderNumber(),
+                CustomerId = request.CustomerId,
+                SubTotal = request.SubTotal,
+                Discount = request.Discount,
+                Total = request.Total,
+                Status = OrderStatus.New,
+                Items = [],
+                Payments = null,
+            };
+
+
             foreach (var orderItem in request.Items)
             {
                 var itemUnit = await _pointDbContext.ItemUnits.FindAsync(orderItem.ItemUnitId, cancellationToken) 
@@ -50,7 +62,7 @@ namespace Point.Core.Application.Handlers.Orders
                 var item = await _pointDbContext.Items.FindAsync(itemUnit.ItemId, cancellationToken);
                 var unit = await _pointDbContext.Units.FindAsync(itemUnit.UnitId, cancellationToken);
 
-                orderItems.Add(new OrderItem
+                order.Items.Add(new OrderItem
                 {
                     ItemUnitId = orderItem.ItemUnitId,
                     ItemName = item.Name,
@@ -63,14 +75,12 @@ namespace Point.Core.Application.Handlers.Orders
                 });
             }
 
-            var status = OrderStatus.New;
-            List<Payment>? payments = null;
             if (request.Payment != null)
             {
                 if (request.Payment.Amount == request.Total)
                 {
-                    status = OrderStatus.Paid;
-                    payments =
+                    order.Status = OrderStatus.Paid;
+                    order.Payments =
                     [
                          new Payment
                          {
@@ -87,22 +97,10 @@ namespace Point.Core.Application.Handlers.Orders
                 }
             }
 
-            var order = new Order
-            {
-                Number = _orderService.GenerateOrderNumber(),
-                CustomerId = request.CustomerId,
-                SubTotal = request.SubTotal,
-                Discount = request.Discount,
-                Total = request.Total,
-                Status = status,
-                Items = orderItems,
-                Payments = payments
-            };
-
             _pointDbContext.Orders.Add(order);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
-            return order.Id;
+            return order;
         }
     }
 }

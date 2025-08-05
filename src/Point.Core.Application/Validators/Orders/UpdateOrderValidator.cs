@@ -23,6 +23,10 @@ namespace Point.Core.Application.Validators.Orders
             RuleForEach(x => x.Items)
                 .SetValidator(new CreateOrderItemValidator())
                 .When(x => x.Items != null);
+
+            RuleFor(x => x.Payment)
+              .SetValidator(new CreatePaymentValidator())
+              .When(x => x.Payment != null);
         }
     }
 }

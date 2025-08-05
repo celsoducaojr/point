@@ -9,5 +9,6 @@ namespace Point.API.Dtos.Orders
          decimal SubTotal,
          decimal Discount,
          decimal Total,
-         List<CreateOrderItemRequest> Items);
+         List<CreateOrderItemRequest> Items,
+         CreatePaymentRequest? Payment);
 }
