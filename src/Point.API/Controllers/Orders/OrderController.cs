@@ -29,7 +29,7 @@ namespace Point.API.Controllers.Orders
         {
             var order = await _mediator.Send(request);
 
-            return CreatedAtAction(nameof(GetById), new { order.Id, order.Status });
+            return Ok(new { order.Id, order.Status });
         }
 
         [HttpPut("{id}")]
