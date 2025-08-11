@@ -38,7 +38,7 @@ namespace Point.API.Controllers.Orders
             var status = await _mediator.Send(new UpdateOrderRequest(id, updateOrderDto.CustomerId,
                 updateOrderDto.SubTotal, updateOrderDto.Discount, updateOrderDto.Total, updateOrderDto.Items, updateOrderDto.Payment));
 
-            return Ok(new { status });
+            return Ok(new { id, status });
         }
 
         [HttpPost("{id}/payment")]
@@ -46,7 +46,7 @@ namespace Point.API.Controllers.Orders
         {
             var status = await _mediator.Send(new AddOrderPaymentRequest(id, createPaymentRequest));
 
-            return Ok(new { status });
+            return Ok(new { id, status });
         }
 
         [HttpPut("{id}/release")]

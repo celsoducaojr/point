@@ -64,8 +64,6 @@ namespace Point.API.Controllers.Listing
             var item = (await LookupAsync(query, parameters, fields)).FirstOrDefault()
                  ?? throw new NotFoundException("Item not found.");
 
-
-
             return Ok(item);
         }
 
