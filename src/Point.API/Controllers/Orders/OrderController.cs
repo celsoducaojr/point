@@ -124,7 +124,7 @@ namespace Point.API.Controllers.Orders
 
             var orderQuery = $@"
                 SELECT
-                o.Id, o.Created, o.Number, o.CustomerId, o.SubTotal, o.Discount, o.Total, o.Status, o.PaymentTerm,
+                o.Id, o.Created, o.Released, o.Number, o.CustomerId, o.SubTotal, o.Discount, o.Total, o.Status, o.PaymentTerm,
                 c.Id, c.Name,
                 oi.Id, oi.ItemUnitId, oi.ItemName, oi.UnitId, oi.UnitName, oi.Quantity, oi.Price, oi.Discount, oi.Total
                 FROM Orders o
@@ -169,6 +169,7 @@ namespace Point.API.Controllers.Orders
                         {
                             Id = order.Id,
                             Created = order.Created,
+                            Released = order.Released,
                             Number = order.Number,
                             Customer = customer?.Id > 0 ? customer : null,
                             SubTotal = order.SubTotal,

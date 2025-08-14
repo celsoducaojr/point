@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Domain.Enums;
@@ -34,6 +35,7 @@ namespace Point.Core.Application.Handlers.Orders
 
             order.Status = request.OrderStatus;
             order.PaymentTerm = request.PaymentTerm;
+            if (request.OrderStatus == OrderStatus.Released) order.Released = DateTime.Now;
 
             _pointDbContext.Orders.Update(order);
             await _pointDbContext.SaveChangesAsync(cancellationToken);

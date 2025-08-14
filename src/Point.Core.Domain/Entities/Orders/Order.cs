@@ -1,4 +1,5 @@
-﻿using Point.Core.Domain.Contracts.Entities;
+﻿using System.Xml;
+using Point.Core.Domain.Contracts.Entities;
 using Point.Core.Domain.Enums;
 
 namespace Point.Core.Domain.Entities.Orders
@@ -8,6 +9,7 @@ namespace Point.Core.Domain.Entities.Orders
         public int Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime LastModified { get; set; }
+        public DateTime? Released { get; set; }
 
         public string Number { get; set; } // Order Number
         public int? CustomerId { get; set; }

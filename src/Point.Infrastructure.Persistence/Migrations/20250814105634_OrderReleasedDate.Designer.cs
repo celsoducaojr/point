@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Point.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Point.Infrastructure.Persistence;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PointDbContext))]
-    partial class PointDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250814105634_OrderReleasedDate")]
+    partial class OrderReleasedDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -223,7 +226,7 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.Property<int?>("PaymentTerm")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("Released")
+                    b.Property<DateTime>("Released")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("Status")

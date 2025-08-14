@@ -27,7 +27,7 @@ namespace Point.Core.Application.Handlers.Orders
                 .Include(order => order.Items).FirstOrDefaultAsync(order => order.Id == request.Id, cancellationToken)
                 ?? throw new NotFoundException($"Order not found.");
 
-            if (order.Status != Domain.Enums.OrderStatus.New)
+            if (order.Status != OrderStatus.New)
             {
                 throw new DomainException($"Updating details of '{order.Status}' Order is not allowed.");
             }
@@ -65,6 +65,7 @@ namespace Point.Core.Application.Handlers.Orders
                 if (request.Payment.Amount == request.Total)
                 {
                     order.Status = OrderStatus.Paid;
+                    order.Released = DateTime.Now;
                     order.Payments =
                     [
                          new Payment

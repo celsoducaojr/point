@@ -80,6 +80,7 @@ namespace Point.Core.Application.Handlers.Orders
                 if (request.Payment.Amount == request.Total)
                 {
                     order.Status = OrderStatus.Paid;
+                    order.Released = DateTime.Now;
                     order.Payments =
                     [
                          new Payment

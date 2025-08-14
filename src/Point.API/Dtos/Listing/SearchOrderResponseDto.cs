@@ -7,6 +7,7 @@ namespace Point.API.Dtos.Listing
     {
         public int Id { get; set; }
         public DateTime Created { get; set; }
+        public DateTime? Released { get; set; }
         public string Number { get; set; } // Order Number
         public Customer? Customer { get; set; }
         public decimal SubTotal { get; set; }
