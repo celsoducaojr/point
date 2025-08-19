@@ -12,8 +12,8 @@ using Point.Infrastructure.Persistence;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PointDbContext))]
-    [Migration("20250727031446_initial-build")]
-    partial class initialbuild
+    [Migration("20250819100904_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -225,6 +225,9 @@ namespace Point.Infrastructure.Persistence.Migrations
 
                     b.Property<int?>("PaymentTerm")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("Released")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
