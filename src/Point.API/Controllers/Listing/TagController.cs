@@ -47,7 +47,9 @@ namespace Point.API.Controllers.Listing
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _pointDbContext.Tags.ToListAsync());
+            return Ok(await _pointDbContext.Tags
+                .OrderBy(tag => tag.Name)
+                .ToListAsync());
         }
     }
 }
