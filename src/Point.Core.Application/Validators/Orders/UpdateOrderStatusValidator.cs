@@ -8,7 +8,7 @@ namespace Point.Core.Application.Validators.Orders
     {
         public UpdateOrderStatusValidator()
         {
-            RuleFor(x => x.OrderStatus)
+            RuleFor(x => x.Status)
                 .IsInEnum();
 
             RuleFor(x => x.PaymentTerm)

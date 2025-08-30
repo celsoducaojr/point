@@ -56,7 +56,8 @@ namespace Point.Core.Application.Handlers.Orders
                     Quantity = orderItem.Quantity,
                     Price = orderItem.Price,
                     Discount = orderItem.Discount,
-                    Total = orderItem.Total
+                    Total = orderItem.Total, 
+                    Status = OrderItemStatus.Active
                 });
             }
 

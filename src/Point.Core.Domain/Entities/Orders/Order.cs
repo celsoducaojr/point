@@ -1,5 +1,4 @@
-﻿using System.Xml;
-using Point.Core.Domain.Contracts.Entities;
+﻿using Point.Core.Domain.Contracts.Entities;
 using Point.Core.Domain.Enums;
 
 namespace Point.Core.Domain.Entities.Orders
@@ -20,5 +19,6 @@ namespace Point.Core.Domain.Entities.Orders
         public List<OrderItem> Items { get; set; }
         public PaymentTerm? PaymentTerm { get; set; }
         public List<Payment>? Payments { get; set; }
+        public List<Refund>? Refunds { get; set; }
     }
 }

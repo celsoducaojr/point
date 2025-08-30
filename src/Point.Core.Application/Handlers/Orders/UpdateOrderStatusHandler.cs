@@ -9,7 +9,7 @@ namespace Point.Core.Application.Handlers.Orders
 {
     public sealed record UpdateOrderStatusRequest(
       int Id,
-      OrderStatus OrderStatus,
+      OrderStatus Status,
       PaymentTerm? PaymentTerm = null)
       : IRequest<Unit>;
 
@@ -23,19 +23,19 @@ namespace Point.Core.Application.Handlers.Orders
             var order = await _pointDbContext.Orders.FindAsync(request.Id, cancellationToken)
                 ?? throw new NotFoundException("Order not found.");
 
-            if (!_orderService.IsStatusChangeAllowed(order.Status, request.OrderStatus))
+            if (!_orderService.IsStatusChangeAllowed(order.Status, request.Status))
             {
-                throw new DomainException($"Order Status update from '{order.Status}' to '{request.OrderStatus}' is now allowed.");
+                throw new DomainException($"Order Status update from '{order.Status}' to '{request.Status}' is now allowed.");
             }
 
-            if (request.OrderStatus == OrderStatus.Released && !request.PaymentTerm.HasValue)
+            if (request.Status == OrderStatus.Released && !request.PaymentTerm.HasValue)
             {
                 throw new DomainException($"Payment Term is required to Release an Order.");
             }
 
-            order.Status = request.OrderStatus;
+            order.Status = request.Status;
             order.PaymentTerm = request.PaymentTerm;
-            if (request.OrderStatus == OrderStatus.Released) order.Released = DateTime.Now;
+            if (request.Status == OrderStatus.Released) order.Released = DateTime.Now;
 
             _pointDbContext.Orders.Update(order);
             await _pointDbContext.SaveChangesAsync(cancellationToken);

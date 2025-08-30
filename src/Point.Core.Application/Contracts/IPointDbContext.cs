@@ -22,6 +22,7 @@ namespace Point.Core.Application.Contracts
         DbSet<Order> Orders { get; }
         DbSet<OrderItem> OrderItems { get; }
         DbSet<Payment> Payments { get; }
+        DbSet<Refund> Refunds { get; }
         DbSet<Customer> Customers { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

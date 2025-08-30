@@ -54,7 +54,6 @@ namespace Point.Core.Application.Handlers.Orders
                 Payments = null,
             };
 
-
             foreach (var orderItem in request.Items)
             {
                 var itemUnit = await _pointDbContext.ItemUnits.FindAsync(orderItem.ItemUnitId, cancellationToken) 
@@ -71,7 +70,8 @@ namespace Point.Core.Application.Handlers.Orders
                     Quantity = orderItem.Quantity,
                     Price = orderItem.Price,
                     Discount = orderItem.Discount,
-                    Total = orderItem.Total
+                    Total = orderItem.Total,
+                    Status = OrderItemStatus.Active
                 });
             }
 

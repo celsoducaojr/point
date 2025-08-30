@@ -1,5 +1,5 @@
-﻿using System.Reflection.Emit;
-using Point.Core.Domain.Contracts.Entities;
+﻿using Point.Core.Domain.Contracts.Entities;
+using Point.Core.Domain.Enums;
 
 namespace Point.Core.Domain.Entities.Orders
 {
@@ -17,5 +17,6 @@ namespace Point.Core.Domain.Entities.Orders
         public decimal Price { get; set; }
         public decimal Discount { get; set; }
         public decimal Total { get; set; }
+        public OrderItemStatus Status {  get; set; }
     }
 }

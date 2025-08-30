@@ -3,12 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Point.API.Controllers.Base;
 using Point.API.Dtos;
-using Point.API.Dtos.Listing;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
-using Point.Core.Application.Handlers;
 using Point.Core.Application.Handlers.Listing;
-using Point.Core.Domain.Entities;
 
 
 namespace Point.API.Controllers.Listing

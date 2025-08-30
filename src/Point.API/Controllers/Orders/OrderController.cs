@@ -1,5 +1,4 @@
-﻿using System.Data;
-using Dapper;
+﻿using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Point.API.Controllers.Base;
@@ -11,6 +10,7 @@ using Point.Core.Application.Handlers.Orders;
 using Point.Core.Domain.Entities.Orders;
 using Point.Core.Domain.Enums;
 using Point.Infrastructure.Persistence.Contracts;
+using System.Data;
 
 namespace Point.API.Controllers.Orders
 {
@@ -45,6 +45,14 @@ namespace Point.API.Controllers.Orders
         public async Task<IActionResult> AddPayment([FromRoute] int id, [FromBody] CreatePaymentRequest createPaymentRequest)
         {
             var status = await _mediator.Send(new AddOrderPaymentRequest(id, createPaymentRequest));
+
+            return Ok(new { id, status });
+        }
+
+        [HttpPut("{id}/items/{itemId}/refund")]
+        public async Task<IActionResult> Refund([FromRoute] int id, [FromRoute] int itemId, [FromBody] CreateRefundRequest createRefundRequest)
+        {
+            var status = await _mediator.Send(new UpdateOrderItemStatusRequest(id, itemId, OrderItemStatus.Refunded, createRefundRequest));
 
             return Ok(new { id, status });
         }
