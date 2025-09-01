@@ -52,9 +52,9 @@ namespace Point.API.Controllers.Orders
         [HttpPut("{id}/items/{itemId}/refund")]
         public async Task<IActionResult> Refund([FromRoute] int id, [FromRoute] int itemId, [FromBody] CreateRefundRequest createRefundRequest)
         {
-            var status = await _mediator.Send(new UpdateOrderItemStatusRequest(id, itemId, OrderItemStatus.Refunded, createRefundRequest));
+            await _mediator.Send(new UpdateOrderItemStatusRequest(id, itemId, OrderItemStatus.Refunded, createRefundRequest));
 
-            return Ok(new { id, status });
+            return NoContent();
         }
 
         [HttpPut("{id}/release")]
@@ -134,7 +134,7 @@ namespace Point.API.Controllers.Orders
                 SELECT
                 o.Id, o.Created, o.Released, o.Number, o.CustomerId, o.SubTotal, o.Discount, o.Total, o.Status, o.PaymentTerm,
                 c.Id, c.Name,
-                oi.Id, oi.ItemUnitId, oi.ItemName, oi.UnitId, oi.UnitName, oi.Quantity, oi.Price, oi.Discount, oi.Total
+                oi.Id, oi.ItemUnitId, oi.ItemName, oi.UnitId, oi.UnitName, oi.Quantity, oi.Price, oi.Discount, oi.Total, oi.Status
                 FROM Orders o
                 LEFT JOIN Customers c ON c.Id = o.CustomerId
                 LEFT JOIN OrderItems oi ON oi.OrderId = o.Id
@@ -210,7 +210,8 @@ namespace Point.API.Controllers.Orders
                         Quantity = orderItem.Quantity,
                         Price = orderItem.Price,
                         Discount = orderItem.Discount,
-                        Total = orderItem.Total
+                        Total = orderItem.Total,
+                        Status = orderItem.Status
                     });
 
                     return orderEntry;

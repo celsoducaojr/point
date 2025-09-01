@@ -31,6 +31,7 @@ namespace Point.API.Dtos.Listing
         public decimal Price { get; set; }
         public decimal Discount { get; set; }
         public decimal Total { get; set; }
+        public OrderItemStatus Status { get; set; }
     }
 
     public sealed class SearchPaymentResponseDto 
