@@ -65,7 +65,8 @@ namespace Point.Core.Application.Handlers.Orders
                     Amount = orderItem.Total,
                     Mode  = request.Refund.Mode,
                     Reference = request.Refund.Reference,
-                    Remarks = request.Refund.Remarks
+                    Remarks = request.Refund.Remarks,
+                    OrderItemId = orderItem.Id
                 });
             }
 

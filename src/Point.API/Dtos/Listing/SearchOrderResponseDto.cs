@@ -17,6 +17,7 @@ namespace Point.API.Dtos.Listing
         public List<SearchOrderItemResponseDto> Items { get; set; }
         public PaymentTerm? PaymentTerm { get; set; }
         public List<SearchPaymentResponseDto>? Payments { get; set; }
+        public List<SearchRefundResponseDto>? Refunds { get; set; }
     }
 
     public sealed class SearchOrderItemResponseDto
@@ -40,5 +41,16 @@ namespace Point.API.Dtos.Listing
         public PaymentMode Mode { get; set; }
         public string? Reference { get; set; }
         public string? Remarks { get; set; }
+    }
+
+    public sealed class SearchRefundResponseDto
+    {
+        public int Id { get; set; }
+        public DateTime Created { get; set; }
+        public decimal Amount { get; set; }
+        public PaymentMode Mode { get; set; }
+        public string? Reference { get; set; }
+        public string? Remarks { get; set; }
+        public int OrderItemId { get; set; }
     }
 }

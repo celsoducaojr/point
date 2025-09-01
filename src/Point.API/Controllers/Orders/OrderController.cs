@@ -150,8 +150,17 @@ namespace Point.API.Controllers.Orders
                 WHERE o.Id in @Ids
                 ORDER BY o.Created DESC";
 
+            var refundsQuery = $@"
+                SELECT
+                o.Id,
+                r.Id, r.Created, r.Amount, r.Mode, r.Reference, r.Remarks, r.OrderItemId
+                FROM Orders o
+                LEFT JOIN Refunds r ON r.OrderId = o.Id
+                WHERE o.Id in @Ids
+                ORDER BY o.Created DESC";
+
             // Execute page query
-            var orders = await LookupAsync(orderQuery, paymentsQuery, parameters);
+            var orders = await LookupAsync(orderQuery, paymentsQuery, refundsQuery, parameters);
 
             return Ok(new
             {
@@ -164,7 +173,7 @@ namespace Point.API.Controllers.Orders
 
         #region Queries
 
-        private async Task<IEnumerable<SearchOrderResponseDto>> LookupAsync(string orderQuery, string paymentsQuery, DynamicParameters parameters)
+        private async Task<IEnumerable<SearchOrderResponseDto>> LookupAsync(string orderQuery, string paymentsQuery, string refundsQuery, DynamicParameters parameters)
         {
             var orderDictionary = new Dictionary<int, SearchOrderResponseDto>();
             var orders = await _pointDbConnection.QueryAsync<Order, Customer, OrderItem, SearchOrderResponseDto>(
@@ -215,7 +224,7 @@ namespace Point.API.Controllers.Orders
                 (order, payment) =>
                 {
                     var orderEntry = orderDictionary[order.Id];
-                    SearchPaymentResponseDto paymentDto = null;
+                    SearchPaymentResponseDto? paymentDto = null;
                     if (payment?.Id > 0)
                     {
                         if (orderEntry.Payments == null) orderEntry.Payments = [];
@@ -233,6 +242,35 @@ namespace Point.API.Controllers.Orders
                     }
 
                     return paymentDto;
+                },
+                parameters,
+                splitOn: "Id"
+            );
+
+            await _pointDbConnection.QueryAsync<Order, Refund, SearchRefundResponseDto>(
+                refundsQuery,
+                (order, refund) =>
+                {
+                    var orderEntry = orderDictionary[order.Id];
+                    SearchRefundResponseDto? refundDto = null;
+                    if (refund?.Id > 0)
+                    {
+                        if (orderEntry.Refunds == null) orderEntry.Refunds = [];
+                        refundDto = new SearchRefundResponseDto
+                        {
+                            Id = refund.Id,
+                            Created = refund.Created,
+                            Amount = refund.Amount,
+                            Mode = refund.Mode,
+                            Reference = refund.Reference,
+                            Remarks = refund.Remarks,
+                            OrderItemId = refund.OrderItemId
+                        };
+
+                        orderEntry.Refunds.Add(refundDto);
+                    }
+
+                    return refundDto;
                 },
                 parameters,
                 splitOn: "Id"
