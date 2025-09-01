@@ -1,7 +1,7 @@
-﻿using System.Text.RegularExpressions;
-using Point.Core.Domain.Contracts.Services;
+﻿using Point.Core.Domain.Contracts.Services;
 using Point.Core.Domain.Entities.Orders;
 using Point.Core.Domain.Enums;
+using System.Text.RegularExpressions;
 
 namespace Point.Core.Domain.Services
 {
@@ -9,6 +9,7 @@ namespace Point.Core.Domain.Services
     {
         bool IsStatusChangeAllowed(OrderStatus from, OrderStatus to);
         bool IsStatusChangeAllowed(OrderStatus orderStatus, OrderItemStatus orderItemStatusTo);
+        bool IsValidCalculations(Order order);
         string GenerateOrderNumber();
         decimal GenerateBalance(Order order);
         decimal GenerateTotal(List<OrderItem> items);
@@ -58,6 +59,37 @@ namespace Point.Core.Domain.Services
             return false;
         }
 
+        public bool IsValidCalculations(Order order)
+        {
+            var valid = true;
+
+            foreach (var item in order.Items)
+            {
+                if (item.Total != (item.Price * item.Quantity) - item.Discount)
+                {
+                    valid = false;
+                    break;
+                }
+            }
+
+            if (order.SubTotal != GenerateTotal(order.Items))
+            {
+                valid = false;
+            }
+
+            if (order.Total != order.SubTotal - order.Discount)
+            {
+                valid = false;
+            }
+
+            if (order.Payments != null && order.Payments[0].Amount != order.Total)
+            {
+                valid = false;
+            }
+
+            return valid;
+        }
+
         public string GenerateOrderNumber()
         {
             var base64 = Convert.ToBase64String(BitConverter.GetBytes(DateTime.UtcNow.Ticks));
@@ -67,9 +99,7 @@ namespace Point.Core.Domain.Services
 
         public decimal GenerateBalance(Order order)
         {
-            var payments = order.Payments?.Sum(payment => payment.Amount) ?? 0;
-
-            return order.Total - payments;
+            return order.Total - (order.Payments?.Sum(payment => payment.Amount) ?? 0);
         }
         
         public decimal GenerateTotal(List<OrderItem> items)

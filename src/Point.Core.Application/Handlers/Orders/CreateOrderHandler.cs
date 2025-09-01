@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using MediatR;
+﻿using MediatR;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Domain.Entities.Orders;
@@ -58,6 +57,7 @@ namespace Point.Core.Application.Handlers.Orders
             {
                 var itemUnit = await _pointDbContext.ItemUnits.FindAsync(orderItem.ItemUnitId, cancellationToken) 
                     ?? throw new NotFoundException($"Item Unit not found: {orderItem.ItemUnitId}");
+
                 var item = await _pointDbContext.Items.FindAsync(itemUnit.ItemId, cancellationToken);
                 var unit = await _pointDbContext.Units.FindAsync(itemUnit.UnitId, cancellationToken);
 
@@ -77,25 +77,23 @@ namespace Point.Core.Application.Handlers.Orders
 
             if (request.Payment != null)
             {
-                if (request.Payment.Amount == request.Total)
-                {
-                    order.Status = OrderStatus.Paid;
-                    order.Released = DateTime.Now;
-                    order.Payments =
-                    [
-                         new Payment
+                order.Status = OrderStatus.Paid;
+                order.Released = DateTime.Now;
+                order.Payments =
+                [
+                     new Payment
                          {
                              Amount = request.Payment.Amount,
                              Mode = request.Payment.Mode,
                              Reference = request.Payment.Reference,
                              Remarks = request.Payment.Remarks
                          }
-                    ];
-                }
-                else
-                {
-                    throw new DomainException("Invalid payment amount.");
-                }
+                ];
+            }
+
+            if (!_orderService.IsValidCalculations(order))
+            {
+                throw new DomainException("Invalid Order calculations.");
             }
 
             _pointDbContext.Orders.Add(order);

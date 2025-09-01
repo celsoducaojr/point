@@ -69,6 +69,11 @@ namespace Point.Core.Application.Handlers.Orders
                 });
             }
 
+            if (!_orderService.IsValidCalculations(order))
+            {
+                throw new DomainException("Invalid Order calculations.");
+            }
+
             _pointDbContext.Orders.Update(order);
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 

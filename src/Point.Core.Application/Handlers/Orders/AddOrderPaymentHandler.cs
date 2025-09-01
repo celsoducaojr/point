@@ -37,8 +37,7 @@ namespace Point.Core.Application.Handlers.Orders
                 throw new DomainException("Invalid payment amount value.");
             }
 
-            if (order.Payments == null) order.Payments = [];
-
+            order.Payments ??= [];
             order.Payments.Add(new Payment
             {
                 Amount = request.Payment.Amount,
