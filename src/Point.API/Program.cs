@@ -18,13 +18,13 @@ app.UseMiddlewares();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.ConfigureSwagger();
 
 app.MapControllers();
-
-app.MapIdentityApi<User>();
 
 app.Run();
 

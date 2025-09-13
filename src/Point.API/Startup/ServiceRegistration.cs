@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Point.API.Constants;
 using Point.API.Conventions;
@@ -8,6 +9,10 @@ using Point.Infrastructure.Identity;
 using Point.Infrastructure.Identity.Domain.Entities;
 using Point.Infrastructure.Persistence;
 using System.Text.Json.Serialization;
+using Point.API.Controllers.Authentication;
+using IAuthenticationService = Point.API.Controllers.Authentication.IAuthenticationService;
+using AuthenticationService = Point.API.Controllers.Authentication.AuthenticationService;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Point.API.Startup
 {
@@ -58,9 +63,11 @@ namespace Point.API.Startup
                 .AddAuthentication()
                 .AddBearerToken(IdentityConstants.BearerScheme);
 
-            services.AddIdentityCore<User>()
+            services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<UserDbContext>()
-                .AddApiEndpoints();
+                .AddDefaultTokenProviders();
+
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             return services;
         }
