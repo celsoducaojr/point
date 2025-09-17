@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Point.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Point.Infrastructure.Persistence;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PointDbContext))]
-    partial class PointDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250917100050_StocksDomain")]
+    partial class StocksDomain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -444,15 +447,10 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.Property<string>("Remarks")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("StockItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
+                    b.Property<int>("StockItemId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("StockItemId");
 
                     b.ToTable("StockHistories");
                 });
@@ -617,13 +615,6 @@ namespace Point.Infrastructure.Persistence.Migrations
                         .HasForeignKey("ItemUnitId");
                 });
 
-            modelBuilder.Entity("Point.Core.Domain.Entities.Stocks.StockHistory", b =>
-                {
-                    b.HasOne("Point.Core.Domain.Entities.Stocks.StockItem", null)
-                        .WithMany("Histories")
-                        .HasForeignKey("StockItemId");
-                });
-
             modelBuilder.Entity("Point.Core.Domain.Entities.SupplierTag", b =>
                 {
                     b.HasOne("Point.Core.Domain.Entities.Supplier", null)
@@ -655,11 +646,6 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.Navigation("Payments");
 
                     b.Navigation("Refunds");
-                });
-
-            modelBuilder.Entity("Point.Core.Domain.Entities.Stocks.StockItem", b =>
-                {
-                    b.Navigation("Histories");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Supplier", b =>
