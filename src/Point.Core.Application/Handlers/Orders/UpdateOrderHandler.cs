@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Domain.Entities.Orders;
+using Point.Core.Domain.Entities.Stocks;
 using Point.Core.Domain.Enums;
 
 namespace Point.Core.Application.Handlers.Orders
@@ -32,6 +33,7 @@ namespace Point.Core.Application.Handlers.Orders
                 throw new DomainException($"Updating details of '{order.Status}' Order is not allowed.");
             }
 
+            // TODO: Update stock
             _pointDbContext.OrderItems.RemoveRange(order.Items);
 
             order.CustomerId = request.CustomerId;
@@ -59,6 +61,22 @@ namespace Point.Core.Application.Handlers.Orders
                     Total = orderItem.Total, 
                     Status = OrderItemStatus.Active
                 });
+
+                var stock = await _pointDbContext.StockItems
+                    .Include(stock => stock.Histories)
+                    .FirstOrDefaultAsync(stock => stock.ItemUnitId == orderItem.ItemUnitId, cancellationToken);
+                if (stock != null)
+                {
+                    stock.Quantity = stock.Quantity - orderItem.Quantity;
+                    stock.Histories.Add(new StockHistory
+                    {
+                        OrderItemId = orderItem.ItemUnitId,
+                        QuantityChanged = -orderItem.Quantity,
+                        QuantityAfterChange = stock.Quantity,
+                        Type = StockHistoryType.Removal,
+                        Remarks = "Sold"
+                    });
+                }
             }
 
             if (request.Payment != null)

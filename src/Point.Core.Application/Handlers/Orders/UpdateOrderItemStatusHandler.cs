@@ -68,6 +68,8 @@ namespace Point.Core.Application.Handlers.Orders
                     Remarks = request.Refund.Remarks,
                     OrderItemId = orderItem.Id
                 });
+
+                // TODO: Update stock
             }
 
             if (!_orderService.IsValidCalculations(order))
