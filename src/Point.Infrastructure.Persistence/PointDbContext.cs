@@ -3,12 +3,14 @@ using Point.Core.Application.Contracts;
 using Point.Core.Domain.Contracts.Entities;
 using Point.Core.Domain.Entities;
 using Point.Core.Domain.Entities.Orders;
+using Point.Core.Domain.Entities.Stocks;
 
 namespace Point.Infrastructure.Persistence
 {
     public class PointDbContext(DbContextOptions<PointDbContext> options)
         : DbContext(options), IPointDbContext 
     {
+        // Listing
         public DbSet<Tag> Tags => Set<Tag>();
         public DbSet<Unit> Units => Set<Unit>();
         public DbSet<PriceType> PriceTypes => Set<PriceType>();
@@ -22,11 +24,16 @@ namespace Point.Infrastructure.Persistence
         public DbSet<CostReference> CostReferences => Set<CostReference>();
         public DbSet<DiscountVariation> DiscountVariations => Set<DiscountVariation>();
 
+        // Orders
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderItem> OrderItems => Set<OrderItem>();
         public DbSet<Payment> Payments => Set<Payment>();
         public DbSet<Refund> Refunds => Set<Refund>();
         public DbSet<Customer> Customers => Set<Customer>();
+
+        // Stocks
+        public DbSet<StockItem> StockItems => Set<StockItem>();
+        public DbSet<StockHistory> StockHistories => Set<StockHistory>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

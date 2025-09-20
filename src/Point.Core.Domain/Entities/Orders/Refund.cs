@@ -3,7 +3,7 @@ using Point.Core.Domain.Enums;
 
 namespace Point.Core.Domain.Entities.Orders
 {
-    public class Refund  :IEntities, IAuditable
+    public class Refund : IEntities, IAuditable
     {
         public int Id { get; set; }
         public DateTime Created { get; set; }
