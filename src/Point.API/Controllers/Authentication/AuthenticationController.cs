@@ -25,6 +25,7 @@ public class AuthenticationController : BaseController
     }
 
     [HttpPost("login")]
+    [ProducesResponseType(typeof(AuthenticationResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> Login(string username, string password)
     {
         var result = await _authenticationService.LoginAsync(username, password);

@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Point.Infrastructure.Identity.Domain.Entities;
 
 namespace Point.API.Controllers.Authentication;
