@@ -68,7 +68,7 @@ namespace Point.Core.Application.Handlers.Stocks
                         : -request.Quantity,
                     QuantityAfterChange = stock.Quantity,
                     Type = request.Type,
-                    Remarks = request.Remarks
+                    Remarks = request.Remarks ?? (request.Type == StockUpdateType.Addition ? "Stock addition" : "Stock removal")
                 });
 
                 _pointDbContext.StockItems.Update(stock);
