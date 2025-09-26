@@ -8,8 +8,8 @@ using Point.Core.Domain.Enums;
 namespace Point.Core.Application.Handlers.Stocks
 {
     public sealed record UpdateStockItemRequest(
-        int StockItemId,
-        StockHistoryType Type,
+        int ItemUnitId,
+        StockUpdateType Type,
         int Quantity,
         string? Remarks) 
         : IRequest<Unit>;
@@ -21,29 +21,59 @@ namespace Point.Core.Application.Handlers.Stocks
         public async Task<Unit> Handle(UpdateStockItemRequest request, CancellationToken cancellationToken)
         {
             var stock = await _pointDbContext.StockItems
-                    .Include(stock => stock.Histories).FirstOrDefaultAsync(stock => stock.Id == request.StockItemId, cancellationToken)
-                    ?? throw new NotFoundException($"Stock not found.");
+                    .Include(stock => stock.Histories).FirstOrDefaultAsync(stock => stock.ItemUnitId == request.ItemUnitId, cancellationToken);
 
-            if (request.Type == StockHistoryType.Removal && stock.Quantity < request.Quantity)
+            if (request.Type == StockUpdateType.Removal)
             {
-                throw new DomainException("Insufficient stock quantity.");
+                if (stock == null)
+                {
+                    throw new NotFoundException("Stock not found.");
+                }
+                if (stock.Quantity < request.Quantity)
+                {
+                    throw new DomainException("Insufficient stock quantity.");
+                }  
             }
 
-            stock.Quantity = request.Type == StockHistoryType.Addition
-                ? stock.Quantity + request.Quantity
-                : stock.Quantity - request.Quantity;
-            
-            stock.Histories.Add(new StockHistory
+            if (request.Type == StockUpdateType.Addition && stock == null)
             {
-                QuantityChanged = request.Type == StockHistoryType.Addition
-                    ? request.Quantity
-                    : -request.Quantity,
-                QuantityAfterChange = stock.Quantity,
-                Type = request.Type,
-                Remarks = request.Remarks
-            });
+                stock = new StockItem
+                {
+                    ItemUnitId = request.ItemUnitId,
+                    Quantity = request.Quantity,
+                    Histories =
+                    [
+                        new StockHistory
+                        {
+                            QuantityChanged = request.Quantity,
+                            QuantityAfterChange = request.Quantity,
+                            Type = request.Type,
+                            Remarks = request.Remarks ?? "Initial stock addition"
+                        }
+                    ]
+                };
 
-            _pointDbContext.StockItems.Update(stock);
+                await _pointDbContext.StockItems.AddAsync(stock, cancellationToken);
+            }
+            else // Update existing stock
+            {
+                stock.Quantity = request.Type == StockUpdateType.Addition
+                    ? stock.Quantity + request.Quantity
+                    : stock.Quantity - request.Quantity;
+
+                stock.Histories.Add(new StockHistory
+                {
+                    QuantityChanged = request.Type == StockUpdateType.Addition
+                        ? request.Quantity
+                        : -request.Quantity,
+                    QuantityAfterChange = stock.Quantity,
+                    Type = request.Type,
+                    Remarks = request.Remarks
+                });
+
+                _pointDbContext.StockItems.Update(stock);
+            }
+
             await _pointDbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

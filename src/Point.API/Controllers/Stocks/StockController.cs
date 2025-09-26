@@ -14,14 +14,6 @@ namespace Point.API.Controllers.Stocks
         private readonly IMediator _mediator = mediator;
         private readonly IPointDbContext _pointDbContext = pointDbContext;
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateStockItemRequest request)
-        {
-            var id = await _mediator.Send(request);
-
-            return CreatedAtAction(nameof(GetById), new { id }, new { id });
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockItemDto updateStockItemDto)
         {

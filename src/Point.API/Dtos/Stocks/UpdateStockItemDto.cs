@@ -3,7 +3,7 @@
 namespace Point.API.Dtos.Stocks
 {
     public sealed record UpdateStockItemDto(
-        StockHistoryType Type,
+        StockUpdateType Type,
         int Quantity,
         string? Remarks);
 }

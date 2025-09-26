@@ -14,7 +14,7 @@ namespace Point.Core.Application.Validators.Stocks
                 .GreaterThan(0);
 
             RuleFor(x => x.Remarks)
-               .MaximumLength(250)
+               .MaximumLength(150)
                .When(x => x.Remarks != null);
         }
     }

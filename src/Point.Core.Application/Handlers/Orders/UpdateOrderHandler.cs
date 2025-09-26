@@ -70,10 +70,9 @@ namespace Point.Core.Application.Handlers.Orders
                     stock.Quantity = stock.Quantity - orderItem.Quantity;
                     stock.Histories.Add(new StockHistory
                     {
-                        OrderItemId = orderItem.ItemUnitId,
                         QuantityChanged = -orderItem.Quantity,
                         QuantityAfterChange = stock.Quantity,
-                        Type = StockHistoryType.Removal,
+                        Type = StockUpdateType.Removal,
                         Remarks = "Sold"
                     });
                 }

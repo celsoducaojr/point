@@ -8,7 +8,6 @@ namespace Point.Core.Domain.Entities.Stocks
         public DateTime Created { get; set; }
         public DateTime LastModified { get; set; }
 
-
         public int ItemUnitId { get; set; }
         public int Quantity { get; set; }
         public List<StockHistory> Histories {get;set;}
