@@ -76,6 +76,7 @@ namespace Point.Infrastructure.Persistence
                 .Property(o => o.Total)
                 .HasPrecision(18, 2);
         }
+
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             var entities = base.ChangeTracker.Entries()

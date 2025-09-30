@@ -93,9 +93,11 @@ namespace Point.API.Controllers.Stocks
                 si.Id, si.ItemUnitId, si.Quantity,
                 iu.Id, iu.ItemId, iu.UnitId,
                 i.Id, i.Name,
+                c.Id, c.Name,
                 u.Id, u.Name
                 FROM StockItems si
                 {_joinQueryExpression}
+                LEFT JOIN Categories c ON i.CategoryId = c.Id
                 LEFT JOIN Units u ON iu.UnitId = u.Id
                 WHERE si.Id in @Ids
                 ORDER By i.Name";
@@ -107,7 +109,7 @@ namespace Point.API.Controllers.Stocks
                 FROM StockItems si
                 LEFT JOIN StockHistories sh ON si.Id = sh.StockItemId
                 WHERE si.Id in @Ids
-                ORDER BY si.Created DESC";
+                ORDER BY sh.Created DESC";
 
             // Execute page query
             var stocks = await LookupAsync(pageQuery, historiesQuery, parameters);
@@ -130,9 +132,9 @@ namespace Point.API.Controllers.Stocks
         private async Task<IEnumerable<SearchStockResponseDto>> LookupAsync(string query, string historiesQuery, DynamicParameters parameters)
         {
             var stockDictionary = new Dictionary<int, SearchStockResponseDto>();
-            var stocks = await _pointDbConnection.QueryAsync<Stock, ItemUnit, Item, Core.Domain.Entities.Unit, SearchStockResponseDto>(
+            var stocks = await _pointDbConnection.QueryAsync<Stock, ItemUnit, Item, Category, Core.Domain.Entities.Unit, SearchStockResponseDto>(
                 query,
-                (stock, itemUnit, item, unit) =>
+                (stock, itemUnit, item, category, unit) =>
                 {
                     if (!stockDictionary.TryGetValue(stock.Id, out var stockEntry))
                     {
@@ -140,6 +142,7 @@ namespace Point.API.Controllers.Stocks
                         {
                            ItemUnitId = stock.ItemUnitId,
                            ItemName = item.Name,
+                           CategoryName = category.Name,
                            ItemUnitName = unit.Name,
                            Quantity = stock.Quantity,
                            Histories = []
