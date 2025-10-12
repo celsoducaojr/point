@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -126,6 +126,23 @@ namespace Point.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PriceTypes", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "StockItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ItemUnitId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockItems", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -260,6 +277,7 @@ namespace Point.Infrastructure.Persistence.Migrations
                     Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Discount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Total = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -296,6 +314,60 @@ namespace Point.Infrastructure.Persistence.Migrations
                         name: "FK_Payments_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
+                        principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Refunds",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    OrderItemId = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    Mode = table.Column<int>(type: "int", nullable: false),
+                    Reference = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Remarks = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OrderId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Refunds", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Refunds_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "StockHistories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    QuantityChanged = table.Column<int>(type: "int", nullable: false),
+                    QuantityAfterChange = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Remarks = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    StockItemId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StockHistories_StockItems_StockItemId",
+                        column: x => x.StockItemId,
+                        principalTable: "StockItems",
                         principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -369,6 +441,16 @@ namespace Point.Infrastructure.Persistence.Migrations
                 column: "ItemUnitId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Refunds_OrderId",
+                table: "Refunds",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockHistories_StockItemId",
+                table: "StockHistories",
+                column: "StockItemId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SupplierTags_SupplierId",
                 table: "SupplierTags",
                 column: "SupplierId");
@@ -402,6 +484,12 @@ namespace Point.Infrastructure.Persistence.Migrations
                 name: "Prices");
 
             migrationBuilder.DropTable(
+                name: "Refunds");
+
+            migrationBuilder.DropTable(
+                name: "StockHistories");
+
+            migrationBuilder.DropTable(
                 name: "SupplierTags");
 
             migrationBuilder.DropTable(
@@ -418,6 +506,9 @@ namespace Point.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "StockItems");
 
             migrationBuilder.DropTable(
                 name: "Suppliers");

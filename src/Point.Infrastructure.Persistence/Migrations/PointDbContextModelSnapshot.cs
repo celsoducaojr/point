@@ -432,9 +432,6 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("OrderItemId")
-                        .HasColumnType("int");
-
                     b.Property<int>("QuantityAfterChange")
                         .HasColumnType("int");
 

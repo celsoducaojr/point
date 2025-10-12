@@ -12,8 +12,8 @@ using Point.Infrastructure.Persistence;
 namespace Point.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PointDbContext))]
-    [Migration("20250830083155_OrderRefund")]
-    partial class OrderRefund
+    [Migration("20251011055023_InitialDB")]
+    partial class InitialDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -280,9 +280,6 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<string>("Remarks")
-                        .HasColumnType("longtext");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -424,6 +421,67 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.ToTable("PriceTypes");
                 });
 
+            modelBuilder.Entity("Point.Core.Domain.Entities.Stocks.StockHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("QuantityAfterChange")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantityChanged")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("StockItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StockItemId");
+
+                    b.ToTable("StockHistories");
+                });
+
+            modelBuilder.Entity("Point.Core.Domain.Entities.Stocks.StockItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ItemUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StockItems");
+                });
+
             modelBuilder.Entity("Point.Core.Domain.Entities.Supplier", b =>
                 {
                     b.Property<int>("Id")
@@ -559,6 +617,13 @@ namespace Point.Infrastructure.Persistence.Migrations
                         .HasForeignKey("ItemUnitId");
                 });
 
+            modelBuilder.Entity("Point.Core.Domain.Entities.Stocks.StockHistory", b =>
+                {
+                    b.HasOne("Point.Core.Domain.Entities.Stocks.StockItem", null)
+                        .WithMany("Histories")
+                        .HasForeignKey("StockItemId");
+                });
+
             modelBuilder.Entity("Point.Core.Domain.Entities.SupplierTag", b =>
                 {
                     b.HasOne("Point.Core.Domain.Entities.Supplier", null)
@@ -590,6 +655,11 @@ namespace Point.Infrastructure.Persistence.Migrations
                     b.Navigation("Payments");
 
                     b.Navigation("Refunds");
+                });
+
+            modelBuilder.Entity("Point.Core.Domain.Entities.Stocks.StockItem", b =>
+                {
+                    b.Navigation("Histories");
                 });
 
             modelBuilder.Entity("Point.Core.Domain.Entities.Supplier", b =>
