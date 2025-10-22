@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Point.API.Controllers.Base;
-using Point.API.Dtos;
+using Point.API.Dtos.Orders;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Application.Handlers.Orders;
@@ -24,9 +24,15 @@ namespace Point.API.Controllers.Orders
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateNameDto updateNameDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCustomerDto updateCustomerDto)
         {
-            await _mediator.Send(new UpdateCustomerRequest(id, updateNameDto.Name));
+            await _mediator.Send(new UpdateCustomerRequest(
+                id, 
+                updateCustomerDto.Name, 
+                updateCustomerDto.MobileNumber, 
+                updateCustomerDto.Email,
+                updateCustomerDto.Address,
+                updateCustomerDto.Remarks));
 
             return NoContent();
         }
@@ -40,18 +46,14 @@ namespace Point.API.Controllers.Orders
             return Ok(unit);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            return Ok(await _pointDbContext.Customers.OrderBy(customer => customer.Name).ToListAsync());
-        }
-
         [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] string name)
+        public async Task<IActionResult> Search([FromQuery] int page = 1, int pageSize = 25, string? name = null)
         {
             var unit = await _pointDbContext.Customers
-                .Where(customer => EF.Functions.Like(customer.Name, $"%{name}%"))
+                .Where(customer => string.IsNullOrEmpty(name) || EF.Functions.Like(customer.Name, $"%{name}%"))
                 .OrderBy(customer => customer.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
 
             return Ok(unit);

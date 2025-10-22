@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Point.API.Controllers.Base;
-using Point.API.Dtos;
+using Point.API.Dtos.Orders;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
 using Point.Core.Application.Handlers.Listing;
@@ -25,7 +25,7 @@ namespace Point.API.Controllers.Listing
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateNameDto updateNameDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCustomerDto updateNameDto)
         {
             await _mediator.Send(new UpdateTagRequest(id, updateNameDto.Name));
 

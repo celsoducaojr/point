@@ -2,13 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using Point.Core.Application.Contracts;
 using Point.Core.Application.Exceptions;
-using Point.Core.Application.Handlers.Listing;
 
 namespace Point.Core.Application.Handlers.Orders
 {
     public sealed record UpdateCustomerRequest(
       int Id,
-      string Name)
+      string Name,
+      string? MobileNumber,
+      string? Email,
+      string? Address,
+      string? Remarks)
       : IRequest<Unit>;
 
     public class UpdateCustomerHandler(IPointDbContext pointDbContext) : IRequestHandler<UpdateCustomerRequest, Unit>
@@ -26,6 +29,10 @@ namespace Point.Core.Application.Handlers.Orders
             }
 
             customer.Name = request.Name;
+            customer.MobileNumber = request.MobileNumber;
+            customer.Email = request.Email;
+            customer.Address = request.Address;
+            customer.Remarks = request.Remarks;
 
             _pointDbContext.Customers.Update(customer);
             await _pointDbContext.SaveChangesAsync(cancellationToken);

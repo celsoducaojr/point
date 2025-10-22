@@ -7,7 +7,11 @@ using Point.Core.Domain.Entities.Orders;
 namespace Point.Core.Application.Handlers.Orders
 {
     public sealed record CreateCustomerRequest(
-        string Name)
+        string Name,
+        string? MobileNumber,
+        string? Email,
+        string? Address,
+        string? Remarks)
         : IRequest<int>;
 
     public class CreateCustomerHandler(IPointDbContext pointDbContext) : IRequestHandler<CreateCustomerRequest, int>
@@ -23,7 +27,11 @@ namespace Point.Core.Application.Handlers.Orders
 
             var customer = new Customer
             {
-                Name = request.Name
+                Name = request.Name,
+                MobileNumber = request.MobileNumber,
+                Email = request.Email,
+                Address = request.Address,
+                Remarks = request.Remarks
             };
 
             _pointDbContext.Customers.Add(customer);
