@@ -21,7 +21,7 @@ namespace Point.Core.Application.Validators.Orders
                 .When(x => !string.IsNullOrEmpty(x.Email));
 
             RuleFor(x => x.Address)
-                .MaximumLength(200)
+                .MaximumLength(250)
                 .When(x => !string.IsNullOrEmpty(x.Address));
 
             RuleFor(RuleFor => RuleFor.Remarks)
