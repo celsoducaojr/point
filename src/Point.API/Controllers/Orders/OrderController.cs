@@ -84,12 +84,12 @@ namespace Point.API.Controllers.Orders
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] 
-            int page = 1,
-            int pageSize = 25,
-            int? customerId = null,
-            string? customerName = null,
-            List<OrderStatus>? statuses = null)
+        public async Task<IActionResult> Search(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 25,
+            [FromQuery] int? customerId = null,
+            [FromQuery] string? customerName = null,
+            [FromQuery] List<OrderStatus>? statuses = null)
         {
             statuses ??= [.. Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>()];
             var statusIds = statuses.Select(s => (int)s).ToList();
