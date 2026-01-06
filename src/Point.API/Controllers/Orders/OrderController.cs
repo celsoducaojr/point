@@ -84,18 +84,17 @@ namespace Point.API.Controllers.Orders
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> Search(
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 25,
-            [FromQuery] int? customerId = null,
-            [FromQuery] List<OrderStatus>? statuses = null)
+        public async Task<IActionResult> Search([FromQuery] 
+            int page = 1,
+            int pageSize = 25,
+            int? customerId = null,
+            string? customerName = null,
+            List<OrderStatus>? statuses = null)
         {
             statuses ??= [.. Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>()];
             var statusIds = statuses.Select(s => (int)s).ToList();
 
-            var idsQuery = $@"
-                SELECT o.Id 
-                FROM Orders o";
+            var idsQuery = $@" SELECT o.Id FROM Orders o";
 
             var conditions = new List<string>();
             var parameters = new DynamicParameters();
@@ -106,6 +105,19 @@ namespace Point.API.Controllers.Orders
                 conditions.Add("o.CustomerId = @CustomerId");
                 parameters.Add("CustomerId", customerId);
             }
+            else if (!string.IsNullOrEmpty(customerName))
+            {
+                var customerIdsQuery = $@" SELECT Id FROM Customers WHERE Name LIKE @Name";
+                var nameParam = new DynamicParameters();
+                nameParam.Add("Name", $"%{customerName}%");
+
+                // Execute Name Ids query
+                var customerIds = await _pointDbConnection.QueryAsync<int>(customerIdsQuery, nameParam);
+
+                conditions.Add("o.CustomerId IN @CustomerIds");
+                parameters.Add("CustomerIds", customerIds);
+            }
+
             if (statusIds.Any())
             {
                 conditions.Add("o.Status IN @StatusIds");
